@@ -197,7 +197,7 @@ namespace Masasamjant.FileSystems
             }
         }
 
-        private static void CopyOrMove(bool copy, string sourceFilePath, string destinationFilePath, bool overwrite = false)
+        private static void CopyOrMove(bool copy, string sourceFilePath, string destinationFilePath, bool overwrite)
         {
             if (string.IsNullOrWhiteSpace(sourceFilePath))
                 throw new ArgumentNullException(nameof(sourceFilePath), "The source file path cannot be empty or only white-space.");
