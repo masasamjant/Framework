@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masasamjant.FileSystems", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masasamjant.Http", "Masasamjant.Http\Masasamjant.Http.csproj", "{DDF2FE4C-50D4-48A5-B5F4-D0161A7959F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masasamjant.Core", "Masasamjant.Core\Masasamjant.Core.csproj", "{A0D7D9DA-CEA3-4E31-AAA3-AED1C3903FD4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masasamjant.Core", "Masasamjant.Core\Masasamjant.Core.csproj", "{A0D7D9DA-CEA3-4E31-AAA3-AED1C3903FD4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masasamjant.Repositories", "Masasamjant.Repositories\Masasamjant.Repositories.csproj", "{98C0DBD8-56CB-4370-BA1A-7BCB28266F8B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{A0D7D9DA-CEA3-4E31-AAA3-AED1C3903FD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0D7D9DA-CEA3-4E31-AAA3-AED1C3903FD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0D7D9DA-CEA3-4E31-AAA3-AED1C3903FD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98C0DBD8-56CB-4370-BA1A-7BCB28266F8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98C0DBD8-56CB-4370-BA1A-7BCB28266F8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98C0DBD8-56CB-4370-BA1A-7BCB28266F8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98C0DBD8-56CB-4370-BA1A-7BCB28266F8B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -37,6 +43,7 @@ Global
 		{00FC2448-9050-4851-BAE0-70B13D71E858} = {6FE5065B-2DB0-4B10-91A3-9B0C18A01DC9}
 		{DDF2FE4C-50D4-48A5-B5F4-D0161A7959F3} = {6FE5065B-2DB0-4B10-91A3-9B0C18A01DC9}
 		{A0D7D9DA-CEA3-4E31-AAA3-AED1C3903FD4} = {6FE5065B-2DB0-4B10-91A3-9B0C18A01DC9}
+		{98C0DBD8-56CB-4370-BA1A-7BCB28266F8B} = {6FE5065B-2DB0-4B10-91A3-9B0C18A01DC9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {68586AED-B72D-4188-A597-B09BCE21CBD0}
