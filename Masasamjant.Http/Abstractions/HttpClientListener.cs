@@ -6,9 +6,10 @@
     public abstract class HttpClientListener : IHttpClientListener
     {
         /// <summary>
-        /// Invoked before specified HTTP request is executed.
+        /// Invoked if exception occurs when executing specified HTTP request.
         /// </summary>
         /// <param name="request">The HTTP request.</param>
+        /// <param name="exception">The occurred exception.</param>
         /// <returns>A <see cref="Task"/>.</returns>
         public abstract Task OnErrorAsync(HttpRequest request, Exception exception);
 
