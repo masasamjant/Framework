@@ -1,7 +1,8 @@
 ﻿namespace Masasamjant.Http.Abstractions
 {
     /// <summary>
-    /// Represents abstract listener of HTTP request execution.
+    /// Represents abstract listener of HTTP request execution. Listener is passive component that just get notifies
+    /// about HTTP request. It must not change request or not interfere with request processing.
     /// </summary>
     public abstract class HttpClientListener : IHttpClientListener
     {
