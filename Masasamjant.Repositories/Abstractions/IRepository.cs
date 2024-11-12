@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace Masasamjant.Repositories
+namespace Masasamjant.Repositories.Abstractions
 {
     /// <summary>
     /// Represents repository to save data of objects.

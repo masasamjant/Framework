@@ -1,4 +1,4 @@
-﻿namespace Masasamjant.Repositories
+﻿namespace Masasamjant.Repositories.Abstractions
 {
     /// <summary>
     /// Represents provider of connection string.
