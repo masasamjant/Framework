@@ -1,11 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35825.156 d17.13
+VisualStudioVersion = 17.13.35825.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masasamjant.Framework", "Masasamjant.Framework\Masasamjant.Framework.csproj", "{0A1DA9FA-D11B-4C81-9CF7-2871BB3A08A4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{B6357D9B-1DE8-481D-A6BC-67DC406B37B0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masasamjant.Framework.UnitTests", "Masasamjant.Framework.UnitTests\Masasamjant.Framework.UnitTests.csproj", "{075692A4-9AE5-476D-B9E7-A19EE4101A8E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,12 +21,17 @@ Global
 		{0A1DA9FA-D11B-4C81-9CF7-2871BB3A08A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A1DA9FA-D11B-4C81-9CF7-2871BB3A08A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A1DA9FA-D11B-4C81-9CF7-2871BB3A08A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{075692A4-9AE5-476D-B9E7-A19EE4101A8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{075692A4-9AE5-476D-B9E7-A19EE4101A8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{075692A4-9AE5-476D-B9E7-A19EE4101A8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{075692A4-9AE5-476D-B9E7-A19EE4101A8E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0A1DA9FA-D11B-4C81-9CF7-2871BB3A08A4} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{075692A4-9AE5-476D-B9E7-A19EE4101A8E} = {B6357D9B-1DE8-481D-A6BC-67DC406B37B0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {599C52B5-160A-4AF9-9951-040D3F362F9E}
