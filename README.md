@@ -1,1 +1,2 @@
-# Masasamjant.Framework
+# Masasamjant Framework
+General purpose framework for building applications.
