@@ -86,5 +86,50 @@ namespace Masasamjant.Resources {
                 return ResourceManager.GetString("User", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Value 0.
+        /// </summary>
+        public static string Value0 {
+            get {
+                return ResourceManager.GetString("Value0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Value 1.
+        /// </summary>
+        public static string Value1 {
+            get {
+                return ResourceManager.GetString("Value1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Value 2.
+        /// </summary>
+        public static string Value2 {
+            get {
+                return ResourceManager.GetString("Value2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Value 4.
+        /// </summary>
+        public static string Value4 {
+            get {
+                return ResourceManager.GetString("Value4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Value 8.
+        /// </summary>
+        public static string Value8 {
+            get {
+                return ResourceManager.GetString("Value8", resourceCulture);
+            }
+        }
     }
 }

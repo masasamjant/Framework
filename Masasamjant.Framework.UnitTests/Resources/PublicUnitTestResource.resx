@@ -126,4 +126,19 @@
   <data name="User" xml:space="preserve">
     <value>User</value>
   </data>
+  <data name="Value0" xml:space="preserve">
+    <value>Value 0</value>
+  </data>
+  <data name="Value1" xml:space="preserve">
+    <value>Value 1</value>
+  </data>
+  <data name="Value2" xml:space="preserve">
+    <value>Value 2</value>
+  </data>
+  <data name="Value4" xml:space="preserve">
+    <value>Value 4</value>
+  </data>
+  <data name="Value8" xml:space="preserve">
+    <value>Value 8</value>
+  </data>
 </root>

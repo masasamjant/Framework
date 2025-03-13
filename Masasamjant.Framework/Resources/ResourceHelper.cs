@@ -78,9 +78,9 @@ namespace Masasamjant.Resources
             {
                 var resources = new List<string>();
 
-                foreach (var flag in value.Flags())
+                foreach (var flag in value.Flags(true))
                 {
-                    if (flag.IsDefaultFlag() && value.IsSingleFlagsValue(default))
+                    if (value.FlagCount(false) == 1)
                     {
                         var resourceStringAttribute = value.GetCustomAttribute<TEnum, ResourceStringAttribute>();
                         return resourceStringAttribute?.ResourceValue;
@@ -121,19 +121,19 @@ namespace Masasamjant.Resources
             {
                 var resources = new List<string>();
 
-                foreach (var flag in value.Flags())
+                foreach (var flag in value.Flags(true))
                 {
-                    if (value.IsDefaultFlag() && value.IsSingleFlagsValue(default))
+                    if (value.FlagCount(false) == 1)
                     {
-                        var resourceString = value.GetResourceString();
-                        return resourceString ?? Enum.GetName(value) ?? value.ToString();
+                        var resourceString = flag.GetResourceString();
+                        return resourceString ?? Enum.GetName(flag) ?? flag.ToString();
                     }
                     else
                     {
-                        if (value.IsDefaultFlag())
+                        if (flag.IsDefaultFlag())
                             continue;
 
-                        var resourceString = value.GetResourceString() ?? Enum.GetName(value) ?? value.ToString();
+                        var resourceString = flag.GetResourceString() ?? Enum.GetName(flag) ?? flag.ToString();
                         resources.Add(resourceString);
                     }
                 }
