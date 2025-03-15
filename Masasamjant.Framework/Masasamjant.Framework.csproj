@@ -39,12 +39,21 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>ErrorBehaviorResource.resx</DependentUpon>
     </Compile>
+    <Compile Update="Resources\Strings\SortOrderResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SortOrderResource.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Update="Resources\Strings\ErrorBehaviorResource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ErrorBehaviorResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Strings\SortOrderResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SortOrderResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 
