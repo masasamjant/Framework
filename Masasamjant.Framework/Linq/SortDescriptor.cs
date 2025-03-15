@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using Masasamjant.Serialization;
+using System.Reflection;
 using System.Text.Json.Serialization;
 
 namespace Masasamjant.Linq
@@ -6,7 +7,7 @@ namespace Masasamjant.Linq
     /// <summary>
     /// Describes sorting by specified property name.
     /// </summary>
-    public sealed class SortDescriptor : IEquatable<SortDescriptor>
+    public sealed class SortDescriptor : IEquatable<SortDescriptor>, IJsonSerializable
     {
         /// <summary>
         /// Initializes new instance of the <see cref="SortDescriptor"/> class.
