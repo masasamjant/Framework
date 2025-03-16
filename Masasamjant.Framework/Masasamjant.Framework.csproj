@@ -34,6 +34,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Resources\Strings\DateTimeComponentResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DateTimeComponentResource.resx</DependentUpon>
+    </Compile>
     <Compile Update="Resources\Strings\ErrorBehaviorResource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -44,9 +49,18 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>SortOrderResource.resx</DependentUpon>
     </Compile>
+    <Compile Update="Resources\Strings\TimeComponentResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TimeComponentResource.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Resources\Strings\DateTimeComponentResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>DateTimeComponentResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\Strings\ErrorBehaviorResource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ErrorBehaviorResource.Designer.cs</LastGenOutput>
@@ -54,6 +68,10 @@
     <EmbeddedResource Update="Resources\Strings\SortOrderResource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SortOrderResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Strings\TimeComponentResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>TimeComponentResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 
