@@ -1,4 +1,6 @@
-﻿namespace Masasamjant
+﻿using Masasamjant.Reflection;
+
+namespace Masasamjant
 {
     public class Person : IEquatable<Person>
     {
@@ -13,6 +15,7 @@
 
         public string LastName { get; }
 
+        [IgnoreProperty]
         public int Age { get; }
 
         public bool Equals(Person? other)
