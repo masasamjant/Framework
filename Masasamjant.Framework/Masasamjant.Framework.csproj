@@ -39,10 +39,20 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>DateTimeComponentResource.resx</DependentUpon>
     </Compile>
+    <Compile Update="Resources\Strings\EqualityOperatorResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>EqualityOperatorResource.resx</DependentUpon>
+    </Compile>
     <Compile Update="Resources\Strings\ErrorBehaviorResource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>ErrorBehaviorResource.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Strings\LogicalOperatorResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>LogicalOperatorResource.resx</DependentUpon>
     </Compile>
     <Compile Update="Resources\Strings\SortOrderResource.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -61,9 +71,17 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>DateTimeComponentResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Strings\EqualityOperatorResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>EqualityOperatorResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\Strings\ErrorBehaviorResource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ErrorBehaviorResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Strings\LogicalOperatorResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>LogicalOperatorResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Strings\SortOrderResource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
