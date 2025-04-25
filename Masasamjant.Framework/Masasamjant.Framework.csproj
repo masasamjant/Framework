@@ -34,6 +34,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Resources\Strings\BooleanOptionResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>BooleanOptionResource.resx</DependentUpon>
+    </Compile>
     <Compile Update="Resources\Strings\DateTimeComponentResource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -67,6 +72,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Resources\Strings\BooleanOptionResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>BooleanOptionResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\Strings\DateTimeComponentResource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>DateTimeComponentResource.Designer.cs</LastGenOutput>

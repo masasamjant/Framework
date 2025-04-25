@@ -18,5 +18,13 @@ namespace Masasamjant
 
             return list;
         }
+
+        protected static List<TValue> CreateList<TValue>(TValue value, int count)
+        {
+            var list = new List<TValue>(count);
+            for (int i = 0; i < count; i++)
+                list.Add(value);
+            return list;
+        }
     }
 }
