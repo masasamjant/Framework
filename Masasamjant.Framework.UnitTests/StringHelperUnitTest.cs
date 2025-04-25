@@ -4,6 +4,16 @@
     public class StringHelperUnitTest : UnitTest
     {
         [TestMethod]
+        public void Test_Remove()
+        {
+            char[] except = ['A', 'B', 'C'];
+            Assert.AreEqual(string.Empty, StringHelper.Remove(null, except));
+            Assert.AreEqual(string.Empty, StringHelper.Remove("", except));
+            Assert.AreEqual("Foo", StringHelper.Remove("Foo", new char[0]));
+            Assert.AreEqual("ABC", StringHelper.Remove("AaBbCc", except));
+        }
+
+        [TestMethod]
         public void Test_Replace()
         {
             var value = "ABC";

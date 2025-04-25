@@ -8,6 +8,31 @@ namespace Masasamjant
     public static class StringHelper
     {
         /// <summary>
+        /// Remove all other characters from <paramref name="value"/> except those in <paramref name="except"/>.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="except">The characters not to remove.</param>
+        /// <returns>A new string.</returns>
+        public static string Remove(this string? value, char[] except)
+        {
+            if (value == null || value.Length == 0)
+                return string.Empty;
+
+            if (except.Length == 0)
+                return value;
+
+            var result = new List<char>(value.Length);
+
+            for (int index = 0; index < value.Length; index++)
+            {
+                if (except.Contains(value[index]))
+                    result.Add(value[index]);
+            }
+
+            return new string(result.ToArray());
+        }
+
+        /// <summary>
         /// Replace characters in string value using specified character map.
         /// </summary>
         /// <param name="value">The string value.</param>

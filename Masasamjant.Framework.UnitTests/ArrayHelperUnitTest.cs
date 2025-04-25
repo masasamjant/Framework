@@ -85,5 +85,17 @@
             var actual = ArrayHelper.Combine(array1, array2);
             CollectionAssert.AreEqual(expected, actual);
         }
+
+        [TestMethod]
+        public void Test_AreEqual()
+        {
+            Assert.IsTrue(ArrayHelper.AreEqual(new int[] { 1, 2, 3 }, new int[] { 1, 2, 3 }));
+            Assert.IsFalse(ArrayHelper.AreEqual(new int[] { 1, 2, 3 }, new int[] { 1, 3, 2 }));
+            Assert.IsFalse(ArrayHelper.AreEqual(new int[] { 1, 2, 3 }, new int[] { 1, 2, 4 }));
+            Assert.IsFalse(ArrayHelper.AreEqual(new int[] { 1, 2, 3 }, new int[] { 1, 2 }));
+            Assert.IsFalse(ArrayHelper.AreEqual(new int[] { 1, 2, 3 }, new int[] { 1, 2, 3, 4 }));
+            Assert.IsTrue(ArrayHelper.AreEqual(new int[] { }, new int[] { }));
+
+        }
     }
 }

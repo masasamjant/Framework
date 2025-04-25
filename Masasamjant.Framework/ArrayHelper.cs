@@ -78,5 +78,28 @@
         /// <returns>A combined array.</returns>
         public static T[] Combine<T>(T[]? array1, T[]? array2, T[]? array3, T[]? array4)
             => Combine(Combine(array1, array2, array3), array4);
+
+        /// <summary>
+        /// Check if two arrays are equal meaning they have the same length and each item is equal.
+        /// </summary>
+        /// <typeparam name="T">The type of the item.</typeparam>
+        /// <param name="array1">The first array.</param>
+        /// <param name="array2">The second array.</param>
+        /// <returns><c>true</c> if arrays are equal; <c>false</c> otherwise.</returns>
+        /// <remarks>If both arrays are empty, then they are considered as equal.</remarks>
+        public static bool AreEqual<T>(T[] array1, T[] array2)
+        {
+            if (array1.Length != array2.Length)
+                return false;
+
+            if (array1.Length == 0)
+                return true;
+
+            for (int index = 0; index < array1.Length; index++)
+                if (!Equals(array1[index], array2[index]))
+                    return false;
+
+            return true;
+        }
     }
 }
