@@ -4,7 +4,7 @@
     /// Attribute to mark enumeration that can be used in configuration.
     /// </summary>
     [AttributeUsage(AttributeTargets.Enum, AllowMultiple = false, Inherited = false)]
-    public sealed class ConfigurationEnumarationAttribute : Attribute
+    public sealed class ConfigurationEnumerationAttribute : Attribute
     {
     }
 }

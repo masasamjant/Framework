@@ -1,4 +1,5 @@
-﻿using Masasamjant.Resources;
+﻿using Masasamjant.Configuration;
+using Masasamjant.Resources;
 using Masasamjant.Resources.Strings;
 
 namespace Masasamjant
@@ -6,6 +7,7 @@ namespace Masasamjant
     /// <summary>
     /// Defines boolean options.
     /// </summary>
+    [ConfigurationEnumeration]
     public enum BooleanOption : int
     {
         /// <summary>
