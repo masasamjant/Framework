@@ -26,15 +26,15 @@ namespace Masasamjant
 
             if (begin.Date.Equals(end.Date))
             {
-                begin = begin.Date;
-                end = begin.Date;
-                days = 1;
+                this.begin = begin.Date;
+                this.end = begin.Date;
+                this.days = 1;
             }
             else
             {
-                begin = begin.Date;
-                end = end.Date;
-                days = end.Subtract(begin).Days + 1;
+                this.begin = begin.Date;
+                this.end = end.Date;
+                this.days = end.Subtract(begin).Days + 1;
             }
         }
 
