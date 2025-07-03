@@ -373,7 +373,7 @@ namespace Masasamjant
 
         /// <summary>
         /// Check if this range is adjacent to other range. So this range either ends day before other begin or
-        /// other ends day fore this begin.
+        /// other ends day after this begin.
         /// </summary>
         /// <param name="other">The other range.</param>
         /// <returns><c>true</c> if this range is adjacent to <paramref name="other"/>; <c>false</c> otherwise.</returns>
@@ -410,6 +410,29 @@ namespace Masasamjant
         }
 
         /// <summary>
+        /// Check is this range begin day after other ends.
+        /// </summary>
+        /// <param name="other">The other range.</param>
+        /// <returns><c>true</c> if end of <paramref name="other"/> is day before this begins; <c>false</c> otherwise.</returns>
+        public bool IsImmediatelyAfter(DateRange other)
+        {
+            if (IsEmpty || other.IsEmpty)
+                return false;
+
+            return other.End.AddDays(1) == Begin;
+        }
+
+        /// <summary>
+        /// Check is this range begin day after specified date.
+        /// </summary>
+        /// <param name="date">The date.</param>
+        /// <returns><c>true</c> if begin of this is day after <paramref name="date"/>; <c>false</c> otherwise.</returns>
+        public bool IsImmediatelyAfter(DateTime date)
+        {
+            return !IsEmpty && date.AddDays(1).Date == Begin;
+        }
+
+        /// <summary>
         /// Check if this range ends before other range begins.
         /// </summary>
         /// <param name="other">The other range.</param>
@@ -430,6 +453,57 @@ namespace Masasamjant
         public bool IsBefore(DateTime date)
         {
             return !IsEmpty && End < date.Date;
+        }
+
+        /// <summary>
+        /// Check if end of this is immediately before other begins.
+        /// </summary>
+        /// <param name="other">The other range.</param>
+        /// <returns><c>true</c> if end of this is one day earlier than other begins; <c>false</c> otherwise.</returns>
+        public bool IsImmediatelyBefore(DateRange other)
+        {
+            if (IsEmpty || other.IsEmpty)
+                return false;
+
+            return End.AddDays(1) == other.Begin;
+        }
+
+        /// <summary>
+        /// Check if end of this is immediately before specified date.
+        /// </summary>
+        /// <param name="date">The date.</param>
+        /// <returns><c>true</c> if end of this is one day earlier than <paramref name="date"/>; <c>false</c> otherwise.</returns>
+        public bool IsImmediatelyBefore(DateTime date)
+        {
+            return !IsEmpty && End.AddDays(1) == date.Date;
+        }
+
+        /// <summary>
+        /// Gets the dates between end of <paramref name="first"/> and begin of <paramref name="second"/>.
+        /// </summary>
+        /// <param name="first">The first range.</param>
+        /// <param name="second">The second range.</param>
+        /// <returns>A dates between <paramref name="first"/> and <paramref name="second"/>.</returns>
+        public static IEnumerable<DateTime> GetDatesBetween(DateRange first, DateRange second)
+        {
+            var range = GetRangeBetween(first, second);
+            return range.IsEmpty ? Enumerable.Empty<DateTime>() : range.GetDates();
+        }
+
+        /// <summary>
+        /// Gets <see cref="DateRange"/> of dates between end of <paramref name="first"/> and begin of <paramref name="second"/>.
+        /// </summary>
+        /// <param name="first">The first range.</param>
+        /// <param name="second">The second range.</param>
+        /// <returns>A <see cref="DateRange"/> of dates between <paramref name="first"/> and <paramref name="second"/>.</returns>
+        public static DateRange GetRangeBetween(DateRange first, DateRange second)
+        {
+            if (first.IsEmpty || second.IsEmpty || first.Equals(second) || first.End >= second.Begin)
+                return Empty;
+
+            var begin = first.End.AddDays(1);
+            var end = second.Begin.AddDays(-1);
+            return new DateRange(begin, end);
         }
 
         /// <summary>

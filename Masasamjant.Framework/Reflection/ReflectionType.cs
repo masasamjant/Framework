@@ -24,22 +24,49 @@ namespace Masasamjant.Reflection
             this.type = type;
         }
 
+        /// <summary>
+        /// Gets the assembly where type is declared.
+        /// </summary>
         public override Assembly Assembly => type.Assembly;
 
+        /// <summary>
+        /// Gets the assembly qualified name.
+        /// </summary>
         public override string? AssemblyQualifiedName => type.AssemblyQualifiedName;
 
+        /// <summary>
+        /// Gets the base type from which type inherits or <c>null</c> if reprsents <see cref="object"/> or interface.
+        /// </summary>
         public override Type? BaseType => type.BaseType;
 
+        /// <summary>
+        /// Gets the full name including namespace, but not assembly.
+        /// </summary>
         public override string? FullName => type.FullName;
 
+        /// <summary>
+        /// Gets the GUID associated with type.
+        /// </summary>
         public override Guid GUID => type.GUID;
 
+        /// <summary>
+        /// Gets the module where type is defined.
+        /// </summary>
         public override Module Module => type.Module;
 
+        /// <summary>
+        /// Gets the namespace.
+        /// </summary>
         public override string? Namespace => type.Namespace;
 
+        /// <summary>
+        /// Gets the underlying system type.
+        /// </summary>
         public override Type UnderlyingSystemType => type.UnderlyingSystemType;
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
         public override string Name => type.Name;
 
         /// <summary>
