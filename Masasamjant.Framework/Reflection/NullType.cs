@@ -9,13 +9,10 @@
         /// Initializes new instance of the <see cref="NullType"/> class.
         /// </summary>
         /// <param name="type">The actual type.</param>
-        /// <exception cref="ArgumentException">If <paramref name="type"/> is <see cref="NullType"/>.</exception>
+        /// <exception cref="ArgumentException">If <paramref name="type"/> is or inherits <see cref="ReflectionType"/>.</exception>
         public NullType(Type type)
             : base(type)
-        {
-            if (type is NullType)
-                throw new ArgumentException("The type cannot be null type.", nameof(type));
-        }
+        { }
 
         /// <summary>
         /// Check if other <see cref="NullType"/> is equal to this.

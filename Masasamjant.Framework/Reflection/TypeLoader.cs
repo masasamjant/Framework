@@ -20,7 +20,7 @@ namespace Masasamjant.Reflection
 
             try
             {
-                var type = assembly.GetType(typeName);
+                var type = GetType(assembly, typeName);
 
                 if (type == null)
                     return new TypeLoadResult();
@@ -104,5 +104,13 @@ namespace Masasamjant.Reflection
             if (string.IsNullOrWhiteSpace(typeName))
                 throw new ArgumentException("The type name cannot be empty or only white-space.", nameof(typeName));
         }
+
+        /// <summary>
+        /// Gets type specified by name from specified assembly.
+        /// </summary>
+        /// <param name="assembly">The assembly.</param>
+        /// <param name="typeName">The type name.</param>
+        /// <returns>A <see cref="Type"/> or <c>null</c>.</returns>
+        protected virtual Type? GetType(Assembly assembly, string typeName) => assembly.GetType(typeName);
     }
 }
