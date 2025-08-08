@@ -24,6 +24,16 @@
         public DateTimeKind Kind { get; }
 
         /// <summary>
+        /// Gets the <see cref="DateTimeConfiguration"/> using local time.
+        /// </summary>
+        public static DateTimeConfiguration Local => new DateTimeConfiguration(DateTimeKind.Local);
+
+        /// <summary>
+        /// Gets the <see cref="DateTimeConfiguration"/> using UTC time.
+        /// </summary>
+        public static DateTimeConfiguration Utc => new DateTimeConfiguration(DateTimeKind.Utc);
+
+        /// <summary>
         /// Gets the current <see cref="DateTime"/>.
         /// </summary>
         /// <returns>

@@ -1,4 +1,5 @@
 ﻿using Masasamjant.Serialization;
+using System.ComponentModel;
 using System.Text.Json.Serialization;
 
 namespace Masasamjant.Linq
@@ -6,6 +7,7 @@ namespace Masasamjant.Linq
     /// <summary>
     /// Represents information of page of data.
     /// </summary>
+    [TypeConverter(typeof(PageInfoConverter))]
     public sealed class PageInfo : IJsonSerializable
     {
         private int totalCount = -1;
