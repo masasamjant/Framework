@@ -4,24 +4,6 @@
     public class PageInfoUnitTest : UnitTest
     {
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void Test_Constructor_With_Negative_Index()
-        {
-            var index = -1;
-            var size = 0;
-            new PageInfo(index, size);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void Test_Constructor_With_Negative_Size()
-        {
-            var index = 0;
-            var size = -1;
-            new PageInfo(index, size);
-        }
-
-        [TestMethod]
         public void Test_Constructor()
         {
             var page = new PageInfo(0, 0);
@@ -30,14 +12,9 @@
             page = new PageInfo(3, 20);
             Assert.AreEqual(3, page.Index);
             Assert.AreEqual(20, page.Size);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void Test_Set_Negative_TotalCount()
-        {
-            var page = new PageInfo(1, 20);
-            page.TotalCount = -1;
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => new PageInfo(-1, 0));
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => new PageInfo(0, -1));
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => new PageInfo(1, 20) { TotalCount = -1 });
         }
 
         [TestMethod]
@@ -80,14 +57,27 @@
             var next = page.Next();
             Assert.AreEqual(1, next.Index);
             Assert.AreEqual(10, next.Size);
+            Assert.ThrowsException<InvalidOperationException>(() => {
+                page = new PageInfo(int.MaxValue, 10);
+                page.Next();
+            });
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void Test_Next_Max()
+        public void Test_Equals()
         {
-            var page = new PageInfo(int.MaxValue, 10);
-            page.Next();
+            Assert.IsTrue(new PageInfo(1, 10).Equals(new PageInfo(1, 10)));
+            Assert.IsTrue((new PageInfo(1, 10) { TotalCount = 10 }).Equals(new PageInfo(1, 10) { TotalCount = 10 }));
+            Assert.IsFalse((new PageInfo(1, 10) { TotalCount = 1 }).Equals(new PageInfo(1, 10) { TotalCount = 10 }));
+            Assert.IsFalse((new PageInfo(10, 10) { TotalCount = 10 }).Equals(new PageInfo(1, 10) { TotalCount = 10 }));
+            Assert.IsFalse((new PageInfo(1, 1) { TotalCount = 10 }).Equals(new PageInfo(1, 10) { TotalCount = 10 }));
+            Assert.IsFalse(new PageInfo(1, 10).Equals(DateTime.Now));
+        }
+
+        [TestMethod]
+        public void Test_GetHashCode()
+        {
+            Assert.AreEqual(new PageInfo(1, 10) { TotalCount = 20 }.GetHashCode(), new PageInfo(1, 10) { TotalCount = 20 }.GetHashCode());
         }
     }
 }

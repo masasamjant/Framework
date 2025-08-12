@@ -108,5 +108,27 @@ namespace Masasamjant.Linq
 
             return new PageInfo(Index - 1, Size);
         }
+
+        /// <summary>
+        /// Check if object instance is <see cref="PageInfo"/> and equal to this.
+        /// </summary>
+        /// <param name="obj">The object instance.</param>
+        /// <returns><c>true</c> if <paramref name="obj"/> is <see cref="PageInfo"/> and equal with this; <c>false</c> otherwise.</returns>
+        public override bool Equals(object? obj)
+        {
+            if (obj is PageInfo other)
+                return Index == other.Index && Size == other.Size && TotalCount == other.TotalCount;
+
+            return false;
+        }
+
+        /// <summary>
+        /// Gets hash code for this instance.
+        /// </summary>
+        /// <returns>A hash code.</returns>
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Index, Size, TotalCount);
+        }
     }
 }

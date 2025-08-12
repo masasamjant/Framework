@@ -30,7 +30,7 @@ namespace Masasamjant.Linq
         /// <returns><c>true</c> if <paramref name="destinationType"/> is type of <see cref="string"/>; <c>false</c> otherwise.</returns>
         public override bool CanConvertTo(ITypeDescriptorContext? context, [NotNullWhen(true)] Type? destinationType)
         {
-            return destinationType != null && destinationType.Equals(typeof(string));
+            return destinationType != null && (destinationType.Equals(typeof(string)) || destinationType.Equals(typeof(PageInfo)));
         }
 
         /// <summary>
@@ -52,12 +52,14 @@ namespace Masasamjant.Linq
                 {
                     if (int.TryParse(parts[0], out int index) && index >= 0 &&
                         int.TryParse(parts[1], out int size) && size >= 0 &&
-                        int.TryParse(parts[2], out int totalCount) && totalCount >= 0)
+                        int.TryParse(parts[2], out int totalCount))
                     {
-                        return new PageInfo(index, size)
-                        {
-                            TotalCount = totalCount
-                        };
+                        var info = new PageInfo(index, size);
+
+                        if (totalCount >= 0)
+                            info.TotalCount = totalCount;
+
+                        return info;
                     }
                 }
             }
@@ -75,16 +77,22 @@ namespace Masasamjant.Linq
         /// <returns>A converted value or <c>null</c>.</returns>
         public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
         {
-            if (destinationType.Equals(typeof(string)) && value is PageInfo pageInfo)
+            if (value is PageInfo pageInfo)
             {
-                var values = new[] 
-                { 
-                    pageInfo.Index.ToString(), 
-                    pageInfo.Size.ToString(), 
-                    pageInfo.TotalCount.ToString() 
-                };
+                if (destinationType.Equals(typeof(string)))
+                {
+                    var values = new[]
+                    {
+                        pageInfo.Index.ToString(),
+                        pageInfo.Size.ToString(),
+                        pageInfo.TotalCount.ToString()
+                    };
 
-                return string.Join(Separator, values);
+                    return string.Join(Separator, values);
+                }
+
+                if (destinationType.Equals(typeof(PageInfo)))
+                    return pageInfo;
             }
 
             return null;
