@@ -513,6 +513,23 @@ namespace Masasamjant
             return lines.AsEnumerable();
         }
 
+        /// <summary>
+        /// Gets byte array of specified string value using specified encoding.
+        /// </summary>
+        /// <param name="value">The string value.</param>
+        /// <param name="encoding">The <see cref="Encoding"/> to use or <c>null</c> to use <see cref="Encoding.Unicode"/>.</param>
+        /// <returns>A byte array of <paramref name="value"/>.</returns>
+        public static byte[] GetByteArray(this string value, Encoding? encoding = null)
+        {
+            if (value.Length == 0)
+                return [];
+
+            if (encoding == null)
+                encoding = Encoding.Unicode;
+
+            return encoding.GetBytes(value);
+        }
+
         private static string Substring(string? value, int length, bool fromLeft)
         {
             if (value == null || value.Length == 0 || length <= 0)

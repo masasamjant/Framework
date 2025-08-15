@@ -1,4 +1,6 @@
-﻿namespace Masasamjant
+﻿using System.Text;
+
+namespace Masasamjant
 {
     [TestClass]
     public class StringHelperUnitTest : UnitTest
@@ -144,13 +146,6 @@
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void Test_TrimUntilStartsWith_Require_One_Start()
-        {
-            StringHelper.TrimUntilStartsWith("Test", new char[0]);
-        }
-
-        [TestMethod]
         public void Test_TrimUntilStartWith()
         {
             var starts = new char[] { 'A' };
@@ -158,13 +153,7 @@
             Assert.AreEqual("", StringHelper.TrimUntilStartsWith("", starts));
             Assert.AreEqual("", StringHelper.TrimUntilStartsWith("123", starts));
             Assert.AreEqual("ABC", StringHelper.TrimUntilStartsWith("123+ABC", starts));
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void Test_TrimUntilEndsWith_Require_One_End()
-        {
-            StringHelper.TrimUntilEndsWith("Test", new char[0]);
+            Assert.ThrowsException<ArgumentException>(() => StringHelper.TrimUntilStartsWith("Test", new char[0]));
         }
 
         [TestMethod]
@@ -175,6 +164,7 @@
             Assert.AreEqual("", StringHelper.TrimUntilEndsWith("", ends));
             Assert.AreEqual("", StringHelper.TrimUntilEndsWith("123", ends));
             Assert.AreEqual("123+A", StringHelper.TrimUntilEndsWith("123+ABC", ends));
+            Assert.ThrowsException<ArgumentException>(() => StringHelper.TrimUntilEndsWith("Test", new char[0]));
         }
 
         [TestMethod]
@@ -230,6 +220,23 @@
             Assert.IsFalse(StringHelper.HasTrailingWhiteSpace(" 123"));
             Assert.IsTrue(StringHelper.HasTrailingWhiteSpace("123 "));
             Assert.IsTrue(StringHelper.HasTrailingWhiteSpace(" 123 "));
+        }
+
+        [TestMethod]
+        public void Test_GetByteArray()
+        {
+            string value = "";
+            byte[] actual = StringHelper.GetByteArray(value);
+            Assert.IsTrue(actual.Length == 0);
+            actual = StringHelper.GetByteArray(value, Encoding.UTF8);
+            Assert.IsTrue(actual.Length == 0);
+            value = "Testing";
+            byte[] expected = Encoding.Unicode.GetBytes(value);
+            actual = StringHelper.GetByteArray(value);
+            CollectionAssert.AreEqual(expected, actual);
+            expected = Encoding.UTF8.GetBytes(value);
+            actual = StringHelper.GetByteArray(value, Encoding.UTF8);
+            CollectionAssert.AreEqual(expected, actual);
         }
     }
 }
