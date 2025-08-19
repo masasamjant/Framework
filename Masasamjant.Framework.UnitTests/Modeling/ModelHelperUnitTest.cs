@@ -56,5 +56,72 @@ namespace Masasamjant.Modeling
             other = new UserModel(Guid.NewGuid(), "Test", identifier.ToByteArray());
             Assert.IsFalse(ModelHelper.Same(model, other));
         }
+
+        [TestMethod]
+        public void Test_TryUpdate()
+        {
+            var a = new A(1, "A");
+            var b = new B(1, "B");
+            Assert.IsTrue(ModelHelper.TryUpdate(a, b) && a.Value == "B");
+            b = new B(2, "C");
+            Assert.IsFalse(ModelHelper.TryUpdate(a, b));
+            Assert.IsTrue(a.Value == "B");
+        }
+
+        private class A : Model, IUpdateable<B>
+        {
+            public A(int id, string value)
+            {
+                Id = id;
+                Value = value;
+            }
+
+            public int Id { get; private set; }
+
+            public string Value { get; private set; } = string.Empty;
+
+            protected override object[] GetKeyProperties()
+            {
+                return [Id];
+            }
+
+            private bool CanUpdateFrom(B source) => Id == source.Id;
+
+            private void UpdateFrom(B source)
+            {
+                if (!CanUpdateFrom(source))
+                    throw new ArgumentException("Cannot update from source instance.", nameof(source));
+
+                Value = source.Value;
+            }
+            
+            bool IUpdateable<B>.CanUpdateFrom(B source)
+            {
+                return this.CanUpdateFrom(source);
+            }
+
+            void IUpdateable<B>.UpdateFrom(B source)
+            {
+                this.UpdateFrom(source);
+            }
+        }
+
+        private class B : Model
+        {
+            public B(int id, string value)
+            {
+                Id = id;
+                Value = value;
+            }
+
+            public int Id { get; private set; }
+
+            public string Value { get; private set; } = string.Empty;
+
+            protected override object[] GetKeyProperties()
+            {
+                return [Id];
+            }
+        }
     }
 }
