@@ -113,6 +113,9 @@ namespace Masasamjant.Modeling
             where TTarget : IUpdateable<TSource>
             where TSource : IModel
         {
+            if (ReferenceEquals(target, source))
+                return false;
+            
             if (target.CanUpdateFrom(source))
             { 
                 target.UpdateFrom(source);
