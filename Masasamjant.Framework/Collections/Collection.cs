@@ -60,7 +60,7 @@ namespace Masasamjant.Collections
         /// </summary>
         /// <param name="item">The item to add.</param>
         /// <exception cref="InvalidOperationException">If <see cref="IsReadOnly"/> is <c>true</c>.</exception>
-        public void Add(T item)
+        public virtual void Add(T item)
         {
             CheckReadOnly();
             Items.Add(item);
@@ -81,7 +81,7 @@ namespace Masasamjant.Collections
         /// </summary>
         /// <param name="item">The item to check.</param>
         /// <returns><c>true</c> if contains <paramref name="item"/>; <c>false</c> otherwise.</returns>
-        public bool Contains(T item)
+        public virtual bool Contains(T item)
         {
             return Items.Contains(item);
         }
@@ -102,7 +102,7 @@ namespace Masasamjant.Collections
         /// <param name="item">The item to remove.</param>
         /// <returns><c>true</c> if was in collection and removed; <c>false</c> otherwise.</returns>
         /// <exception cref="InvalidOperationException">If <see cref="IsReadOnly"/> is <c>true</c>.</exception>
-        public bool Remove(T item)
+        public virtual bool Remove(T item)
         {
             CheckReadOnly();
             return Items.Remove(item);

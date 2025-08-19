@@ -59,7 +59,7 @@
                 Assert.IsTrue(ReferenceEquals(model, exception.Model));
                 Assert.IsTrue(exception.Errors.Any());
                 var error = exception.Errors.First();
-                Assert.AreEqual("Name", error.PropertyName);
+                Assert.AreEqual("Name", error.MemberName);
                 Assert.AreEqual("Name of the user is mandatory and cannot be empty string.", error.ErrorMessage);
             }
             finally

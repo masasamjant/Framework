@@ -19,11 +19,30 @@ namespace Masasamjant.Modeling
         /// <summary>
         /// Initializes new instance of the <see cref="ModelValidationException"/> class.
         /// </summary>
+        /// <param name="model">The validated model.</param>
+        /// <param name="modelError">The model error.</param>
+        public ModelValidationException(IModel model, ModelError modelError)
+            : this(model, [modelError])
+        { }
+
+        /// <summary>
+        /// Initializes new instance of the <see cref="ModelValidationException"/> class.
+        /// </summary>
         /// <param name="message">The exception message.</param>
         /// <param name="model">The validated model.</param>
         /// <param name="errors">The validation errors.</param>
         public ModelValidationException(string message, IModel model, IEnumerable<ModelError> errors)
             : this(message, model, errors, null)
+        { }
+
+        /// <summary>
+        /// Initializes new instance of the <see cref="ModelValidationException"/> class.
+        /// </summary>
+        /// <param name="message">The exception message.</param>
+        /// <param name="model">The validated model.</param>
+        /// <param name="modelError">The model error.</param>
+        public ModelValidationException(string message, IModel model, ModelError modelError)
+            : this(message, model, [modelError])
         { }
 
         /// <summary>
@@ -39,6 +58,17 @@ namespace Masasamjant.Modeling
             Model = model;
             Errors = errors;
         }
+
+        /// <summary>
+        /// Initializes new instance of the <see cref="ModelValidationException"/> class.
+        /// </summary>
+        /// <param name="message">The exception message.</param>
+        /// <param name="model">The validated model.</param>
+        /// <param name="modelError">The model error.</param>
+        /// <param name="innerException">The inner exception or <c>null</c>.</param>
+        public ModelValidationException(string message, IModel model, ModelError modelError, Exception? innerException)
+            : this(message, model, [modelError], innerException)
+        { }
 
         /// <summary>
         /// Gets the validated model.

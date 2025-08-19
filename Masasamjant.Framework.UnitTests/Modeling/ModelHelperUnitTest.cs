@@ -19,7 +19,7 @@ namespace Masasamjant.Modeling
             Assert.IsTrue(ReferenceEquals(model, validationException.Model));
             Assert.IsTrue(validationException.Errors.Any());
             var error = validationException.Errors.First();
-            Assert.AreEqual("Name", error.PropertyName);
+            Assert.AreEqual("Name", error.MemberName);
             Assert.AreEqual("Name of the user is mandatory and cannot be empty string.", error.ErrorMessage);
         }
 

@@ -11,11 +11,11 @@ namespace Masasamjant.Modeling
         /// <summary>
         /// Initializes new instance of the <see cref="ModelError"/> class.
         /// </summary>
-        /// <param name="propertyName">The name of error property.</param>
+        /// <param name="memberName">The name of error member like property or parameter.</param>
         /// <param name="errorMessage">The error message.</param>
-        public ModelError(string propertyName, string errorMessage)
+        public ModelError(string memberName, string errorMessage)
         {
-            PropertyName = propertyName;
+            MemberName = memberName;
             ErrorMessage = errorMessage;
         }
 
@@ -26,10 +26,10 @@ namespace Masasamjant.Modeling
         { }
 
         /// <summary>
-        /// Gets the name of error property.
+        /// Gets the name of error member like property or parameter.
         /// </summary>
         [JsonInclude]
-        public string PropertyName { get; internal set; } = string.Empty;
+        public string MemberName { get; internal set; } = string.Empty;
 
         /// <summary>
         /// Gets the error message.
