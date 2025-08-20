@@ -1,4 +1,4 @@
-﻿using Masasamjant.Modeling.Abstractions.Services;
+﻿using Masasamjant.Modeling.Services.Abstractions;
 using System.Linq.Expressions;
 
 namespace Masasamjant.Modeling.Abstractions

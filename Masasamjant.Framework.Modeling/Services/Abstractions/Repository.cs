@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Masasamjant.Modeling.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Masasamjant.Modeling.Abstractions.Services
+namespace Masasamjant.Modeling.Services.Abstractions
 {
     public abstract class Repository<TModel> : IRepository<TModel> where TModel : IModel
     {

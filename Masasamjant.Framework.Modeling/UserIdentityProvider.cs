@@ -1,5 +1,5 @@
 ﻿using Masasamjant.Modeling.Abstractions;
-using Masasamjant.Modeling.Abstractions.Services;
+using Masasamjant.Modeling.Services.Abstractions;
 
 namespace Masasamjant.Modeling
 {

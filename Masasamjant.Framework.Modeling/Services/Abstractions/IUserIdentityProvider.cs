@@ -1,4 +1,6 @@
-﻿namespace Masasamjant.Modeling.Abstractions.Services
+﻿using Masasamjant.Modeling.Abstractions;
+
+namespace Masasamjant.Modeling.Services.Abstractions
 {
     /// <summary>
     /// Represent service that provides identity of current user.
