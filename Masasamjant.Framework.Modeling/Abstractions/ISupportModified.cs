@@ -1,9 +1,9 @@
 ﻿namespace Masasamjant.Modeling.Abstractions
 {
     /// <summary>
-    /// Represents <see cref="IModel"/> that has modified and modification time properties.
+    /// Represents a model that has modified and modification time properties.
     /// </summary>
-    public interface ISupportModified : IModel
+    public interface ISupportModified
     {
         /// <summary>
         /// Gets the identity, like user name or identifier, to identify user who modified model.

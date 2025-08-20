@@ -1,44 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Masasamjant.Serialization;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Masasamjant.Modeling.Abstractions
 {
     /// <summary>
-    /// Represents abstract <see cref="IModel"/> implementation.
+    /// Represents model in application.
     /// </summary>
-    public abstract class Model : IModel, IAddHandler, IUpdateHandler, IRemoveHandler
+    public abstract class Model : IModel, IAddHandler, IUpdateHandler, IRemoveHandler, IJsonSerializable
     {
-        /// <summary>
-        /// Gets the version bytes or empty array.
-        /// </summary>
-        public byte[] Version { get; protected set; } = [];
-
-        /// <summary>
-        /// Gets <see cref="Version"/> as upper-case base-64 string.
-        /// </summary>
-        /// <returns>A <see cref="Version"/> as upper-case base-64 string or empty string.</returns>
-        public string GetVersionString()
-        {
-            byte[] version = Version;
-            if (version.Length == 0)
-                return string.Empty;
-            return Convert.ToBase64String(version).ToUpperInvariant();
-        }
-
-        /// <summary>
-        /// Gets the <see cref="ModelIdentity"/> of the model or <c>null</c>, if 
-        /// model is new and available only on current context.
-        /// </summary>
-        /// <returns>A <see cref="ModelIdentity"/> or <c>null</c>.</returns>
-        public ModelIdentity? GetIdentity()
-        {
-            var keys = GetKeyProperties();
-
-            if (keys.Length == 0)
-                return null;
-
-            return new ModelIdentity(this, keys);
-        }
-
         /// <summary>
         /// Validates model state.
         /// </summary>
@@ -57,40 +27,6 @@ namespace Masasamjant.Modeling.Abstractions
         }
 
         /// <summary>
-        /// Invoked when model instance is added to non-volatile memory like database or file.
-        /// </summary>
-        /// <param name="identity">The identity, like user name or identifier, to identify user who is performing addition.</param>
-        protected virtual void OnAdd(string? identity)
-        {
-            return;
-        }
-
-        /// <summary>
-        /// Invoked when model instance is removed from non-volatile memory like database or file. This usually means physical delete
-        /// where same model does not exist in non-volatile memory after remove.
-        /// </summary>
-        /// <param name="identity">The identity, like user name or identifier, to identify user who is performing remove.</param>
-        protected virtual void OnRemove(string? identity) 
-        {
-            return;
-        }
-
-        /// <summary>
-        /// Invoked when model instance is updated in non-volatile memory like database or file.
-        /// </summary>
-        /// <param name="identity">The identity, like user name or identifier, to identify user who is performing update.</param>
-        protected virtual void OnUpdate(string? identity)
-        {
-            return;
-        }
-
-        /// <summary>
-        /// Gets values of key properties or empty array if model is new one and key(s) not assined.
-        /// </summary>
-        /// <returns>A values of key properties.</returns>
-        protected abstract object[] GetKeyProperties();
-
-        /// <summary>
         /// Gets the current <see cref="DateTime"/> using <see cref="DateTimeConfigurationProvider.Current"/> provider.
         /// </summary>
         /// <returns>A current <see cref="DateTime"/>.</returns>
@@ -106,6 +42,34 @@ namespace Masasamjant.Modeling.Abstractions
         protected static DateTimeOffset GetDateTimeOffsetNow()
         {
             return DateTimeConfigurationProvider.Current.Configuration.GetDateTimeOffsetNow();
+        }
+
+        /// <summary>
+        /// Invoked when model instance is added to non-volatile memory like database or file.
+        /// </summary>
+        /// <param name="identity">The identity, like user name or identifier, to identify user who is performing addition.</param>
+        protected virtual void OnAdd(string? identity)
+        {
+            return;
+        }
+
+        /// <summary>
+        /// Invoked when model instance is removed from non-volatile memory like database or file. This usually means physical delete
+        /// where same model does not exist in non-volatile memory after remove.
+        /// </summary>
+        /// <param name="identity">The identity, like user name or identifier, to identify user who is performing remove.</param>
+        protected virtual void OnRemove(string? identity)
+        {
+            return;
+        }
+
+        /// <summary>
+        /// Invoked when model instance is updated in non-volatile memory like database or file.
+        /// </summary>
+        /// <param name="identity">The identity, like user name or identifier, to identify user who is performing update.</param>
+        protected virtual void OnUpdate(string? identity)
+        {
+            return;
         }
 
         private ModelValidationException HandleValidationException(ValidationException validationException)
@@ -135,5 +99,50 @@ namespace Masasamjant.Modeling.Abstractions
         {
             this.OnUpdate(identity);
         }
+    }
+
+    /// <summary>
+    /// Represents model in application that is identified by <typeparamref name="TIdentifier"/>.
+    /// </summary>
+    /// <typeparam name="TIdentifier">The type of the identifier.</typeparam>
+    public abstract class Model<TIdentifier> : Model, IModel<TIdentifier>
+        where TIdentifier : IEquatable<TIdentifier>
+    {
+        /// <summary>
+        /// Initializes new instance of the <see cref="Model{TIdentifier}"/> class.
+        /// </summary>
+        protected Model()
+        { }
+
+        /// <summary>
+        /// Gets the unique identifier.
+        /// </summary>
+        [JsonInclude]
+        public TIdentifier Identifier { get; protected set; } = default!;
+
+        /// <summary>
+        /// Check if object instance is equal to this model.
+        /// </summary>
+        /// <param name="obj">The object instance.</param>
+        /// <returns><c>true</c> if <paramref name="obj"/> has same type and identifier is equal to this identifier; <c>false</c> otherwise.</returns>
+        public override bool Equals(object? obj)
+        {
+            if (obj != null && obj.GetType().Equals(GetType()) && obj is Model<TIdentifier> other)
+            {
+                return Equals(Identifier, other.Identifier);
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Gets hash code.
+        /// </summary>
+        /// <returns>A hash code.</returns>
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(GetType(), Identifier);
+        }
+
     }
 }

@@ -41,23 +41,6 @@ namespace Masasamjant.Modeling
         }
 
         [TestMethod]
-        public void Test_Same()
-        {
-            Guid identifier = Guid.NewGuid();
-            var model = new UserModel(identifier, "Test", identifier.ToByteArray());
-            var other = model;
-            Assert.IsTrue(ModelHelper.Same(model, other));
-            other = new UserModel(identifier, "Test", identifier.ToByteArray());
-            Assert.IsTrue(ModelHelper.Same(model, other));
-            other = new UserModel(identifier, "User", identifier.ToByteArray());
-            Assert.IsTrue(ModelHelper.Same(model, other));
-            other = new UserModel(identifier, "Test", Guid.NewGuid().ToByteArray());
-            Assert.IsFalse(ModelHelper.Same(model, other));
-            other = new UserModel(Guid.NewGuid(), "Test", identifier.ToByteArray());
-            Assert.IsFalse(ModelHelper.Same(model, other));
-        }
-
-        [TestMethod]
         public void Test_TryUpdate()
         {
             var a = new A(1, "A");
@@ -79,11 +62,6 @@ namespace Masasamjant.Modeling
             public int Id { get; private set; }
 
             public string Value { get; private set; } = string.Empty;
-
-            protected override object[] GetKeyProperties()
-            {
-                return [Id];
-            }
 
             private bool CanUpdateFrom(B source) => Id == source.Id;
 
@@ -117,11 +95,6 @@ namespace Masasamjant.Modeling
             public int Id { get; private set; }
 
             public string Value { get; private set; } = string.Empty;
-
-            protected override object[] GetKeyProperties()
-            {
-                return [Id];
-            }
         }
     }
 }

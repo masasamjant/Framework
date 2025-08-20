@@ -1,9 +1,9 @@
 ﻿namespace Masasamjant.Modeling.Abstractions
 {
     /// <summary>
-    /// Represents <see cref="IModel"/> that support preparation before it is ready for use.
+    /// Represents a model that support preparation before it is ready for use.
     /// </summary>
-    public interface ISupportPrepareModel : IModel
+    public interface ISupportPrepareModel
     {
         /// <summary>
         /// Prepares model before it is ready for use. This should be used immediately after retrieving 

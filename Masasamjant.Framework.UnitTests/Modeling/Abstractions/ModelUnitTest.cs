@@ -7,7 +7,7 @@
         public void Test_Version()
         {
             Guid identifier = Guid.NewGuid();
-            Model model = new UserModel(identifier, "Test");
+            ISupportVersion model = new UserModel(identifier, "Test");
             byte[] expected = identifier.ToByteArray();
             byte[] actual = model.Version;
             CollectionAssert.AreEqual(expected, actual);
@@ -20,28 +20,12 @@
         public void Test_GetVersionString()
         {
             Guid identifier = Guid.NewGuid();
-            Model model = new UserModel(identifier, "Test");
+            ISupportVersion model = new UserModel(identifier, "Test");
             string expected = Convert.ToBase64String(identifier.ToByteArray()).ToUpperInvariant();
             string actual = model.GetVersionString();
             Assert.AreEqual(expected, actual);
             model = new UserModel("Test");
             Assert.IsTrue(string.IsNullOrEmpty(model.GetVersionString()));
-        }
-
-        [TestMethod]
-        public void Test_GetIdentity()
-        {
-            Model model = new UserModel("Test");
-            var identity = model.GetIdentity();
-            Assert.IsNull(identity);
-            Guid identifier = Guid.NewGuid();
-            model = new UserModel(identifier, "Test");
-            Model other = new UserModel(identifier, "Test");
-            identity = model.GetIdentity();
-            var otherIdentity = other.GetIdentity();
-            Assert.IsNotNull(identity);
-            Assert.IsNotNull(otherIdentity);
-            Assert.AreEqual(identity.Value, otherIdentity.Value);
         }
 
         [TestMethod]

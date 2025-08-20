@@ -51,38 +51,5 @@ namespace Masasamjant.Modeling
             Assert.AreEqual("Hello", ModelValidationHelper.ValidateOptionalString(model, "Hello", "test", minLength: -1));
             Assert.AreEqual("Hello", ModelValidationHelper.ValidateOptionalString(model, "Hello", "test", maxLength: -1));
         }
-
-        [TestMethod]
-        public void Test_ValidateReference()
-        {
-            var model = new UserModel(Guid.NewGuid(), "Test");
-            var referenced = new UserModel("Test");
-            Assert.ThrowsException<ModelValidationException>(() => ModelValidationHelper.ValidateReference(model, referenced, "reference", mandatoryIdentity: true));
-            var result = ModelValidationHelper.ValidateReference(model, referenced, "reference", mandatoryIdentity: false);
-            Assert.IsTrue(ReferenceEquals(result, referenced));
-            referenced = new UserModel(Guid.NewGuid(), "Test");
-            result = ModelValidationHelper.ValidateReference(model, referenced, "reference", mandatoryIdentity: true);
-            Assert.IsTrue(ReferenceEquals(result, referenced));
-            referenced = new UserModel(Guid.NewGuid(), string.Empty);
-            Assert.ThrowsException<ModelValidationException>(() => ModelValidationHelper.ValidateReference(model, referenced, "reference", mandatoryIdentity: true));
-        }
-
-        [TestMethod]
-        public void Test_ValidateOptionalReference()
-        {
-            var model = new UserModel(Guid.NewGuid(), "Test");
-            UserModel? referenced = null;
-            var result = ModelValidationHelper.ValidateOptionalReference(model, referenced, "reference");
-            Assert.IsNull(result);
-            referenced = new UserModel("Test");
-            Assert.ThrowsException<ModelValidationException>(() => ModelValidationHelper.ValidateOptionalReference(model, referenced, "reference", mandatoryIdentity: true));
-            result = ModelValidationHelper.ValidateOptionalReference(model, referenced, "reference", mandatoryIdentity: false);
-            Assert.IsTrue(ReferenceEquals(result, referenced));
-            referenced = new UserModel(Guid.NewGuid(), "Test");
-            result = ModelValidationHelper.ValidateOptionalReference(model, referenced, "reference", mandatoryIdentity: true);
-            Assert.IsTrue(ReferenceEquals(result, referenced));
-            referenced = new UserModel(Guid.NewGuid(), string.Empty);
-            Assert.ThrowsException<ModelValidationException>(() => ModelValidationHelper.ValidateOptionalReference(model, referenced, "reference", mandatoryIdentity: true));
-        }
     }
 }

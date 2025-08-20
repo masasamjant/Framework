@@ -1,9 +1,11 @@
 ﻿namespace Masasamjant.Modeling.Abstractions
 {
     /// <summary>
-    /// Represents abstract <see cref="IRecord"/> impementation.
+    /// Represents <see cref="IRecord{TIdentifier}"/> that is identified by <typeparamref name="TIdentifier"/>.
     /// </summary>
-    public abstract class Record : Model, IRecord, IModel, ISupportCreated, ISupportModified, ISupportDeleted
+    /// <typeparam name="TIdentifier">The type of the identifier.</typeparam>
+    public abstract class Record<TIdentifier> : Model<TIdentifier>, IRecord<TIdentifier>, ISupportCreated, ISupportModified, ISupportDeleted
+        where TIdentifier : IEquatable<TIdentifier>
     {
         /// <summary>
         /// Gets the identity, like user name or identifier, to identify user who created record.

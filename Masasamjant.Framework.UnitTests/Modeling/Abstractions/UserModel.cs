@@ -2,7 +2,7 @@
 
 namespace Masasamjant.Modeling.Abstractions
 {
-    public class UserModel : Record, ISupportPrepareModel
+    public class UserModel : Record<Guid>, ISupportPrepareModel, ISupportVersion
     {
         public UserModel(string name)
             : this(Guid.Empty, name)
@@ -23,19 +23,19 @@ namespace Masasamjant.Modeling.Abstractions
             Version = version;
         }
 
+        public byte[] Version { get; internal set; } = [];
+
         [Required(AllowEmptyStrings = false, ErrorMessage = "Name of the user is mandatory and cannot be empty string.")]
         public string Name { get; protected set; } = string.Empty;
 
-        public Guid Identifier { get; protected set; }
-
         public bool IsPrepared { get; protected set; }
 
-        protected override object[] GetKeyProperties()
+        public string GetVersionString()
         {
-            if (Identifier.Equals(Guid.Empty))
-                return [];
+            if (Version.Length == 0)
+                return string.Empty;
 
-            return [Identifier];
+            return Convert.ToBase64String(Version).ToUpperInvariant();
         }
 
         void ISupportPrepareModel.PrepareModel()

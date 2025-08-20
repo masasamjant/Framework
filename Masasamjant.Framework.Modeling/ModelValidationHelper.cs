@@ -80,48 +80,5 @@ namespace Masasamjant.Modeling
             return ValidateMandatoryString(model, value, paramName, true, allowWhiteSpace, maxLength, minLength, checkNoLeadingWhiteSpace, checkNoTrailingWhiteSpace);
 
         }
-
-        /// <summary>
-        /// Validate referenced <typeparamref name="TModel"/> instance.
-        /// </summary>
-        /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <param name="parent">The parent model.</param>
-        /// <param name="referenced">The referenced model.</param>
-        /// <param name="paramName">The name of parameter.</param>
-        /// <param name="mandatoryIdentity"><c>true</c> to <paramref name="referenced"/> must have identity; <c>false</c> othewise.</param>
-        /// <returns>A <paramref name="referenced"/> is valid.</returns>
-        /// <exception cref="ModelValidationException">If <paramref name="referenced"/> is not valid.</exception>
-        public static TModel ValidateReference<TModel>(this IModel parent, TModel referenced, string paramName, bool mandatoryIdentity = true) where TModel : IModel
-        {
-            if (mandatoryIdentity)
-            {
-                var identity = referenced.GetIdentity();
-
-                if (identity == null)
-                    throw new ModelValidationException("The referenced model must have identity.", parent, new ModelError(paramName, "The referenced model must have identity."));
-            }
-
-            referenced.Validate();
-
-            return referenced;
-        }
-
-        /// <summary>
-        /// Validate referenced <typeparamref name="TModel"/> instance.
-        /// </summary>
-        /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <param name="parent">The parent model.</param>
-        /// <param name="referenced">The referenced model.</param>
-        /// <param name="paramName">The name of parameter.</param>
-        /// <param name="mandatoryIdentity"><c>true</c> to <paramref name="referenced"/> must have identity; <c>false</c> othewise.</param>
-        /// <returns>A <paramref name="referenced"/> is valid or <c>null</c>, if <paramref name="referenced"/> is <c>null</c>.</returns>
-        /// <exception cref="ModelValidationException">If <paramref name="referenced"/> is not valid.</exception>
-        public static TModel? ValidateOptionalReference<TModel>(this IModel parent, TModel? referenced, string paramName, bool mandatoryIdentity = true) where TModel : IModel
-        {
-            if (referenced == null)
-                return referenced;
-
-            return ValidateReference(parent, referenced, paramName, mandatoryIdentity);
-        }
     }
 }

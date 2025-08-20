@@ -57,49 +57,11 @@ namespace Masasamjant.Modeling
         }
 
         /// <summary>
-        /// Check if models can be considered to be same by identity and version.
-        /// </summary>
-        /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <param name="model">The source model.</param>
-        /// <param name="other">The other model.</param>
-        /// <returns><c>true</c> if <paramref name="model"/> and <paramref name="other"/> has equal identity and version; <c>false</c> otherwise.</returns>
-        public static bool Same<TModel>(this TModel model, TModel other) where TModel : IModel
-        {
-            if (ReferenceEquals(model, other))
-                return true;
-
-            var modelIdentity = model.GetIdentity();
-            var otherIdentity = other.GetIdentity();
-
-            if (modelIdentity != null && otherIdentity != null)
-            {
-                if (!string.Equals(modelIdentity.Value, otherIdentity.Value, StringComparison.Ordinal))
-                    return false;
-            }
-            else if (modelIdentity != null || otherIdentity != null)
-            {
-                return false;
-            }
-
-            var modelVersion = model.Version;
-            var otherVersion = other.Version;
-
-            if (modelVersion.Length != otherVersion.Length)
-                return false;
-
-            for (int index = 0; index < modelVersion.Length; index++)
-                if (modelVersion[index] != otherVersion[index])
-                    return false;
-
-            return true;
-        }
-
-        /// <summary>
         /// Check if specified <see cref="IModel"/> has version data.
         /// </summary>
         /// <param name="model">The <see cref="IModel"/>.</param>
         /// <returns><c>true</c> if <paramref name="model"/> has any version data; <c>false</c> otherwise.</returns>
-        public static bool HasVersion(this IModel model) => model.Version.Length > 0;
+        public static bool HasVersion(this ISupportVersion model) => model.Version.Length > 0;
 
         /// <summary>
         /// Try update specified <typeparamref name="TTarget"/> instance from specified <typeparamref name="TSource"/> instance.

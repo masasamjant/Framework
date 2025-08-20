@@ -1,32 +1,27 @@
 ﻿namespace Masasamjant.Modeling.Abstractions
 {
     /// <summary>
-    /// Represents model in application that can be either domain or data model.
+    /// Represents model in application.
     /// </summary>
     public interface IModel : IAddHandler, IUpdateHandler, IRemoveHandler
     {
-        /// <summary>
-        /// Gets the version bytes or empty array.
-        /// </summary>
-        byte[] Version { get; }
-
-        /// <summary>
-        /// Gets the <see cref="ModelIdentity"/> of the model or <c>null</c>, if 
-        /// model is new and available only on current context.
-        /// </summary>
-        /// <returns>A <see cref="ModelIdentity"/> or <c>null</c>.</returns>
-        ModelIdentity? GetIdentity();
-
-        /// <summary>
-        /// Gets <see cref="Version"/> as upper-case base-64 string.
-        /// </summary>
-        /// <returns>A <see cref="Version"/> as upper-case base-64 string or empty string.</returns>
-        string GetVersionString();
-
         /// <summary>
         /// Validates model state.
         /// </summary>
         /// <exception cref="ModelValidationException">If model is not valid.</exception>
         void Validate();
+    }
+
+    /// <summary>
+    /// Represents model in application that is identified by <typeparamref name="TIdentifier"/>.
+    /// </summary>
+    /// <typeparam name="TIdentifier">The type of the identifier.</typeparam>
+    public interface IModel<TIdentifier> : IModel
+        where TIdentifier : IEquatable<TIdentifier>
+    {
+        /// <summary>
+        /// Gets the unique identifier.
+        /// </summary>
+        TIdentifier Identifier { get; }
     }
 }

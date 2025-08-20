@@ -1,9 +1,9 @@
 ﻿namespace Masasamjant.Modeling.Abstractions
 {
     /// <summary>
-    /// Represents <see cref="IModel"/> that has deleted and deleted time properties.
+    /// Represents a model that has deleted and deleted time properties.
     /// </summary>
-    public interface ISupportDeleted : IModel
+    public interface ISupportDeleted
     {
         /// <summary>
         /// Gets the identity, like user name or identifier, to identify user who marked model as deleted.

@@ -1,9 +1,9 @@
 ﻿namespace Masasamjant.Modeling.Abstractions
 {
     /// <summary>
-    /// Represents <see cref="IModel"/> that has creator and creation time properties.
+    /// Represents a model that has creator and creation time properties.
     /// </summary>
-    public interface ISupportCreated : IModel
+    public interface ISupportCreated
     {
         /// <summary>
         /// Gets the identity, like user name or identifier, to identify user who created model.
