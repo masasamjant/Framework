@@ -1,16 +1,19 @@
-﻿namespace Masasamjant.Modeling.Abstractions.Services
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Masasamjant.Modeling.Abstractions.Services
 {
-    /// <summary>
-    /// Represents abstact implementation of <see cref="IManager{TModel}"/> interface.
-    /// </summary>
-    /// <typeparam name="TModel">The type of the model.</typeparam>
-    public abstract class Manager<TModel> : IManager<TModel> where TModel : IModel
+    public abstract class Repository<TModel> : IRepository<TModel> where TModel : IModel
     {
         /// <summary>
-        /// Initializes new instance of the <see cref="Manager{TModel}"/> class.
+        /// Initializes new instance of the <see cref="Repository{TModel}"/> class.
         /// </summary>
         /// <param name="userIdentityProvider">The <see cref="IUserIdentityProvider"/>.</param>
-        protected Manager(IUserIdentityProvider userIdentityProvider)
+        protected Repository(IUserIdentityProvider userIdentityProvider)
         {
             UserIdentityProvider = userIdentityProvider;
         }
@@ -20,26 +23,12 @@
         /// </summary>
         protected IUserIdentityProvider UserIdentityProvider { get; }
 
-        /// <summary>
-        /// Adds new <typeparamref name="TModel"/> to non-volatile memory.
-        /// </summary>
-        /// <param name="model">The model to add.</param>
-        /// <returns>A <typeparamref name="TModel"/> after it has been added.</returns>
         public abstract Task<TModel> AddAsync(TModel model);
-
-        /// <summary>
-        /// Removes aka deleted specified <typeparamref name="TModel"/> from non-volatile memory.
-        /// </summary>
-        /// <param name="model">The model to delete.</param>
-        /// <returns>A <typeparamref name="TModel"/> after it has been removed.</returns>
-        public abstract Task<TModel> RemoveAsync(TModel model);
-
-        /// <summary>
-        /// Updates specified <typeparamref name="TModel"/> in non-volatile memory.
-        /// </summary>
-        /// <param name="model">The model to update.</param>
-        /// <returns>A <typeparamref name="TModel"/> after it has been updated.</returns>
+        public abstract Task<TModel> DeleteAsync(TModel model);
         public abstract Task<TModel> UpdateAsync(TModel model);
+
+        public abstract IQueryable<TModel> Query();
+        public abstract IQueryable<TModel> Query(Expression<Func<TModel, bool>> predicate);
 
         /// <summary>
         /// Can be invoked when <typeparamref name="TModel"/> is added to invoke <see cref="IAddHandler.OnAdd(string?)"/> 
@@ -83,5 +72,22 @@
             var userIdentity = UserIdentityProvider.GetUserIdentity();
             return userIdentity.IsAnonymous() ? null : userIdentity.Identity;
         }
+
+
+    }
+
+    public abstract class Repository<TModel, TIdentifier> : Repository<TModel>, IRepository<TModel, TIdentifier>
+        where TModel : IModel<TIdentifier>
+        where TIdentifier : IEquatable<TIdentifier>
+    {
+        /// <summary>
+        /// Initializes new instance of the <see cref="Repository{TModel, TIdentifier}"/> class.
+        /// </summary>
+        /// <param name="userIdentityProvider">The <see cref="IUserIdentityProvider"/>.</param>
+        protected Repository(IUserIdentityProvider userIdentityProvider)
+            : base(userIdentityProvider)
+        { }
+
+        public abstract Task<TModel?> FindAsync(TIdentifier identifier);
     }
 }

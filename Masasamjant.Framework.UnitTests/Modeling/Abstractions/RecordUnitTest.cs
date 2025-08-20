@@ -1,4 +1,5 @@
 ﻿using Masasamjant.Modeling.Abstractions.Services;
+using System.Linq.Expressions;
 
 namespace Masasamjant.Modeling.Abstractions
 {
@@ -22,11 +23,11 @@ namespace Masasamjant.Modeling.Abstractions
         public async Task Test_Add()
         {
             var userIdentityProvider = new UserIdentityProvider(() => new UserIdentity("User"));
-            var manager = new UserManager(userIdentityProvider);
+            var repository = new UserRepository(userIdentityProvider);
             var model = new UserModel(Guid.NewGuid(), "Test");
             Assert.IsNull(model.CreatedBy);
             Assert.AreEqual(DateTimeOffset.MinValue, model.CreatedAt);
-            await manager.AddAsync(model);
+            await repository.AddAsync(model);
             Assert.AreEqual("User", model.CreatedBy);
             Assert.AreNotEqual(DateTimeOffset.MinValue, model.CreatedAt);
         }
@@ -35,18 +36,18 @@ namespace Masasamjant.Modeling.Abstractions
         public async Task Test_Update()
         {
             var userIdentityProvider = new UserIdentityProvider(() => new UserIdentity("User"));
-            var manager = new UserManager(userIdentityProvider);
+            var repository = new UserRepository(userIdentityProvider);
             var model = new UserModel(Guid.NewGuid(), "Test");
             Assert.IsNull(model.ModifiedBy);
             Assert.IsFalse(model.ModifiedAt.HasValue);
-            await manager.UpdateAsync(model);
+            await repository.UpdateAsync(model);
             Assert.AreEqual("User", model.ModifiedBy);
             Assert.IsTrue(model.ModifiedAt.HasValue);
         }
 
-        private class UserManager : Manager<UserModel>
+        private class UserRepository : Repository<UserModel, Guid>
         {
-            public UserManager(IUserIdentityProvider userIdentityProvider) 
+            public UserRepository(IUserIdentityProvider userIdentityProvider) 
                 : base(userIdentityProvider)
             { }
 
@@ -56,10 +57,25 @@ namespace Masasamjant.Modeling.Abstractions
                 return Task.FromResult(model);
             }
 
-            public override Task<UserModel> RemoveAsync(UserModel model)
+            public override Task<UserModel> DeleteAsync(UserModel model)
             {
                 OnRemove(model);
                 return Task.FromResult(model);
+            }
+
+            public override Task<UserModel?> FindAsync(Guid identifier)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override IQueryable<UserModel> Query()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override IQueryable<UserModel> Query(Expression<Func<UserModel, bool>> predicate)
+            {
+                throw new NotImplementedException();
             }
 
             public override Task<UserModel> UpdateAsync(UserModel model)
