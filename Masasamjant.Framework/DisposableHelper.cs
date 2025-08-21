@@ -35,5 +35,17 @@
                 return false;
             }
         }
+
+        /// <summary>
+        /// Check if <see cref="ISupportIsDisposed.IsDisposed"/> of specified instance is <c>true</c> and if so, 
+        /// then throws <see cref="ObjectDisposedException"/>.
+        /// </summary>
+        /// <param name="disposable">The <see cref="ISupportIsDisposed"/>.</param>
+        /// <exception cref="ObjectDisposedException">If <see cref="ISupportIsDisposed.IsDisposed"/> of <paramref name="disposable"/> is <c>true</c>.</exception>
+        public static void CheckIsDisposed(this ISupportIsDisposed disposable)
+        {
+            if (disposable.IsDisposed)
+                throw new ObjectDisposedException(disposable.GetType().FullName);
+        }
     }
 }
