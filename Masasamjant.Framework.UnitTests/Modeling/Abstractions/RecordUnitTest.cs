@@ -1,4 +1,5 @@
-﻿using Masasamjant.Modeling.Services.Abstractions;
+﻿using Masasamjant.Linq;
+using Masasamjant.Modeling.Services.Abstractions;
 using System.Linq.Expressions;
 
 namespace Masasamjant.Modeling.Abstractions
@@ -68,12 +69,22 @@ namespace Masasamjant.Modeling.Abstractions
                 throw new NotImplementedException();
             }
 
+            public override Task<UserModel?> FindAsync(object key)
+            {
+                throw new NotImplementedException();
+            }
+
             public override IQueryable<UserModel> Query()
             {
                 throw new NotImplementedException();
             }
 
-            public override IQueryable<UserModel> Query(Expression<Func<UserModel, bool>> predicate)
+            public override IQueryable<UserModel> Query(IQuery<UserModel> query)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override Task SaveAsync()
             {
                 throw new NotImplementedException();
             }
