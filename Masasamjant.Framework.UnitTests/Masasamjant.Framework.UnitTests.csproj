@@ -47,4 +47,14 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Repositories\EntityFramework\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="lorem.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

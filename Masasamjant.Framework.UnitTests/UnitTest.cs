@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using System.Text;
 
 namespace Masasamjant
 { 
@@ -25,6 +26,21 @@ namespace Masasamjant
             for (int i = 0; i < count; i++)
                 list.Add(value);
             return list;
+        }
+
+        protected static byte[] GetLoremIpsumData()
+        {
+            string str = GetLoremIpsumText();
+            return Encoding.UTF8.GetBytes(str);
+        }
+
+        protected static string GetLoremIpsumText()
+        {
+            const string file = "lorem.txt";
+            using (var reader = File.OpenText(file))
+            {
+                return reader.ReadToEnd();
+            }
         }
     }
 }
