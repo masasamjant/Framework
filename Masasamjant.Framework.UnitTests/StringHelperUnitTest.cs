@@ -238,5 +238,34 @@ namespace Masasamjant
             actual = StringHelper.GetByteArray(value, Encoding.UTF8);
             CollectionAssert.AreEqual(expected, actual);
         }
+
+        [TestMethod]
+        public void Test_IsTrueString()
+        {
+            Assert.IsFalse(StringHelper.IsTrueString(null));
+            Assert.IsFalse(StringHelper.IsTrueString(string.Empty));
+            Assert.IsFalse(StringHelper.IsTrueString("  "));
+            Assert.IsFalse(StringHelper.IsTrueString("123"));
+            Assert.IsFalse(StringHelper.IsTrueString("false"));
+            Assert.IsFalse(StringHelper.IsTrueString("tru4"));
+            Assert.IsTrue(StringHelper.IsTrueString("True"));
+            Assert.IsTrue(StringHelper.IsTrueString("true"));
+            Assert.IsTrue(StringHelper.IsTrueString("TRUE"));
+            Assert.IsTrue(StringHelper.IsTrueString("TruE"));
+        }
+
+        [TestMethod]
+        public void Test_IsFalseString()
+        {
+            Assert.IsFalse(StringHelper.IsFalseString(null));
+            Assert.IsFalse(StringHelper.IsFalseString(string.Empty));
+            Assert.IsFalse(StringHelper.IsFalseString("  "));
+            Assert.IsFalse(StringHelper.IsFalseString("123"));
+            Assert.IsFalse(StringHelper.IsFalseString("true"));
+            Assert.IsTrue(StringHelper.IsFalseString("False"));
+            Assert.IsTrue(StringHelper.IsFalseString("false"));
+            Assert.IsTrue(StringHelper.IsFalseString("FALSE"));
+            Assert.IsTrue(StringHelper.IsFalseString("FalsE"));
+        }
     }
 }

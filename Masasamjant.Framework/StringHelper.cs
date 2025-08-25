@@ -530,6 +530,26 @@ namespace Masasamjant
             return encoding.GetBytes(value);
         }
 
+        /// <summary>
+        /// Check if specified string value is equal to <see cref="bool.TrueString"/> when ignoring case.
+        /// </summary>
+        /// <param name="value">The string value.</param>
+        /// <returns><c>true</c> if <paramref name="value"/> is equal to <see cref="bool.TrueString"/> when ignoring case; <c>false</c> otherwise.</returns>
+        public static bool IsTrueString(this string? value)
+        {
+            return value != null && string.Equals(value, bool.TrueString, StringComparison.OrdinalIgnoreCase);  
+        }
+
+        /// <summary>
+        /// Check if specified string value is equal to <see cref="bool.FalseString"/> when ignoring case.
+        /// </summary>
+        /// <param name="value">The string value.</param>
+        /// <returns><c>true</c> if <paramref name="value"/> is equal to <see cref="bool.FalseString"/> when ignoring case; <c>false</c> otherwise.</returns>
+        public static bool IsFalseString(this string? value)
+        {
+            return value != null && string.Equals(value, bool.FalseString, StringComparison.OrdinalIgnoreCase);
+        }
+
         private static string Substring(string? value, int length, bool fromLeft)
         {
             if (value == null || value.Length == 0 || length <= 0)
