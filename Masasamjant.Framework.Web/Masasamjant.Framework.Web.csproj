@@ -10,4 +10,8 @@
     <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Masasamjant.Framework\Masasamjant.Framework.csproj" />
+  </ItemGroup>
+
 </Project>
