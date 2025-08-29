@@ -94,5 +94,67 @@ namespace Masasamjant
             expected = new[] { FileAttributes.None, FileAttributes.Normal, FileAttributes.ReadOnly, FileAttributes.Hidden };
             CollectionAssert.AreEquivalent(expected, actual);
         }
+
+        [TestMethod]
+        public void Test_AppendFlag()
+        {
+            Type enumType = typeof(int);
+            object value = FileAttributes.Normal;
+            object flag = FileAttributes.ReadOnly;
+            Assert.ThrowsException<ArgumentException>(() => EnumHelper.AppendFlag(enumType, value, flag));
+            
+            enumType = typeof(DateTimeKind);
+            Assert.ThrowsException<ArgumentException>(() => EnumHelper.AppendFlag(enumType, value, flag));
+            
+            enumType = typeof(FileAttributes);
+            value = DateTimeKind.Local;
+            Assert.ThrowsException<ArgumentException>(() => EnumHelper.AppendFlag(enumType, value, flag));
+
+            value = FileAttributes.Normal;
+            flag = DateTimeKind.Local;
+            Assert.ThrowsException<ArgumentException>(() => EnumHelper.AppendFlag(enumType, value, flag));
+
+            value = FileAttributes.Normal;
+            flag = FileAttributes.ReadOnly;
+            FileAttributes expected = FileAttributes.Normal | FileAttributes.ReadOnly;
+            FileAttributes actual = (FileAttributes)EnumHelper.AppendFlag(enumType, value, flag);
+            Assert.AreEqual(expected, actual);
+
+            value = (int)FileAttributes.Normal;
+            flag = (int)FileAttributes.ReadOnly;
+            expected = FileAttributes.Normal | FileAttributes.ReadOnly;
+            actual = (FileAttributes)EnumHelper.AppendFlag(enumType, value, flag);
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void Test_ConvertToEnum()
+        {
+            Type enumType = typeof(DateTime);
+            object value = DateTimeKind.Utc;
+            Assert.ThrowsException<ArgumentException>(() => EnumHelper.ConvertToEnum(enumType, value));
+
+            enumType = typeof(DateTimeKind);
+            value = DateTimeKind.Utc;
+            Assert.AreEqual(DateTimeKind.Utc, EnumHelper.ConvertToEnum(enumType, value));
+
+            value = "Foo";
+            Assert.ThrowsException<InvalidCastException>(() => EnumHelper.ConvertToEnum(enumType, value));
+
+            value = "UTC";
+            Assert.AreEqual(DateTimeKind.Utc, EnumHelper.ConvertToEnum(enumType, value));
+
+            value = "utc";
+            Assert.AreEqual(DateTimeKind.Utc, EnumHelper.ConvertToEnum(enumType, value));
+
+            value = DateTime.Now;
+            Assert.ThrowsException<InvalidCastException>(() => EnumHelper.ConvertToEnum(enumType, value));
+
+            value = (int)DateTimeKind.Utc;
+            Assert.AreEqual(DateTimeKind.Utc, EnumHelper.ConvertToEnum(enumType, value));
+
+            value = 999;
+            Assert.AreEqual((DateTimeKind)999, EnumHelper.ConvertToEnum(enumType, value));
+        }
     }
 }

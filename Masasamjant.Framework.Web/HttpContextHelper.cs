@@ -182,6 +182,21 @@ namespace Masasamjant.Web
             return false;
         }
 
+        /// <summary>
+        /// Gets session identifier string stored to HTTP context items.
+        /// </summary>
+        /// <param name="context">The <see cref="HttpContext"/>.</param>
+        /// <param name="sessionIdentifierKey">The session identifier key. Default value is <see cref="HttpDefaultKeys.SessionIdentifierKey"/>.</param>
+        /// <returns>A session identifier string or <c>null</c>, if not exist or not string.</returns>
+        /// <exception cref="ArgumentNullException">If value of <paramref name="sessionIdentifierKey"/> is empty or only whitespace.</exception>
+        public static string? GetSessionIdentifier(this HttpContext context, string sessionIdentifierKey = HttpDefaultKeys.SessionIdentifierKey)
+        {
+            if (string.IsNullOrWhiteSpace(sessionIdentifierKey))
+                throw new ArgumentNullException(nameof(sessionIdentifierKey), "The session identifier key is empty or only whitespace.");
+
+            return context.Items[sessionIdentifierKey] as string;
+        }
+
         private static HttpContext GetHttpContext(IHttpContextAccessor httpContextAccessor)
         {
             return httpContextAccessor.HttpContext ?? throw new InvalidOperationException("HTTP context is not available.");

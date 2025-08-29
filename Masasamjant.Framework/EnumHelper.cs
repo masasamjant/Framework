@@ -35,6 +35,16 @@ namespace Masasamjant
         }
 
         /// <summary>
+        /// Check if specified <see cref="Type"/> is enumeration type with <see cref="FlagsAttribute"/> attribute.
+        /// </summary>
+        /// <param name="enumType">The enumeration type.</param>
+        /// <returns><c>true</c> if <paramref name="enumType"/> is enumeration with <see cref="FlagsAttribute"/>; <c>false</c> otherwise.</returns>
+        public static bool IsFlagsEnum(Type enumType)
+        {
+            return enumType.IsEnum && enumType.GetCustomAttribute<FlagsAttribute>(false) != null;
+        }
+
+        /// <summary>
         /// Check if type of <typeparamref name="TEnum"/> enumeration has <see cref="FlagsAttribute"/> attribute.
         /// </summary>
         /// <typeparam name="TEnum">The type of enumeration.</typeparam>
@@ -138,6 +148,131 @@ namespace Masasamjant
         public static bool IsEnumTypeOrUnderlyingEnumType(Type type)
         {
             return type.IsEnum || underlyingEnumTypes.Contains(type);
+        }
+
+        /// <summary>
+        /// Appends <paramref name="flag"/> to <paramref name="value"/>.
+        /// </summary>
+        /// <param name="enumType">The flags enumeration type.</param>
+        /// <param name="value">The current value of enumeration or underlying type.</param>
+        /// <param name="flag">The value of enumeration or underlying type to append.</param>
+        /// <returns>A new value.</returns>
+        /// <exception cref="ArgumentException">
+        /// If <paramref name="enumType"/> is not flags enumeration type.
+        /// -or-
+        /// If <paramref name="value"/> or <paramref name="flag"/> are not same type as underlying type of <paramref name="enumType"/> or equal to <paramref name="enumType"/>.
+        /// </exception>
+        /// <exception cref="NotSupportedException">If the underlying type of <paramref name="enumType"/> is not supported.</exception>
+        public static object AppendFlag(Type enumType, object value, object flag)
+        {
+            if (!IsFlagsEnum(enumType))
+                throw new ArgumentException("The type is not flags enumeration.", nameof(enumType));
+
+            var underlyingType = Enum.GetUnderlyingType(enumType);
+
+            if (!value.GetType().Equals(enumType) && !value.GetType().Equals(underlyingType))
+                throw new ArgumentException($"The value is not '{underlyingType}'.", nameof(value));
+
+            if (!flag.GetType().Equals(enumType) && !flag.GetType().Equals(underlyingType))
+                throw new ArgumentException($"The value is not '{underlyingType}'.", nameof(flag));
+
+            if (underlyingType.Equals(typeof(int)))
+            {
+                var current = (int)value;
+                current |= (int)flag;
+                return current;
+            }
+            else if (underlyingType.Equals(typeof(long)))
+            {
+                var current = (long)value;
+                current |= (long)flag;
+                return current;
+            }
+            else if (underlyingType.Equals(typeof(uint)))
+            {
+                var current = (uint)value;
+                current |= (uint)flag;
+                return current;
+            }
+            else if (underlyingType.Equals(typeof(ulong)))
+            {
+                var current = (ulong)value;
+                current |= (ulong)flag;
+                return current;
+            }
+            else if (underlyingType.Equals(typeof(short)))
+            {
+                var current = (short)value;
+                current |= (short)flag;
+                return current;
+            }
+            else if (underlyingType.Equals(typeof(ushort)))
+            {
+                var current = (ushort)value;
+                current |= (ushort)flag;
+                return current;
+            }
+            else if (underlyingType.Equals(typeof(sbyte)))
+            {
+                var current = (sbyte)value;
+                current |= (sbyte)flag;
+                return current;
+            }
+            else if (underlyingType.Equals(typeof(byte)))
+            {
+                var current = (byte)value;
+                current |= (byte)flag;
+                return current;
+            }
+            else
+                throw new NotSupportedException($"The underlying enum type '{underlyingType}' is not supported.");
+        }
+
+        /// <summary>
+        /// Convert specified value to specified enumeration type. The value can be enumeration itself, string value or value 
+        /// of underlying type that can be converted to target type.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="value"/> is convertible but not defined, then this returns undefined value. So even if conversion is successful,
+        /// the result should be checked for undefined value.
+        /// </remarks>
+        /// <param name="enumType">The type of enumeration.</param>
+        /// <param name="value">The value to convert.</param>
+        /// <returns>A converted value.</returns>
+        /// <exception cref="ArgumentException">If <paramref name="enumType"/> is not enumeration type.</exception>
+        /// <exception cref="InvalidCastException">If conversion fails.</exception>
+        public static object ConvertToEnum(Type enumType, object value)
+        {
+            if (!enumType.IsEnum)
+                throw new ArgumentException("The type is not enum type.", nameof(enumType));
+
+            var type = value.GetType();
+
+            object? result;
+
+            if (enumType.Equals(type))
+                return value;
+            else if (type.Equals(typeof(string)))
+            {
+                if (!Enum.TryParse(enumType, (string?)value, true, out result))
+                    throw new InvalidCastException($"The conversion from {value} to {enumType} failed.");
+            }
+            else
+            {
+                try
+                {
+                    result = Enum.ToObject(enumType, value);
+                }
+                catch (Exception exception)
+                {
+                    throw new InvalidCastException($"The conversion from {value} to {enumType} failed.", exception);
+                }
+            }
+
+            if (result == null)
+                throw new InvalidCastException($"The conversion from {value} to {enumType} failed.");
+
+            return result;
         }
 
         private static readonly HashSet<Type> underlyingEnumTypes = new HashSet<Type>()
