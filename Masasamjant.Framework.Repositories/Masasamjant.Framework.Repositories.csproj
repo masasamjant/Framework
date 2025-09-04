@@ -20,11 +20,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Masasamjant.Framework\Masasamjant.Framework.csproj" />
     <ProjectReference Include="..\Masasamjant.Framework.Modeling\Masasamjant.Framework.Modeling.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Masasamjant.Framework" Version="1.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.8" />
   </ItemGroup>
 
