@@ -2,7 +2,7 @@
 
 namespace Masasamjant.Web
 {
-    internal static class DictionaryHelper
+    internal static class DataDictionaryHelper
     {
         internal static bool TryGetValue<T>(IDictionary<string, object?> dictionary, string key, [NotNullWhen(true)] out T? value)
         {

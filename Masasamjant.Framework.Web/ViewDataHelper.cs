@@ -17,7 +17,7 @@ namespace Masasamjant.Web
         /// <param name="value">The value from <paramref name="viewData"/> if returns <c>true</c>.</param>
         /// <returns><c>true</c> if <paramref name="value"/> was get from <paramref name="viewData"/>; <c>false</c> otherwise.</returns>
         public static bool TryGetValue<T>(this ViewDataDictionary viewData, string key, [NotNullWhen(true)] out T? value)
-            => DictionaryHelper.TryGetValue(viewData, key, out value);
+            => DataDictionaryHelper.TryGetValue(viewData, key, out value);
 
         /// <summary>
         /// Gets value of <typeparamref name="T"/> from specified <see cref="ViewDataDictionary"/>, if exist or default value, if not.
@@ -28,6 +28,6 @@ namespace Masasamjant.Web
         /// <param name="defaultValue">The default value to return if value not in <paramref name="viewData"/>.</param>
         /// <returns>A <typeparamref name="T"/> value from <paramref name="viewData"/> or <paramref name="defaultValue"/>.</returns>
         public static T GetValueOrDefault<T>(this ViewDataDictionary viewData, string key, T defaultValue)
-            => DictionaryHelper.GetValueOrDefault(viewData, key, defaultValue);
+            => DataDictionaryHelper.GetValueOrDefault(viewData, key, defaultValue);
     }
 }

@@ -197,6 +197,116 @@ namespace Masasamjant.Web
             return context.Items[sessionIdentifierKey] as string;
         }
 
+        /// <summary>
+        /// Gets the value of request cookie specified by name.
+        /// </summary>
+        /// <param name="context">The <see cref="HttpContext"/>.</param>
+        /// <param name="cookieName">The cookie name.</param>
+        /// <returns>A cookie value or <c>null</c>.</returns>
+        public static string? GetCookieValue(this HttpContext context, string cookieName)
+            => TryGetCookieValue(context, cookieName, out var cookieValue) ? cookieValue : null;
+
+        /// <summary>
+        /// Gets the value of request cookie specified by name.
+        /// </summary>
+        /// <param name="httpContextAccessor">The <see cref="IHttpContextAccessor"/>.</param>
+        /// <param name="cookieName">The cookie name.</param>
+        /// <returns>A cookie value or <c>null</c>.</returns>
+        /// <exception cref="InvalidOperationException">If HTTP context is not available via <paramref name="httpContextAccessor"/>.</exception>
+        public static string? GetCookieValue(this IHttpContextAccessor httpContextAccessor, string cookieName)
+            => GetCookieValue(GetHttpContext(httpContextAccessor), cookieName);
+
+        /// <summary>
+        /// Try get the value of request cookie specified by name.
+        /// </summary>
+        /// <param name="context">The <see cref="HttpContext"/>.</param>
+        /// <param name="cookieName">The cookie name.</param>
+        /// <param name="cookieValue">The cookie value if returns <c>true</c>; otherwise <c>null</c>.</param>
+        /// <returns><c>true</c> if cookie value exist; <c>false</c> otherwise.</returns>
+        public static bool TryGetCookieValue(this HttpContext context, string cookieName, out string? cookieValue)
+            =>  TryGetCookieValue(context.Request.Cookies, cookieName, out cookieValue);
+
+        /// <summary>
+        /// Try get the value of request cookie specified by name.
+        /// </summary>
+        /// <param name="httpContextAccessor">The <see cref="IHttpContextAccessor"/>.</param>
+        /// <param name="cookieName">The cookie name.</param>
+        /// <param name="cookieValue">The cookie value if returns <c>true</c>; otherwise <c>null</c>.</param>
+        /// <returns><c>true</c> if cookie value exist; <c>false</c> otherwise.</returns>
+        /// <exception cref="InvalidOperationException">If HTTP context is not available via <paramref name="httpContextAccessor"/>.</exception>
+        public static bool TryGetCookieValue(this IHttpContextAccessor httpContextAccessor, string cookieName, out string? cookieValue)
+            => TryGetCookieValue(GetHttpContext(httpContextAccessor), cookieName, out cookieValue);
+
+        /// <summary>
+        /// Try get the value of request cookie specified by name.
+        /// </summary>
+        /// <param name="requestCookies">The <see cref="IRequestCookieCollection"/>.</param>
+        /// <param name="cookieName">The cookie name.</param>
+        /// <param name="cookieValue">The cookie value if returns <c>true</c>; otherwise <c>null</c>.</param>
+        /// <returns><c>true</c> if cookie value exist; <c>false</c> otherwise.</returns>
+        public static bool TryGetCookieValue(IRequestCookieCollection requestCookies, string cookieName, out string? cookieValue)
+            => requestCookies.TryGetValue(cookieName, out cookieValue);
+
+        /// <summary>
+        /// Set response cookie with specified name and value using provided settings.
+        /// </summary>
+        /// <param name="context">The <see cref="HttpContext"/>.</param>
+        /// <param name="cookieName">The cookie name.</param>
+        /// <param name="cookieValue">The cookie value.</param>
+        /// <param name="path">The cookie path.</param>
+        /// <param name="expires">The expiration date and time.</param>
+        /// <param name="httpOnly"><c>true</c> if HTTP only; <c>false</c> otherwise.</param>
+        /// <param name="secure"><c>true</c> if only transmit in HTTPS; <c>false</c> otherwise.</param>
+        /// <param name="essential"><c>true</c> if cookie is essential; <c>false</c> otherwise.</param>
+        /// <param name="domain">The domain associated with cookie.</param>
+        public static void SetCookieValue(this HttpContext context, string cookieName, string cookieValue, string? path = null, DateTimeOffset? expires = null, bool httpOnly = true, bool secure = false, bool essential = false, string? domain = null)
+            => SetCookieValue(context.Response.Cookies, cookieName, cookieValue, path, expires, httpOnly, secure, essential, domain);
+
+        /// <summary>
+        /// Set response cookie with specified name and value using provided settings.
+        /// </summary>
+        /// <param name="httpContextAccessor">The <see cref="IHttpContextAccessor"/>.</param>
+        /// <param name="cookieName">The cookie name.</param>
+        /// <param name="cookieValue">The cookie value.</param>
+        /// <param name="path">The cookie path.</param>
+        /// <param name="expires">The expiration date and time.</param>
+        /// <param name="httpOnly"><c>true</c> if HTTP only; <c>false</c> otherwise.</param>
+        /// <param name="secure"><c>true</c> if only transmit in HTTPS; <c>false</c> otherwise.</param>
+        /// <param name="essential"><c>true</c> if cookie is essential; <c>false</c> otherwise.</param>
+        /// <param name="domain">The domain associated with cookie.</param>
+        /// <exception cref="InvalidOperationException">If HTTP context is not available via <paramref name="httpContextAccessor"/>.</exception>
+        public static void SetCookieValue(this IHttpContextAccessor httpContextAccessor, string cookieName, string cookieValue, string? path = null, DateTimeOffset? expires = null, bool httpOnly = true, bool secure = false, bool essential = false, string? domain = null)
+            => SetCookieValue(GetHttpContext(httpContextAccessor), cookieName, cookieValue, path, expires, httpOnly, secure, essential, domain);
+
+        /// <summary>
+        /// Set response cookie with specified name and value using provided settings.
+        /// </summary>
+        /// <param name="responseCookies">The <see cref="IResponseCookies"/>.</param>
+        /// <param name="cookieName">The cookie name.</param>
+        /// <param name="cookieValue">The cookie value.</param>
+        /// <param name="path">The cookie path.</param>
+        /// <param name="expires">The expiration date and time.</param>
+        /// <param name="httpOnly"><c>true</c> if HTTP only; <c>false</c> otherwise.</param>
+        /// <param name="secure"><c>true</c> if only transmit in HTTPS; <c>false</c> otherwise.</param>
+        /// <param name="essential"><c>true</c> if cookie is essential; <c>false</c> otherwise.</param>
+        /// <param name="domain">The domain associated with cookie.</param>
+        public static void SetCookieValue(IResponseCookies responseCookies, string cookieName, string cookieValue, string? path = null, DateTimeOffset? expires = null, bool httpOnly = true, bool secure = false, bool essential = false, string? domain = null)
+        {
+            var options = new CookieOptions()
+            {
+                Domain = domain,
+                Expires = expires,
+                HttpOnly = httpOnly,
+                Secure = secure,
+                IsEssential = essential
+            };
+
+            if (!string.IsNullOrWhiteSpace(path))
+                options.Path = path;
+
+            responseCookies.Append(cookieName, cookieValue, options);
+        }
+
         private static HttpContext GetHttpContext(IHttpContextAccessor httpContextAccessor)
         {
             return httpContextAccessor.HttpContext ?? throw new InvalidOperationException("HTTP context is not available.");
