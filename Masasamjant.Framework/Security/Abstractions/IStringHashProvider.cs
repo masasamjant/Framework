@@ -1,4 +1,4 @@
-﻿namespace Masasamjant.Security
+﻿namespace Masasamjant.Security.Abstractions
 {
     /// <summary>
     /// Represents provider that computes hash from string.

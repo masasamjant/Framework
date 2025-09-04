@@ -1,5 +1,6 @@
 ﻿using Masasamjant.ComponentModel;
 using Masasamjant.Security;
+using Masasamjant.Security.Abstractions;
 using Masasamjant.Web.Sessions;
 using System.Diagnostics.CodeAnalysis;
 

@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using Masasamjant.Security.Abstractions;
+using System.Security.Cryptography;
 
 namespace Masasamjant.Security
 {
