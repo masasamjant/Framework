@@ -2,7 +2,7 @@
 using Masasamjant.Linq;
 using Masasamjant.Modeling.Abstractions;
 
-namespace Masasamjant.Modeling.Services.Abstractions
+namespace Masasamjant.Repositories.Abstractions
 {
     /// <summary>
     /// Represents repository of <typeparamref name="TModel"/> instances.

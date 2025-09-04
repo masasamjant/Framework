@@ -1,7 +1,8 @@
-﻿using Masasamjant.Modeling.Abstractions;
-using Masasamjant.Modeling.Services.Abstractions;
+﻿using Masasamjant.Modeling;
+using Masasamjant.Modeling.Abstractions;
+using Masasamjant.Repositories.Abstractions;
 
-namespace Masasamjant.Modeling
+namespace Masasamjant.Repositories
 {
     /// <summary>
     /// Represents basic implementation of <see cref="IUserIdentityProvider"/> interface.

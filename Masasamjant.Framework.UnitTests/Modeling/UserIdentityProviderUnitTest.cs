@@ -1,4 +1,5 @@
 ﻿using Masasamjant.Modeling.Abstractions;
+using Masasamjant.Repositories;
 
 namespace Masasamjant.Modeling
 {

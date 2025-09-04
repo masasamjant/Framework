@@ -1,5 +1,4 @@
-﻿using Masasamjant.Modeling.Services;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Masasamjant.Repositories.EntityFramework
 {

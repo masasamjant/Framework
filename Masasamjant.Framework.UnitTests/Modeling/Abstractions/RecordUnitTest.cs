@@ -1,6 +1,6 @@
 ﻿using Masasamjant.Linq;
-using Masasamjant.Modeling.Services.Abstractions;
-using System.Linq.Expressions;
+using Masasamjant.Repositories;
+using Masasamjant.Repositories.Abstractions;
 
 namespace Masasamjant.Modeling.Abstractions
 {

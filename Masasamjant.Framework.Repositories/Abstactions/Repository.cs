@@ -1,7 +1,8 @@
 ﻿using Masasamjant.Linq;
+using Masasamjant.Modeling;
 using Masasamjant.Modeling.Abstractions;
 
-namespace Masasamjant.Modeling.Services.Abstractions
+namespace Masasamjant.Repositories.Abstractions
 {
     /// <summary>
     /// Represents abstract <see cref="IRepository{TModel}"/>.

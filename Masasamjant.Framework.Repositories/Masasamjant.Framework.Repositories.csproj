@@ -4,20 +4,29 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>Masasamjant.Repositories.EntityFramework</RootNamespace>
-    <AssemblyName>Masasamjant.Framework.Repositories.EntityFramework</AssemblyName>
+    <AssemblyName>Masasamjant.Framework.Repositories</AssemblyName>
+    <RootNamespace>Masasamjant.Repositories</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Title>Repository implementation using Entity Framework.</Title>
+    <Title>Masasamjant Framework Repositories</Title>
     <Company></Company>
-    <Description>Framework implementing modeling repository using Entity Framework.</Description>
+    <Description>Repository pattern for applications build using this framework.</Description>
     <Copyright>2025 - Matti Jantti</Copyright>
     <IncludeSymbols>False</IncludeSymbols>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/masasamjant/Framework</PackageProjectUrl>
     <RepositoryUrl>https://github.com/masasamjant/Framework</RepositoryUrl>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <Version>1.0.0</Version>    
+    <Version>1.0.0</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Masasamjant.Framework\Masasamjant.Framework.csproj" />
+    <ProjectReference Include="..\Masasamjant.Framework.Modeling\Masasamjant.Framework.Modeling.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.8" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\LICENSE.txt">
@@ -28,15 +37,6 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.8" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\Masasamjant.Framework.Modeling\Masasamjant.Framework.Modeling.csproj" />
-    <ProjectReference Include="..\Masasamjant.Framework\Masasamjant.Framework.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿namespace Masasamjant.Modeling.Services
+﻿namespace Masasamjant.Repositories
 {
     /// <summary>
     /// Represents exception thrown by repository operations.

@@ -1,7 +1,6 @@
 ﻿using Masasamjant.Linq;
 using Masasamjant.Modeling.Abstractions;
-using Masasamjant.Modeling.Services;
-using Masasamjant.Modeling.Services.Abstractions;
+using Masasamjant.Repositories.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Masasamjant.Repositories.EntityFramework
