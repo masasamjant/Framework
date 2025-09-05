@@ -7,7 +7,7 @@
     {
         /// <summary>
         /// Converts <see cref="IEnumerable{IRouteValue}"/> to <see cref="IDictionary{string, object}"/>. If <paramref name="routeValues"/> contains duplicates, 
-        /// then value of the last one is set.
+        /// then value of the first one is set.
         /// </summary>
         /// <param name="routeValues">The route values.</param>
         /// <returns>A <see cref="IDictionary{string, object}"/> of route values.</returns>
