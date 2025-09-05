@@ -130,5 +130,8 @@ namespace Masasamjant.Web.Mvc
             context.ReplaceCurrentHtmlAttributes = value;
             return context;
         }
+
+        internal static IDictionary<string, object> CreateHtmlAttributesDictionary(this IHtmlHelper _)
+            => new Dictionary<string, object>();
     }
 }

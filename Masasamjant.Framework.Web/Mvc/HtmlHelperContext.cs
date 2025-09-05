@@ -23,7 +23,7 @@
             Title = title;
             CssClass = css;
             EmptyOptionLabel = emptyOptionLabel;
-            HtmlAttributes = htmlAttributes ?? new Dictionary<string, object>();
+            HtmlAttributes = htmlAttributes != null  ?  new Dictionary<string, object>(htmlAttributes) : new Dictionary<string, object>();
             ReplaceCurrentHtmlAttributes = replaceCurrentHtmlAttributes;
         }
 
@@ -63,5 +63,39 @@
         /// Gets or sets whether or not attributes from <see cref="HtmlAttributes"/> will replace current attributes.
         /// </summary>
         public bool ReplaceCurrentHtmlAttributes { get; set; }
+
+        /// <summary>
+        /// Apply context to specified HTML attributes dictionary.
+        /// </summary>
+        /// <param name="htmlAttributes">The HTML attributes dictionary to apply context.</param>
+        public void ApplyAttributes(IDictionary<string, object> htmlAttributes)
+        {
+            if (!string.IsNullOrWhiteSpace(Id))
+                htmlAttributes["id"] = Id;
+
+            if (!string.IsNullOrWhiteSpace(Title))
+                htmlAttributes["title"] = Title;
+
+            if (!IsEnabled)
+                htmlAttributes["disabled"] = "disabled";
+
+            if (!string.IsNullOrWhiteSpace(CssClass))
+            {
+                if (htmlAttributes.TryGetValue("class", out var value))
+                { 
+                    var css = (string)value;
+                    css += " " + CssClass;
+                    htmlAttributes["class"] = css;
+                }
+                else
+                    htmlAttributes["class"] = CssClass;
+            }
+
+            foreach (var attribute in HtmlAttributes)
+            {
+                if (!htmlAttributes.ContainsKey(attribute.Key) || ReplaceCurrentHtmlAttributes)
+                    htmlAttributes[attribute.Key] = attribute.Value;
+            }
+        }
     }
 }
