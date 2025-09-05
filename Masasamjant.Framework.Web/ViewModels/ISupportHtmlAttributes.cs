@@ -6,7 +6,7 @@
     public interface ISupportHtmlAttributes
     {
         /// <summary>
-        /// Gets or sets HTML attributes.
+        /// Gets HTML attributes.
         /// </summary>
         IDictionary<string, object?> HtmlAttributes { get; }
     }

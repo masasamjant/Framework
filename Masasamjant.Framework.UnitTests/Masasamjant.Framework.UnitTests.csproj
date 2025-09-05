@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Masasamjant.Framework.Modeling\Masasamjant.Framework.Modeling.csproj" />
     <ProjectReference Include="..\Masasamjant.Framework.Repositories\Masasamjant.Framework.Repositories.csproj" />
+    <ProjectReference Include="..\Masasamjant.Framework.Web\Masasamjant.Framework.Web.csproj" />
     <ProjectReference Include="..\Masasamjant.Framework\Masasamjant.Framework.csproj" />
   </ItemGroup>
 

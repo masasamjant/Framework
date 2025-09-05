@@ -21,8 +21,9 @@
         IDictionary<string, object?> RouteParameters { get; }
 
         /// <summary>
-        /// Gets child navigation items.
+        /// Gets the full navigation URL with route parameters.
         /// </summary>
-        IEnumerable<INavigationItem> Children { get; }
+        /// <returns>A full navigation URL with route parameters.</returns>
+        string GetFullUrl();
     }
 }

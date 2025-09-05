@@ -8,6 +8,6 @@
         /// <summary>
         /// Gets or sets name(s) of CSS classes applied to element when element is disabled.
         /// </summary>
-        string DisabledCssClass { get; }
+        string DisabledCssClass { get; set; }
     }
 }
