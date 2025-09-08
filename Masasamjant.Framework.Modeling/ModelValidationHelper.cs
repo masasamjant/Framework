@@ -78,7 +78,6 @@ namespace Masasamjant.Modeling
                 return value;
 
             return ValidateMandatoryString(model, value, paramName, true, allowWhiteSpace, maxLength, minLength, checkNoLeadingWhiteSpace, checkNoTrailingWhiteSpace);
-
         }
     }
 }
