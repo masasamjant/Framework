@@ -8,19 +8,6 @@ namespace Masasamjant.Modeling.Abstractions
     public class RecordUnitTest : UnitTest
     {
         [TestMethod]
-        public void Test_Delete()
-        {
-            var model = new UserModel(Guid.NewGuid(), "Test");
-            Assert.IsFalse(model.IsDeleted);
-            Assert.IsFalse(model.DeletedAt.HasValue);
-            Assert.IsNull(model.DeletedBy);
-            model.Delete("User");
-            Assert.IsTrue(model.IsDeleted);
-            Assert.IsTrue(model.DeletedAt.HasValue);
-            Assert.AreEqual("User", model.DeletedBy);
-        }
-
-        [TestMethod]
         public async Task Test_Add()
         {
             var userIdentityProvider = new UserIdentityProvider(() => new UserIdentity("User"));

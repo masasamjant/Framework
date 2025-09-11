@@ -4,7 +4,7 @@
     /// Represents <see cref="IRecord{TIdentifier}"/> that is identified by <typeparamref name="TIdentifier"/>.
     /// </summary>
     /// <typeparam name="TIdentifier">The type of the identifier.</typeparam>
-    public abstract class Record<TIdentifier> : Model<TIdentifier>, IRecord<TIdentifier>, ISupportCreated, ISupportModified, ISupportDeleted
+    public abstract class Record<TIdentifier> : Model<TIdentifier>, IRecord<TIdentifier>, ISupportCreated, ISupportModified
         where TIdentifier : IEquatable<TIdentifier>
     {
         /// <summary>
@@ -29,39 +29,6 @@
         /// </summary>
         /// <remarks>If <c>null</c>, then record has not been modified.</remarks>
         public DateTimeOffset? ModifiedAt { get; protected set; }
-
-        /// <summary>
-        /// Gets the identity, like user name or identifier, to identify user who marked record as deleted.
-        /// </summary>
-        /// <remarks>If <c>null</c> or empty, then deleter is unknown or anonymous user.</remarks>
-        public string? DeletedBy { get; protected set; }
-
-        /// <summary>
-        /// Gets the date and time when record was marked as deleted.
-        /// </summary>
-        /// <remarks>If <c>null</c>, then record has not been marked as deleted.</remarks>
-        public DateTimeOffset? DeletedAt { get; protected set; }
-
-        /// <summary>
-        /// Gets whether or not record is marked as deleted.
-        /// </summary>
-        public bool IsDeleted
-        {
-            get { return DeletedAt.HasValue; }
-        }
-
-        /// <summary>
-        /// Marks record as deleted.
-        /// </summary>
-        /// <param name="deletedBy">The identity, like user name or identifier, to identify user who marked record as deleted.</param>
-        public void Delete(string? deletedBy)
-        {
-            if (IsDeleted)
-                return;
-
-            DeletedAt = GetDateTimeOffsetNow();
-            DeletedBy = deletedBy;
-        }
 
         /// <summary>
         /// Invoked when record instance is added to non-volatile memory like database or file.

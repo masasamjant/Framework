@@ -1,9 +1,9 @@
 ﻿namespace Masasamjant.Modeling.Abstractions
 {
     /// <summary>
-    /// Represents model in application that implements <see cref="ISupportCreated"/>, <see cref="ISupportModified"/> and <see cref="ISupportDeleted"/> interfaces.
+    /// Represents model in application that implements <see cref="ISupportCreated"/> and <see cref="ISupportModified"/> interfaces.
     /// </summary>
-    public interface IRecord : IModel, ISupportCreated, ISupportModified, ISupportDeleted
+    public interface IRecord : IModel, ISupportCreated, ISupportModified
     { }
 
     /// <summary>
