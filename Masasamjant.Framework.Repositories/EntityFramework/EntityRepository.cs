@@ -57,6 +57,7 @@ namespace Masasamjant.Repositories.EntityFramework
         /// <exception cref="RepositoryException">If operation fails.</exception>
         public override async Task<TModel> AddAsync(TModel model)
         {
+            OnAdd(model);
             return await DbContextHelper.AddAsync(DbContext, model);
         }
 
@@ -79,6 +80,7 @@ namespace Masasamjant.Repositories.EntityFramework
         /// <exception cref="RepositoryException">If operation fails.</exception>
         public override Task<TModel> UpdateAsync(TModel model)
         {
+            OnUpdate(model);
             return DbContextHelper.UpdateAsync(DbContext, model);
         }
 
