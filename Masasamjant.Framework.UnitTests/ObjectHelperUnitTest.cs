@@ -34,5 +34,12 @@
             Assert.AreEqual(100, left);
             Assert.AreEqual(10, right);
         }
+
+        [TestMethod]
+        public void Test_IsEmpty_Guid()
+        {
+            Assert.IsTrue(ObjectHelper.IsEmpty(Guid.Empty));
+            Assert.IsFalse(ObjectHelper.IsEmpty(Guid.NewGuid()));
+        }
     }
 }

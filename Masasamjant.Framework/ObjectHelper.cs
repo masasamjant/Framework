@@ -37,5 +37,12 @@
 
             return false;
         }
+
+        /// <summary>
+        /// Check if specified <see cref="Guid"/> value is <see cref="Guid.Empty"/>.
+        /// </summary>
+        /// <param name="value">The <see cref="Guid"/> value.</param>
+        /// <returns><c>true</c> if <paramref name="value"/> is <see cref="Guid.Empty"/>; <c>false</c> otherwise.</returns>
+        public static bool IsEmpty(this Guid value) => Guid.Empty.Equals(value);
     }
 }
