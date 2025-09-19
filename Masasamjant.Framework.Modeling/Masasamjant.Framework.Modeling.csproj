@@ -11,12 +11,13 @@
     <Company></Company>
     <Description>Framework for modeling application domain or data model.</Description>
     <Copyright>2025 - Matti Jantti</Copyright>
-    <IncludeSymbols>False</IncludeSymbols>
+    <IncludeSymbols>True</IncludeSymbols>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/masasamjant/Framework</PackageProjectUrl>
     <RepositoryUrl>https://github.com/masasamjant/Framework</RepositoryUrl>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <Version>1.2.0</Version>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
