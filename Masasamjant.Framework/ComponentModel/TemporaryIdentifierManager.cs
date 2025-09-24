@@ -6,26 +6,26 @@ using System.Diagnostics.CodeAnalysis;
 namespace Masasamjant.ComponentModel
 {
     /// <summary>
-    /// Represents simple <see cref="IIdentifierManager"/> that keeps identifiers in memory.
+    /// Represents simple <see cref="ITemporaryIdentifierManager"/> that keeps identifiers in memory.
     /// </summary>
     /// <remarks>Instance of this class is thread-safe and can be used as singleton instance.</remarks>
-    public sealed class IdentifierManager : IIdentifierManager
+    public sealed class TemporaryIdentifierManager : ITemporaryIdentifierManager
     {
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, object[]>> temporaryIdentifiers;
         private readonly IStringHashProvider hashProvider;
 
         /// <summary>
-        /// Initializes new default instance of the <see cref="IdentifierManager"/> class that creates Base-64 SHA1 temporary identifiers.
+        /// Initializes new default instance of the <see cref="TemporaryIdentifierManager"/> class that creates Base-64 SHA1 temporary identifiers.
         /// </summary>
-        public IdentifierManager()
+        public TemporaryIdentifierManager()
             : this(new Base64SHA1Provider())
         { }
 
         /// <summary>
-        /// Initializes new instance of the <see cref="IdentifierManager"/> class with specified <see cref="IStringHashProvider"/> to compute temporary identifiers.
+        /// Initializes new instance of the <see cref="TemporaryIdentifierManager"/> class with specified <see cref="IStringHashProvider"/> to compute temporary identifiers.
         /// </summary>
         /// <param name="hashProvider">The <see cref="IStringHashProvider"/> to compute temporary identifiers.</param>
-        public IdentifierManager(IStringHashProvider hashProvider)
+        public TemporaryIdentifierManager(IStringHashProvider hashProvider)
         {
             this.temporaryIdentifiers = new ConcurrentDictionary<string, ConcurrentDictionary<string, object[]>>();
             this.hashProvider = hashProvider;

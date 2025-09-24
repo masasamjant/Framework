@@ -5,7 +5,7 @@ namespace Masasamjant.ComponentModel
     /// <summary>
     /// Represents component to manage temporary identifiers to hide actual identifiers.
     /// </summary>
-    public interface IIdentifierManager
+    public interface ITemporaryIdentifierManager
     {
         /// <summary>
         /// Tries to get the actual identifier for specified temporary identifier.

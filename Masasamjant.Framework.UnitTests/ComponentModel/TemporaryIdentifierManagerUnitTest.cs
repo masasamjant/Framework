@@ -1,12 +1,12 @@
 ﻿namespace Masasamjant.ComponentModel
 {
     [TestClass]
-    public class IdentifierManagerUnitTest : UnitTest
+    public class TemporaryIdentifierManagerUnitTest : UnitTest
     {
         [TestMethod]
         public void Test_GetTemporaryIdentifier()
         {
-            var manager = new IdentifierManager();
+            var manager = new TemporaryIdentifierManager();
             var identifier = Guid.NewGuid();
             var temporaryIdentifier = manager.GetTemporaryIdentifier("Scope", identifier);
             Assert.AreNotEqual(temporaryIdentifier, identifier.ToString());
@@ -24,7 +24,7 @@
         [TestMethod]
         public void Test_TryGetIdentifier()
         {
-            var manager = new IdentifierManager();
+            var manager = new TemporaryIdentifierManager();
             var identifier = Guid.NewGuid();
             var temporaryIdentifier = manager.GetTemporaryIdentifier("Scope", identifier);
             Assert.IsTrue(manager.TryGetIdentifier("Scope", temporaryIdentifier, out Guid actual));
@@ -44,7 +44,7 @@
         [TestMethod]
         public void Test_RemoveIdentifiers()
         {
-            var manager = new IdentifierManager();
+            var manager = new TemporaryIdentifierManager();
             var identifier = Guid.NewGuid();
             var temporaryIdentifier = manager.GetTemporaryIdentifier("Scope", identifier);
             Assert.IsTrue(manager.TryGetIdentifier("Scope", temporaryIdentifier, out Guid actual));
