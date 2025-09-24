@@ -37,8 +37,7 @@
             temporaryIdentifier = manager.GetTemporaryIdentifier("Scope", identifiers);
             Assert.IsTrue(manager.TryGetIdentifier("Scope", temporaryIdentifier, out object[] actualIdentifiers));
             CollectionAssert.AreEqual(identifiers, actualIdentifiers);
-            Assert.IsFalse(manager.TryGetIdentifier("Foo", temporaryIdentifier, out actual));
-            Assert.AreEqual(Guid.Empty, actual);
+            Assert.IsFalse(manager.TryGetIdentifier("Scope", temporaryIdentifier, out actualIdentifiers));
         }
 
         [TestMethod]
@@ -47,9 +46,8 @@
             var manager = new TemporaryIdentifierManager();
             var identifier = Guid.NewGuid();
             var temporaryIdentifier = manager.GetTemporaryIdentifier("Scope", identifier);
-            Assert.IsTrue(manager.TryGetIdentifier("Scope", temporaryIdentifier, out Guid actual));
             manager.RemoveIdentifiers("Scope");
-            Assert.IsFalse(manager.TryGetIdentifier("Scope", temporaryIdentifier, out actual));
+            Assert.IsFalse(manager.TryGetIdentifier("Scope", temporaryIdentifier, out Guid actual));
             Assert.AreEqual(Guid.Empty, actual);
         }
     }

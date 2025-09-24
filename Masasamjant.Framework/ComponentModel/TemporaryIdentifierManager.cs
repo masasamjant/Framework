@@ -61,7 +61,8 @@ namespace Masasamjant.ComponentModel
         }
 
         /// <summary>
-        /// Tries to get the actual identifier for specified temporary identifier.
+        /// Tries to get the actual identifier for specified temporary identifier. If return <c>true</c>, then actual identifier was get and 
+        /// temporary identifier was removed.
         /// </summary>
         /// <typeparam name="T">The type of the actual identifier.</typeparam>
         /// <param name="key">The scope key.</param>
@@ -70,11 +71,15 @@ namespace Masasamjant.ComponentModel
         /// <returns><c>true</c> if there was actual identifier for <paramref name="temporaryIdentifier"/>; <c>false</c> otherwise.</returns>
         public bool TryGetIdentifier<T>(string key, string temporaryIdentifier, [MaybeNullWhen(false)] out T identifier)
         {
-            if (TryGetIdentifier(key, temporaryIdentifier, out var identifiers) &&
-                identifiers.Length == 1 && identifiers[0] is T result)
+            if (temporaryIdentifiers.TryGetValue(key, out var identifiersDictionary))
             {
-                identifier = result;
-                return true;
+                if (identifiersDictionary.TryGetValue(temporaryIdentifier, out var identifiers) &&
+                    identifiers.Length == 1 && identifiers[0] is T result)
+                {
+                    identifiersDictionary.TryRemove(temporaryIdentifier, out var _);
+                    identifier = result;
+                    return true;
+                }
             }
 
             identifier = default;
@@ -82,7 +87,8 @@ namespace Masasamjant.ComponentModel
         }
 
         /// <summary>
-        /// Tries to get the actual identifiers for specified temporary identifier.
+        /// Tries to get the actual identifiers for specified temporary identifier. If return <c>true</c>, then actual identifiers was get and
+        /// temporary identifier was removed.
         /// </summary>
         /// <param name="key">The scope key.</param>
         /// <param name="temporaryIdentifier">The temporary identifier.</param>
@@ -92,7 +98,7 @@ namespace Masasamjant.ComponentModel
         {
             if (temporaryIdentifiers.TryGetValue(key, out var identifiersDictionary))
             {
-                if (identifiersDictionary.TryGetValue(temporaryIdentifier, out var result))
+                if (identifiersDictionary.TryRemove(temporaryIdentifier, out var result))
                 {
                     identifiers = result;
                     return true;
