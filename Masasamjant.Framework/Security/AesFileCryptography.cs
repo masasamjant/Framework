@@ -45,7 +45,6 @@ namespace Masasamjant.Security
             using (var destinationStream = new FileStream(destinationFile, destinationMode, FileAccess.Write))
             {
                 await cryptography.EncryptAsync(sourceStream, destinationStream, password, salt, cancellationToken);
-                await destinationStream.FlushAsync(cancellationToken);
             }
         }
 
@@ -75,7 +74,6 @@ namespace Masasamjant.Security
                 using (var destinationStream = new FileStream(destinationFile, destinationMode, FileAccess.Write))
                 {
                     await cryptography.DecryptAsync(sourceStream, destinationStream, password, salt, cancellationToken);
-                    await destinationStream.FlushAsync(cancellationToken);
                 }
             }
             catch (Exception exception)

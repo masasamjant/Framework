@@ -2,7 +2,7 @@
 using System.Text;
 
 namespace Masasamjant
-{ 
+{
     public abstract class UnitTest
     {
         protected static IConfiguration GetConfiguration(Dictionary<string, string?> values)
