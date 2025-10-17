@@ -117,7 +117,7 @@
         /// -or-
         /// If cannot write to <paramref name="destination"/>.
         /// </exception>
-        public static void CopyStream(Stream source, Stream destination, Action<StreamCopyProgress>? progressHandler, int bufferSize = DefaultBufferSize)
+        public static void CopyStream(Stream source, Stream destination, Action<StreamCopyProgress>? progressHandler = null, int bufferSize = DefaultBufferSize)
         {
             ValidateStreamCopy(source, destination);
             bufferSize = EnsureBufferSize(bufferSize);
@@ -149,7 +149,7 @@
         /// -or-
         /// If cannot write to <paramref name="destination"/>.
         /// </exception>
-        public static async Task CopyStreamAsync(Stream source, Stream destination, Func<StreamCopyProgress, Task>? progressHandler, int bufferSize = DefaultBufferSize)
+        public static async Task CopyStreamAsync(Stream source, Stream destination, Func<StreamCopyProgress, Task>? progressHandler = null, int bufferSize = DefaultBufferSize)
         {
             ValidateStreamCopy(source, destination);
             bufferSize = EnsureBufferSize(bufferSize);
