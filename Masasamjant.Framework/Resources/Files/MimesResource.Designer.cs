@@ -63,9 +63,9 @@ namespace Masasamjant.Resources.Files {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] mimes {
+        internal static byte[] Data {
             get {
-                object obj = ResourceManager.GetObject("mimes", resourceCulture);
+                object obj = ResourceManager.GetObject("Data", resourceCulture);
                 return ((byte[])(obj));
             }
         }

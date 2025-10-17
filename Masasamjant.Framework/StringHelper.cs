@@ -550,6 +550,50 @@ namespace Masasamjant
             return value != null && string.Equals(value, bool.FalseString, StringComparison.OrdinalIgnoreCase);
         }
 
+        /// <summary>
+        /// Ensure specified string starts with specified prefix.
+        /// </summary>
+        /// <param name="value">The string value.</param>
+        /// <param name="prefix">The prefix.</param>
+        /// <returns>A value that starts with <paramref name="prefix"/> and ends with <paramref name="value"/>.</returns>
+        public static string EnsureStartsWith(this string value, string prefix)
+        {
+            return value.StartsWith(prefix) ? value : prefix + value;
+        }
+
+        /// <summary>
+        /// Ensure specified string starts with specified prefix.
+        /// </summary>
+        /// <param name="value">The string value.</param>
+        /// <param name="prefix">The prefix.</param>
+        /// <returns>A value that starts with <paramref name="prefix"/> and ends with <paramref name="value"/>.</returns>
+        public static string EnsureStartsWith(this string value, char prefix)
+        {
+            return value.StartsWith(prefix) ? value : prefix + value;
+        }
+
+        /// <summary>
+        /// Ensure specified string ends with specified suffix.
+        /// </summary>
+        /// <param name="value">The string value.</param>
+        /// <param name="suffix">The suffix.</param>
+        /// <returns>A value that starts with <paramref name="value"/> and ends with <paramref name="suffix"/>.</returns>
+        public static string EnsureEndsWith(this string value, string suffix)
+        {
+            return value.EndsWith(suffix) ? value : value + suffix;
+        }
+
+        /// <summary>
+        /// Ensure specified string ends with specified suffix.
+        /// </summary>
+        /// <param name="value">The string value.</param>
+        /// <param name="suffix">The suffix.</param>
+        /// <returns>A value that starts with <paramref name="value"/> and ends with <paramref name="suffix"/>.</returns>
+        public static string EnsureEndsWith(this string value, char suffix)
+        {
+            return value.EndsWith(suffix) ? value : value + suffix;
+        }
+
         private static string Substring(string? value, int length, bool fromLeft)
         {
             if (value == null || value.Length == 0 || length <= 0)

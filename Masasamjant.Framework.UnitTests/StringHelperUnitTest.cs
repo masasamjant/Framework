@@ -267,5 +267,27 @@ namespace Masasamjant
             Assert.IsTrue(StringHelper.IsFalseString("FALSE"));
             Assert.IsTrue(StringHelper.IsFalseString("FalsE"));
         }
+
+        [TestMethod]
+        public void Test_EnsureStartsWith()
+        {
+            Assert.AreEqual(".Home", StringHelper.EnsureStartsWith(".Home", '.'));
+            Assert.AreEqual(".Home", StringHelper.EnsureStartsWith("Home", '.'));
+            Assert.AreEqual("...Home", StringHelper.EnsureStartsWith("...Home", "..."));
+            Assert.AreEqual("...Home", StringHelper.EnsureStartsWith("Home", "..."));
+            Assert.AreEqual("...", StringHelper.EnsureStartsWith("...", "..."));
+            Assert.AreEqual("...", StringHelper.EnsureStartsWith("", "..."));
+        }
+
+        [TestMethod]
+        public void Test_EnsureEndsWith()
+        {
+            Assert.AreEqual("Home.", StringHelper.EnsureEndsWith("Home.", '.'));
+            Assert.AreEqual("Home.", StringHelper.EnsureEndsWith("Home", '.'));
+            Assert.AreEqual("Home...", StringHelper.EnsureEndsWith("Home...", "..."));
+            Assert.AreEqual("Home...", StringHelper.EnsureEndsWith("Home", "..."));
+            Assert.AreEqual("...", StringHelper.EnsureEndsWith("...", "..."));
+            Assert.AreEqual("...", StringHelper.EnsureEndsWith("", "..."));
+        }
     }
 }
