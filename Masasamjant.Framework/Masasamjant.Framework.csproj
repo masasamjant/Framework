@@ -35,6 +35,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Resources\Files\MimesResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MimesResource.resx</DependentUpon>
+    </Compile>
     <Compile Update="Resources\Strings\BooleanOptionResource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -73,6 +78,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Resources\Files\MimesResource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MimesResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\Strings\BooleanOptionResource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>BooleanOptionResource.Designer.cs</LastGenOutput>
