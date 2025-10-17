@@ -6,7 +6,7 @@ namespace Masasamjant.Security
     /// <summary>
     /// Provides encryption and decryption of streams using AES algorithm.
     /// </summary>
-    public sealed class AesStreamCryptography : IStreamCryptography
+    public sealed class AesStreamCryptography : IStreamCryptography, IStreamCryptography<AesCryptoKey>
     {
         private static readonly HashAlgorithmName DefaultHashAlgorithmName = HashAlgorithmName.SHA384;
         private static readonly int DefaultIterations = 1000000;
@@ -49,15 +49,35 @@ namespace Masasamjant.Security
         /// <exception cref="InvalidOperationException">If stream encryption fails.</exception>
         public async Task EncryptAsync(Stream sourceStream, Stream destinationStream, string password, Salt salt, CancellationToken cancellationToken = default)
         {
-            ValidatePassword(password);
+            await EncryptAsync(sourceStream, destinationStream, CreateCryptoKey(password, salt), cancellationToken);
+        }
+
+        /// <summary>
+        /// Encrypt data from specified source stream to specified destination stream.
+        /// </summary>
+        /// <param name="sourceStream">The source stream containing data to encrypt.</param>
+        /// <param name="destinationStream">The destination stream to contain encrypted data.</param>
+        /// <param name="key">The crypto key.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A task representing encryption.</returns>
+        /// <exception cref="ArgumentException">
+        /// If <paramref name="destinationStream"/> is same as <paramref name="sourceStream"/>.
+        /// -or-
+        /// If <paramref name="sourceStream"/> or <paramref name="destinationStream"/> is crypto stream.
+        /// -or-
+        /// If <paramref name="sourceStream"/> is not readable.
+        /// -or-
+        /// If <paramref name="destinationStream"/> is not writable.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">If stream encryption fails.</exception>
+        public async Task EncryptAsync(Stream sourceStream, Stream destinationStream, AesCryptoKey key, CancellationToken cancellationToken = default)
+        {
             ValidateStreams(sourceStream, destinationStream);
 
             try
             {
-                var (key, iv) = GetKey(password, salt, iterations, hashAlgorithmName);
-
                 using (var aes = Aes.Create())
-                using (var encryptor = aes.CreateEncryptor(key, iv))
+                using (var encryptor = aes.CreateEncryptor(key.Key, key.IV))
                 {
                     CryptoStream? cs = null;
 
@@ -109,15 +129,35 @@ namespace Masasamjant.Security
         /// <exception cref="InvalidOperationException">If stream decryption fails.</exception>
         public async Task DecryptAsync(Stream sourceStream, Stream destinationStream, string password, Salt salt, CancellationToken cancellationToken = default)
         {
-            ValidatePassword(password);
+            await DecryptAsync(sourceStream, destinationStream, CreateCryptoKey(password, salt), cancellationToken);
+        }
+
+        /// <summary>
+        /// Decrypt data from specified source stream to specified destination stream.
+        /// </summary>
+        /// <param name="sourceStream">The source stream containing encrypted data.</param>
+        /// <param name="destinationStream">The destination stream to contain decrypted data.</param>
+        /// <param name="key">The crypto key.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A task representing decryption.</returns>
+        /// <exception cref="ArgumentException">
+        /// If <paramref name="destinationStream"/> is same as <paramref name="sourceStream"/>.
+        /// -or-
+        /// If <paramref name="sourceStream"/> or <paramref name="destinationStream"/> is crypto stream.
+        /// -or-
+        /// If <paramref name="sourceStream"/> is not readable.
+        /// -or-
+        /// If <paramref name="destinationStream"/> is not writable.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">If stream encryption fails.</exception>
+        public async Task DecryptAsync(Stream sourceStream, Stream destinationStream, AesCryptoKey key, CancellationToken cancellationToken = default)
+        {
             ValidateStreams(sourceStream, destinationStream);
 
             try
             {
-                var (key, iv) = GetKey(password, salt, iterations, hashAlgorithmName);
-
                 using (var aes = Aes.Create())
-                using (var decryptor = aes.CreateDecryptor(key, iv))
+                using (var decryptor = aes.CreateDecryptor(key.Key, key.IV))
                 {
                     CryptoStream? cs = null;
 
@@ -147,6 +187,15 @@ namespace Masasamjant.Security
             }
         }
 
+        /// <summary>
+        /// Creates new <see cref="AesCryptoKey"/> instance from specified password and salt.
+        /// </summary>
+        /// <param name="password">The password.</param>
+        /// <param name="salt">The salt.</param>
+        /// <returns>A <see cref="AesCryptoKey"/>.</returns>
+        /// <exception cref="ArgumentNullException">If value of <paramref name="password"/> is empty or only whitespace.</exception>
+        public AesCryptoKey CreateCryptoKey(string password, Salt salt) => new(password, salt, iterations, hashAlgorithmName);
+
         private static void ValidateStreams(Stream sourceStream, Stream destinationStream) 
         {
             if (ReferenceEquals(sourceStream, destinationStream))
@@ -163,22 +212,6 @@ namespace Masasamjant.Security
 
             if (!destinationStream.CanWrite)
                 throw new ArgumentException("The destination stream is not writable.", nameof(destinationStream));
-        }
-
-        private static (byte[] Key, byte[] IV) GetKey(string password, Salt salt, int iterations, HashAlgorithmName hashAlgorithmName)
-        {
-            using (var derivedBytes = new Rfc2898DeriveBytes(password, salt.ToBytes(), iterations, hashAlgorithmName))
-            {
-                var key = derivedBytes.GetBytes(32);
-                var iv = derivedBytes.GetBytes(16);
-                return (key, iv);
-            }
-        }
-
-        private static void ValidatePassword(string password)
-        {
-            if (string.IsNullOrWhiteSpace(password))
-                throw new ArgumentNullException(nameof(password), "The password is empty or only whitespace.");
         }
     }
 }

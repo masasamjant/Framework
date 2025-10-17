@@ -7,7 +7,7 @@ namespace Masasamjant.Security
     /// <summary>
     /// Represents component that provides encryption and decryption of data using AES algorithm.
     /// </summary>
-    public sealed class AesDataCryptography : IDataCryptography
+    public sealed class AesDataCryptography : IDataCryptography, IDataCryptography<AesCryptoKey>
     {
         private readonly AesStreamCryptography cryptography;
 
@@ -34,15 +34,28 @@ namespace Masasamjant.Security
         /// <exception cref="InvalidOperationException">If data decryption fails.</exception>
         public async Task<byte[]> DecryptDataAsync(byte[] cipherData, string password, Salt salt, CancellationToken cancellationToken = default)
         {
+            return await DecryptDataAsync(cipherData, CreateCryptoKey(password, salt), cancellationToken);
+        }
+
+        /// <summary>
+        /// Decrypt specified cipher data.
+        /// </summary>
+        /// <param name="cipherData">The cipher data to decrypt.</param>
+        /// <param name="key">The crypto key.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A task representing decryption and when completed contains decrypted data.</returns>
+        /// <exception cref="InvalidOperationException">If data decryption fails.</exception>
+        public async Task<byte[]> DecryptDataAsync(byte[] cipherData, AesCryptoKey key, CancellationToken cancellationToken = default)
+        {
             if (cipherData.Length == 0)
                 return [];
 
             try
             {
                 using (var sourceStream = new MemoryStream(cipherData))
-                using (var destinationStream = new MemoryStream()) 
+                using (var destinationStream = new MemoryStream())
                 {
-                    await cryptography.DecryptAsync(sourceStream, destinationStream, password, salt, cancellationToken);
+                    await cryptography.DecryptAsync(sourceStream, destinationStream, key, cancellationToken);
                     return destinationStream.ToArray();
                 }
             }
@@ -65,13 +78,27 @@ namespace Masasamjant.Security
         /// <exception cref="InvalidOperationException">If string encryption fails.</exception>
         public async Task<string> DecryptStringAsync(string cipherData, string password, Salt salt, Encoding? encoding = null, CancellationToken cancellationToken = default)
         {
+            return await DecryptStringAsync(cipherData, CreateCryptoKey(password, salt), encoding, cancellationToken);
+        }
+
+        /// <summary>
+        /// Decrypt specified cipher string.
+        /// </summary>
+        /// <param name="cipherData">The cipher string to decrypt.</param>
+        /// <param name="key">The crypto key.</param>
+        /// <param name="encoding">The encoding or <c>null</c> to use unicode encoding.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A task representing decryption and when completed contains decrypted string.</returns>
+        /// <exception cref="InvalidOperationException">If string encryption fails.</exception>
+        public async Task<string> DecryptStringAsync(string cipherData, AesCryptoKey key, Encoding? encoding = null, CancellationToken cancellationToken = default)
+        {
             if (string.IsNullOrWhiteSpace(cipherData))
                 return cipherData;
 
             try
             {
                 byte[] cipherBytes = Convert.FromBase64String(cipherData);
-                byte[] clearBytes = await DecryptDataAsync(cipherBytes, password, salt, cancellationToken);
+                byte[] clearBytes = await DecryptDataAsync(cipherBytes, key, cancellationToken);
                 if (encoding == null)
                     encoding = Encoding.Unicode;
                 return encoding.GetString(clearBytes);
@@ -94,6 +121,19 @@ namespace Masasamjant.Security
         /// <exception cref="InvalidOperationException">If data encryption fails.</exception>
         public async Task<byte[]> EncryptDataAsync(byte[] clearData, string password, Salt salt, CancellationToken cancellationToken = default)
         {
+            return await EncryptDataAsync(clearData, CreateCryptoKey(password, salt), cancellationToken);
+        }
+
+        /// <summary>
+        /// Encrypt specified clear data.
+        /// </summary>
+        /// <param name="clearData">The clear data to encrypt.</param>
+        /// <param name="key">The crypto key.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A task representing encryption and when completed contains encrypted data.</returns>
+        /// <exception cref="InvalidOperationException">If data encryption fails.</exception>
+        public async Task<byte[]> EncryptDataAsync(byte[] clearData, AesCryptoKey key, CancellationToken cancellationToken = default)
+        {
             if (clearData.Length == 0)
                 return [];
 
@@ -102,7 +142,7 @@ namespace Masasamjant.Security
                 using (var sourceStream = new MemoryStream(clearData))
                 using (var destinationStream = new MemoryStream())
                 {
-                    await cryptography.EncryptAsync(sourceStream, destinationStream, password, salt, cancellationToken);
+                    await cryptography.EncryptAsync(sourceStream, destinationStream, key, cancellationToken);
                     return destinationStream.ToArray();
                 }
             }
@@ -125,13 +165,27 @@ namespace Masasamjant.Security
         /// <exception cref="InvalidOperationException">If string encryption fails.</exception>
         public async Task<string> EncryptStringAsync(string clearData, string password, Salt salt, Encoding? encoding = null, CancellationToken cancellationToken = default)
         {
+            return await EncryptStringAsync(clearData, CreateCryptoKey(password, salt), encoding, cancellationToken);
+        }
+
+        /// <summary>
+        /// Encrypt specified clear string.
+        /// </summary>
+        /// <param name="clearData">The clear string to encrypt.</param>
+        /// <param name="key">The crypto key.</param>
+        /// <param name="encoding">The encoding or <c>null</c> to use unicode encoding.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A task representing encryption and when completed contains encrypted string.</returns>
+        /// <exception cref="InvalidOperationException">If string encryption fails.</exception>
+        public async Task<string> EncryptStringAsync(string clearData, AesCryptoKey key, Encoding? encoding = null, CancellationToken cancellationToken = default)
+        {
             if (string.IsNullOrWhiteSpace(clearData))
                 return clearData;
 
             try
             {
                 byte[] clearBytes = clearData.GetByteArray(encoding);
-                byte[] cipherBytes = await EncryptDataAsync(clearBytes, password, salt, cancellationToken);
+                byte[] cipherBytes = await EncryptDataAsync(clearBytes, key, cancellationToken);
                 return Convert.ToBase64String(cipherBytes);
             }
             catch (Exception exception)
@@ -139,5 +193,14 @@ namespace Masasamjant.Security
                 throw new NotImplementedException("The string encryption failed. See inner exception for details.", exception);
             }
         }
+
+        /// <summary>
+        /// Creates new <see cref="AesCryptoKey"/> instance from specified password and salt.
+        /// </summary>
+        /// <param name="password">The password.</param>
+        /// <param name="salt">The salt.</param>
+        /// <returns>A <see cref="AesCryptoKey"/>.</returns>
+        /// <exception cref="ArgumentNullException">If value of <paramref name="password"/> is empty or only whitespace.</exception>
+        public AesCryptoKey CreateCryptoKey(string password, Salt salt) => cryptography.CreateCryptoKey(password, salt);
     }
 }

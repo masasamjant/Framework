@@ -18,7 +18,7 @@ namespace Masasamjant.Security
             await cryptography.EncryptAsync(sourceFile, destinationFile, password, salt, true);
             var content2 = File.ReadAllText(destinationFile);
             Assert.AreNotEqual(content, content2);
-            await cryptography.DencryptAsync(destinationFile, sourceFile, password, salt, true);
+            await cryptography.DecryptAsync(destinationFile, sourceFile, password, salt, true);
             content2 = File.ReadAllText(sourceFile);
             Assert.AreEqual(content, content2);
             File.Delete(sourceFile);
