@@ -24,6 +24,10 @@ namespace Masasamjant.Security
             : base(password, salt, iterations.GetValueOrDefault(DefaultIterations), hashAlgorithmName.GetValueOrDefault(DefaultHashAlgorithmName))
         { }
 
+        internal AesCryptoKey(byte[] key, byte[] iv)
+            : base(key, iv) 
+        { }
+
         /// <summary>
         /// Creates key and initialization vector bytes for AES algorithm
         /// </summary>
@@ -39,6 +43,47 @@ namespace Masasamjant.Security
                 var key = derivedBytes.GetBytes(32);
                 var iv = derivedBytes.GetBytes(16);
                 return (key, iv);
+            }
+        }
+
+        /// <summary>
+        /// Export <see cref="AesCryptoKey"/> to specified file.
+        /// </summary>
+        /// <param name="key">The key to export.</param>
+        /// <param name="filePath">The file to save exported key.</param>
+        /// <returns>A task representing export.</returns>
+        /// <exception cref="ArgumentException">If file specified by <paramref name="filePath"/> already exist.</exception>
+        /// <exception cref="InvalidOperationException">If export operation fails.</exception>
+        /// <remarks>It is responsibility of the caller to ensure file is secured.</remarks>
+        public static async Task ExportAsync(AesCryptoKey key, string filePath)
+        {
+            if (File.Exists(filePath))
+                throw new ArgumentException("The file already exist.", nameof(filePath));
+
+            using (var stream = new FileStream(filePath, FileMode.CreateNew, FileAccess.Write))
+            {
+                var export = new AesCryptoKeyExport();
+                await export.ExportAsync(key, stream);
+                await stream.FlushAsync();
+            }
+        }
+
+        /// <summary>
+        /// Import <see cref="AesCryptoKey"/> from specified file.
+        /// </summary>
+        /// <param name="filePath">The file to import.</param>
+        /// <returns>A imported <see cref="AesCryptoKey"/>.</returns>
+        /// <exception cref="FileNotFoundException">If file specified by <paramref name="filePath"/> not exist.</exception>
+        /// <exception cref="InvalidOperationException">If import operation fails.</exception>
+        public static async Task<AesCryptoKey> ImportAsync(string filePath)
+        {
+            if (!File.Exists(filePath))
+                throw new FileNotFoundException("File not found.", filePath);
+
+            using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            { 
+                var import = new AesCryptoKeyImport();
+                return await import.ImportAsync(stream);
             }
         }
     }
