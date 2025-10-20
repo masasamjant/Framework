@@ -15,15 +15,35 @@ namespace Masasamjant.Security
             var password = "Good4Life!";
             var salt = new Salt("KickMe", provider);
             byte[] clearData = Encoding.Unicode.GetBytes("Mikki Hiiri");
+            
             var sourceStream = new MemoryStream(clearData);
             var destinationStream = new MemoryStream();
+            
             await cryptography.EncryptAsync(sourceStream, destinationStream, password, salt);
             byte[] cipherData = destinationStream.ToArray();
             CollectionAssert.AreNotEqual(clearData, cipherData);
             sourceStream = new MemoryStream(cipherData);
             destinationStream = new MemoryStream();
+
+            cryptography = new AesStreamCryptography(iterations: 1000);
             await cryptography.DecryptAsync(sourceStream, destinationStream, password, salt);
             byte[] clearData2 = destinationStream.ToArray();
+            CollectionAssert.AreEqual(clearData, clearData2);
+
+            var cryptoKey = new AesCryptoKey(password, salt);
+
+            sourceStream = new MemoryStream(clearData);
+            destinationStream = new MemoryStream();
+
+            await cryptography.EncryptAsync(sourceStream, destinationStream, cryptoKey);
+            cipherData = destinationStream.ToArray();
+            CollectionAssert.AreNotEqual(clearData, cipherData);
+            sourceStream = new MemoryStream(cipherData);
+            destinationStream = new MemoryStream();
+
+            cryptography = new AesStreamCryptography(iterations: 1000);
+            await cryptography.DecryptAsync(sourceStream, destinationStream, cryptoKey);
+            clearData2 = destinationStream.ToArray();
             CollectionAssert.AreEqual(clearData, clearData2);
         }
 

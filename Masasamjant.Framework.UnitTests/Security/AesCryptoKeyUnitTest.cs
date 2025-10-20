@@ -12,12 +12,31 @@ namespace Masasamjant.Security
             var salt = new Salt("Test", new Base64SHA256Provider());
             Assert.ThrowsException<ArgumentNullException>(() => new AesCryptoKey("", salt));
             Assert.ThrowsException<ArgumentNullException>(() => new AesCryptoKey("  ", salt));
+            
             var cryptoKey = new AesCryptoKey("Testing", salt, iterations: CryptoKey.MinIterations);
             Assert.AreEqual(32, cryptoKey.Key.Length);
             Assert.AreEqual(16, cryptoKey.IV.Length);
+
+            var key = cryptoKey.Key;
+            var iv = cryptoKey.IV;
+            Assert.IsFalse(ReferenceEquals(key, cryptoKey.Key));
+            Assert.IsFalse(ReferenceEquals(iv, cryptoKey.IV));
+
             var cryptoKey2 = new AesCryptoKey("Testing", salt, iterations: CryptoKey.MinIterations);
             CollectionAssert.AreEqual(cryptoKey.Key, cryptoKey2.Key);
             CollectionAssert.AreEqual(cryptoKey.IV, cryptoKey2.IV);
+        }
+
+        [TestMethod]
+        public void Test_Dispose()
+        {
+            var salt = new Salt("Test", new Base64SHA256Provider());
+            var cryptoKey = new AesCryptoKey("Testing", salt, iterations: CryptoKey.MinIterations);
+            Assert.IsTrue(cryptoKey.Key.Length > 0);
+            Assert.IsTrue(cryptoKey.IV.Length > 0);
+            cryptoKey.Dispose();
+            Assert.IsTrue(cryptoKey.Key.Length == 0);
+            Assert.IsTrue(cryptoKey.IV.Length == 0);
         }
 
         [TestMethod]

@@ -5,8 +5,12 @@ namespace Masasamjant.Security.Abstractions
     /// <summary>
     /// Represents cryptography key created from password and salt.
     /// </summary>
-    public abstract class CryptoKey
+    public abstract class CryptoKey : IDisposable
     {
+        private byte[] key;
+        private byte[] iv;
+        private bool disposed;
+
         /// <summary>
         /// Minimum iterations to compute key.
         /// </summary>
@@ -27,8 +31,8 @@ namespace Masasamjant.Security.Abstractions
                 throw new ArgumentNullException(nameof(password), "The password is empty or only whitespace.");
 
             var (key, iv) = GenerateKey(password, salt, Math.Max(MinIterations, iterations), hashAlgorithmName);
-            Key = key;
-            IV = iv;
+            this.key = key;
+            this.iv = iv;
         }
 
         /// <summary>
@@ -38,19 +42,55 @@ namespace Masasamjant.Security.Abstractions
         /// <param name="iv">The initialization vector bytes.</param>
         protected CryptoKey(byte[] key, byte[] iv)
         {
-            Key = key;
-            IV = iv;
+            this.key = (byte[])key.Clone();
+            this.iv = (byte[])iv.Clone();
+        }
+
+        /// <summary>
+        /// Finalize current instance.
+        /// </summary>
+        ~CryptoKey()
+        {
+            Dispose(false);
         }
 
         /// <summary>
         /// Gets the key bytes.
         /// </summary>
-        public byte[] Key { get; }
+        public byte[] Key
+        {
+            get { return (byte[])key.Clone(); }
+        }
 
         /// <summary>
         /// Gets the initialization vector bytes.
         /// </summary>
-        public byte[] IV { get; }
+        public byte[] IV
+        {
+            get { return (byte[])iv.Clone(); }
+        }
+
+        /// <summary>
+        /// Disposes current instance.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Disposes current instance.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> if disposing; <c>false</c> otherwise.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+            disposed = true;
+            key = [];
+            iv = [];
+        }
 
         /// <summary>
         /// Derived classes must override to create key and initialization vector bytes.
