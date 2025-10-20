@@ -70,7 +70,7 @@ namespace Masasamjant.IO
         /// </summary>
         /// <param name="text">The text to write to file.</param>
         /// <returns>A full path to temporary file.</returns>
-        public static string CreateTempFile(string? text)
+        public static string CreateTempTextFile(string? text)
         {
             var filePath = Path.GetTempFileName();
 
@@ -83,6 +83,17 @@ namespace Masasamjant.IO
                 }
             }
 
+            return filePath;
+        }
+
+        /// <summary>
+        /// Create path to temp file that does not exist.
+        /// </summary>
+        /// <returns>A full path to temporary file that does not exist.</returns>
+        public static string CreateTempFilePath()
+        {
+            var filePath = Path.GetTempFileName();
+            TryDeleteFile(filePath);
             return filePath;
         }
 

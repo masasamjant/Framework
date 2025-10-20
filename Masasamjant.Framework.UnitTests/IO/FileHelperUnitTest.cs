@@ -36,17 +36,17 @@ namespace Masasamjant.IO
         [TestMethod]
         public void Test_CreateTempFile()
         {
-            var tempFilePath = FileHelper.CreateTempFile((string?)null);
+            var tempFilePath = FileHelper.CreateTempTextFile((string?)null);
             Assert.IsTrue(File.Exists(tempFilePath));
             Assert.IsTrue(FileHelper.IsEmptyFile(tempFilePath));
             File.Delete(tempFilePath);
 
-            tempFilePath = FileHelper.CreateTempFile("");
+            tempFilePath = FileHelper.CreateTempTextFile("");
             Assert.IsTrue(File.Exists(tempFilePath));
             Assert.IsTrue(FileHelper.IsEmptyFile(tempFilePath));
             File.Delete(tempFilePath);
 
-            tempFilePath = FileHelper.CreateTempFile("Text");
+            tempFilePath = FileHelper.CreateTempTextFile("Text");
             Assert.IsTrue(File.Exists(tempFilePath));
             Assert.AreEqual("Text", File.ReadAllText(tempFilePath));
             File.Delete(tempFilePath);
@@ -142,7 +142,7 @@ namespace Masasamjant.IO
             Assert.ThrowsException<ArgumentNullException>(() => FileHelper.CopyToTempFile(""));
             Assert.ThrowsException<ArgumentNullException>(() => FileHelper.CopyToTempFile("  "));
             Assert.ThrowsException<FileNotFoundException>(() => FileHelper.CopyToTempFile(NotExistFile));
-            var sourceFile = FileHelper.CreateTempFile("Content");
+            var sourceFile = FileHelper.CreateTempTextFile("Content");
             var tempFilePath = FileHelper.CopyToTempFile(sourceFile);
             Assert.IsTrue(File.Exists(tempFilePath));
             Assert.IsFalse(FileHelper.IsEmptyFile(tempFilePath));
@@ -154,7 +154,7 @@ namespace Masasamjant.IO
         [TestMethod]
         public async Task Test_CopyToTempFileAsync()
         {
-            var sourceFile = FileHelper.CreateTempFile("Content");
+            var sourceFile = FileHelper.CreateTempTextFile("Content");
             var tempFilePath = await FileHelper.CopyToTempFileAsync(sourceFile);
             Assert.IsTrue(File.Exists(tempFilePath));
             Assert.IsFalse(FileHelper.IsEmptyFile(tempFilePath));
@@ -191,6 +191,13 @@ namespace Masasamjant.IO
             Assert.ThrowsException<ArgumentNullException>(() => FileHelper.CreateTempDirectory(""));
             Assert.ThrowsException<ArgumentNullException>(() => FileHelper.CreateTempDirectory("   "));
             Assert.ThrowsException<DirectoryNotFoundException>(() => FileHelper.CreateTempDirectory(@"C:\NOTEXISTS"));
+        }
+
+        [TestMethod]
+        public void Test_CreateTempFilePath()
+        {
+            var tempFilePath = FileHelper.CreateTempFilePath();
+            Assert.IsFalse(File.Exists(tempFilePath));
         }
     }
 }

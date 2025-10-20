@@ -18,7 +18,7 @@ namespace Masasamjant.IO
                 Assert.IsTrue(ReferenceEquals(stream, ms));
             }
 
-            var tempFilePath = FileHelper.CreateTempFile("Testing");
+            var tempFilePath = FileHelper.CreateTempTextFile("Testing");
 
             using (var context = new DisposableContext())
             {
@@ -45,7 +45,7 @@ namespace Masasamjant.IO
                 Assert.IsTrue(ReferenceEquals(stream, ms));
             }
 
-            var tempFilePath = FileHelper.CreateTempFile("Testing");
+            var tempFilePath = FileHelper.CreateTempTextFile("Testing");
 
             using (var context = new DisposableContext())
             {
@@ -64,7 +64,7 @@ namespace Masasamjant.IO
         [TestMethod]
         public void Test_ToBytes()
         {
-            var tempFilePath = FileHelper.CreateTempFile("Testing");
+            var tempFilePath = FileHelper.CreateTempTextFile("Testing");
             
             using (var context = new DisposableContext())
             {
@@ -81,7 +81,7 @@ namespace Masasamjant.IO
         [TestMethod]
         public async Task Test_ToBytesAsync()
         {
-            var tempFilePath = FileHelper.CreateTempFile("Testing");
+            var tempFilePath = FileHelper.CreateTempTextFile("Testing");
 
             using (var context = new DisposableContext())
             {

@@ -13,7 +13,7 @@ namespace Masasamjant.Security
             var password = "Good4Life!";
             var salt = new Salt("KickMe", provider);
             var content = "Mikki Hiiri";
-            var sourceFile = FileHelper.CreateTempFile(content);
+            var sourceFile = FileHelper.CreateTempTextFile(content);
             var destinationFile = Path.GetTempFileName();
             await cryptography.EncryptAsync(sourceFile, destinationFile, password, salt, true);
             var content2 = File.ReadAllText(destinationFile);

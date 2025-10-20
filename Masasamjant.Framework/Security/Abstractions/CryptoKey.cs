@@ -7,7 +7,10 @@ namespace Masasamjant.Security.Abstractions
     /// </summary>
     public abstract class CryptoKey
     {
-        private static readonly int MinIterations = 1000;
+        /// <summary>
+        /// Minimum iterations to compute key.
+        /// </summary>
+        public const int MinIterations = 1000;
 
         /// <summary>
         /// Initializes new instance of the <see cref="CryptoKey"/> class.
