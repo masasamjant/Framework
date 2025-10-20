@@ -6,6 +6,11 @@
     public interface IStringHashProvider
     {
         /// <summary>
+        /// Gets the name of algorithm.
+        /// </summary>
+        string Algorithm { get; }
+
+        /// <summary>
         /// Create hash from specified string value.
         /// </summary>
         /// <param name="value">The string value.</param>
