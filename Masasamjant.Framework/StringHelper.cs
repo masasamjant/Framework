@@ -594,6 +594,23 @@ namespace Masasamjant
             return value.EndsWith(suffix) ? value : value + suffix;
         }
 
+        /// <summary>
+        /// Check if specified string consist only from unicode letters and ASCII digits from 0 to 9.
+        /// </summary>
+        /// <param name="value">The string value.</param>
+        /// <returns><c>true</c> if each character of <paramref name="value"/> are unicode letter or ASCII digit; <c>false</c> if not or if empty.</returns>
+        public static bool ContainsOnlyLettersAndNumbers(string value)
+        {
+            if (value.Length == 0)
+                return false;
+
+            foreach (char c in value)
+                if (!c.IsNumberOrLetter())
+                    return false;
+
+            return true;
+        }
+
         private static string Substring(string? value, int length, bool fromLeft)
         {
             if (value == null || value.Length == 0 || length <= 0)

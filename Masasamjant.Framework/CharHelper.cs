@@ -73,5 +73,13 @@ namespace Masasamjant
         /// <returns><c>true</c> if suitable separator was found; <c>false</c> otherwise.</returns>
         public static bool TryGetCommonSeparator(IEnumerable<string> values, [NotNullWhen(true)] out char? separator)
             => TryGetSeparator(values, CommonSeparators, out separator);
+
+        /// <summary>
+        /// Check if character is unicode letter or ASCII digit from 0 to 9.
+        /// </summary>
+        /// <param name="c">The character.</param>
+        /// <returns><c>true</c> if <paramref name="c"/> is unicode letter or ASCII digit; <c>false</c> otherwise.</returns>
+        public static bool IsNumberOrLetter(this char c)
+            => char.IsLetter(c) || char.IsAsciiDigit(c);
     }
 }

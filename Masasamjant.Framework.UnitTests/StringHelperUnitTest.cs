@@ -289,5 +289,21 @@ namespace Masasamjant
             Assert.AreEqual("...", StringHelper.EnsureEndsWith("...", "..."));
             Assert.AreEqual("...", StringHelper.EnsureEndsWith("", "..."));
         }
+
+        [TestMethod]
+        public void Test_ContainsOnlyLettersAndNumbers()
+        {
+            string a = "abcdefghijklmnopqrstuvwxyzäöå";
+            string b = a.ToUpperInvariant();
+            string c = "0123456789";
+            string d = " ";
+            string f = "!@£#$¤%&{}()[]=+?*¨^~";
+            Assert.IsFalse(StringHelper.ContainsOnlyLettersAndNumbers(""));
+            Assert.IsTrue(StringHelper.ContainsOnlyLettersAndNumbers(a));
+            Assert.IsTrue(StringHelper.ContainsOnlyLettersAndNumbers(b));
+            Assert.IsTrue(StringHelper.ContainsOnlyLettersAndNumbers(c));
+            Assert.IsFalse(StringHelper.ContainsOnlyLettersAndNumbers(d));
+            Assert.IsFalse(StringHelper.ContainsOnlyLettersAndNumbers(f));
+        }
     }
 }

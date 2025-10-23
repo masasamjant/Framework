@@ -1,4 +1,6 @@
-﻿namespace Masasamjant
+﻿using Masasamjant.Collections;
+
+namespace Masasamjant
 {
     [TestClass]
     public class CharHelperUnitTest : UnitTest
@@ -42,6 +44,21 @@
             Assert.IsTrue(CharHelper.TryGetSeparator(values, separators, out separator));
             Assert.IsTrue(separator.HasValue);
             Assert.AreEqual('A', separator.Value);
+        }
+
+        [TestMethod]
+        public void Test_IsNumberOrLetter()
+        {
+            string a = "abcdefghijklmnopqrstuvwxyzäöå";
+            string b = a.ToUpperInvariant();
+            string c = "0123456789";
+            string d = " ";
+            string f = "!@£#$¤%&{}()[]=+?*¨^~";
+            a.ForEach(x => Assert.IsTrue(CharHelper.IsNumberOrLetter(x)));
+            b.ForEach(x => Assert.IsTrue(CharHelper.IsNumberOrLetter(x)));
+            c.ForEach(x => Assert.IsTrue(CharHelper.IsNumberOrLetter(x)));
+            d.ForEach(x => Assert.IsFalse(CharHelper.IsNumberOrLetter(x)));
+            f.ForEach(x => Assert.IsFalse(CharHelper.IsNumberOrLetter(x)));
         }
     }
 }

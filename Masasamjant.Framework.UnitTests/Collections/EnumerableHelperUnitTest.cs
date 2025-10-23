@@ -84,5 +84,18 @@
                     CollectionAssert.AreEqual(new int[] { f }, arr);
             }
         }
+
+        [TestMethod]
+        public void Test_Unique()
+        {
+            var source = new List<object>();
+            object a = new object();
+            object b = a;
+            source.Add(a);
+            source.Add(b);
+            var result = EnumerableHelper.Unique(source).ToArray();
+            Assert.AreEqual(1, result.Length);
+            CollectionAssert.AreEqual(new object[] { a }, result);
+        }
     }
 }

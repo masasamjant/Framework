@@ -180,5 +180,24 @@ namespace Masasamjant.Collections
         /// <returns>A paging <see cref="IEnumerable{T}"/>.</returns>
         public static IEnumerable<T> Page<T>(this IEnumerable<T> source, PageInfo page, bool calculateTotalCount = false)
             => QueryableHelper.Page(source.AsQueryable(), page, calculateTotalCount);
+
+        /// <summary>
+        /// Get unique items from specified <see cref="IEnumerable{T}"/>.
+        /// </summary>
+        /// <typeparam name="T">The type of the item.</typeparam>
+        /// <param name="source">The source <see cref="IEnumerable{T}"/>.</param>
+        /// <param name="equalityComparer">The <see cref="IEqualityComparer{T}"/> or <c>null</c> to use default one.</param>
+        /// <returns>A unique items from <paramref name="source"/>.</returns>
+        public static IEnumerable<T> Unique<T>(this IEnumerable<T> source, IEqualityComparer<T>? equalityComparer = null)
+        {
+            equalityComparer ??= EqualityComparer<T>.Default;
+
+            var set = new HashSet<T>(equalityComparer);
+
+            foreach (var item in source)
+                set.Add(item);
+
+            return set;
+        }
     }
 }
