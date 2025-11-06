@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using Masasamjant.Collections;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace Masasamjant.Reflection
@@ -180,6 +181,10 @@ namespace Masasamjant.Reflection
             else
                 property = instance.GetType().GetProperty(propertyName, bindingFlags);
 
+            // Check if property should be ignored in reflection.
+            if (property != null && property.HasIngorePropertyAttribute())
+                return null;
+
             return property;
         }
 
@@ -215,31 +220,137 @@ namespace Masasamjant.Reflection
                 owner = property != null ? instance : null;
             }
 
+            // Check if property should be ignored in reflection.
+            if (property != null && property.HasIngorePropertyAttribute())
+            {
+                owner = null;
+                return null;
+            }
+
             return property;
         }
 
+        /// <summary>
+        /// Gets property value.
+        /// </summary>
+        /// <param name="instance">The instance to get property.</param>
+        /// <param name="propertyName">The property name.</param>
+        /// <param name="allowNonPublic"><c>true</c> allow using non-public property; <c>false</c> otherwise.</param>
+        /// <returns>A property value or <c>null</c>.</returns>
+        /// <exception cref="ArgumentNullException">If value of <paramref name="propertyName"/> is empty or only whitespace.</exception>
         public static object? GetPropertyValue(object instance, string propertyName, bool allowNonPublic = false)
         {
-            var propertySupport = allowNonPublic ? PropertySupport.PublicGetter | PropertySupport.NonPublicGetter : PropertySupport.PublicGetter;
+            var propertySupport = allowNonPublic ? PropertySupport.Public | PropertySupport.NonPublic : PropertySupport.Public;
+            propertySupport |= PropertySupport.Getter;
+
             var property = GetProperty(instance, propertyName, propertySupport, out var owner);
             if (property == null)
                 return null;
             return property.GetValue(owner);
         }
 
+        /// <summary>
+        /// Sets property value.
+        /// </summary>
+        /// <param name="instance">The instance to set property.</param>
+        /// <param name="propertyName">The property name.</param>
+        /// <param name="value">The value to set.</param>
+        /// <param name="allowNonPublic"><c>true</c> to allow using non-public property; <c>false</c> otherwise.</param>
+        /// <exception cref="ArgumentNullException">If value of <paramref name="propertyName"/> is empty or only whitespace.</exception>
+        /// <exception cref="TargetInvocationException">If invocation of property setter fails.</exception>
         public static void SetPropertyValue(object instance, string propertyName, object? value, bool allowNonPublic = false)
         {
-            var propertySupport = allowNonPublic ? PropertySupport.PublicSetter | PropertySupport.NonPublicSetter : PropertySupport.PublicSetter;
+            var propertySupport = allowNonPublic ? PropertySupport.Public | PropertySupport.NonPublic : PropertySupport.Public;
+            propertySupport |= PropertySupport.Setter;
+
             var property = GetProperty(instance, propertyName, propertySupport, out var owner);
             if (property == null)
                 return;
-            property.SetValue(owner, value);
+            try
+            {
+                property.SetValue(owner, value);
+            }
+            catch (Exception exception)
+            {
+                throw new TargetInvocationException($"Invoking setter of '{propertyName}' property failed. See inner exception.", exception);
+            }
         }
 
+        /// <summary>
+        /// Invoke method of specified object instance.
+        /// </summary>
+        /// <param name="instance">The instance to invoke method.</param>
+        /// <param name="methodName">The method name.</param>
+        /// <param name="parameters">The method parameters.</param>
+        /// <returns>A result of method invoke.</returns>
+        /// <exception cref="ArgumentNullException">If value of <paramref name="methodName"/> is empty or only whitespace.</exception>
+        /// <exception cref="ArgumentException">If <c>null</c> reference parameters are not defined using <see cref="NullType"/>.</exception>
+        /// <exception cref="InvalidOperationException">If <paramref name="instance"/> do not have public instance method with name specified by <paramref name="methodName"/>.</exception>
+        /// <exception cref="TargetInvocationException">If invocation of method fails.</exception>
         public static object? InvokeMethod(object instance, string methodName, object?[]? parameters)
         {
             var method = GetMethod(instance.GetType(), methodName, ref parameters);
-            return method.Invoke(instance, parameters);
+            try
+            {
+                return method.Invoke(instance, parameters);
+            }
+            catch (Exception exception)
+            {
+                throw new TargetInvocationException($"Invoking method '{methodName}' failed. See inner exception.", exception);
+            }
+        }
+
+        /// <summary>
+        /// Gets methods of specified type and base type or interfaces, if <paramref name="inherited"/> is <c>true</c>.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="binding">The binding to get method.</param>
+        /// <param name="inherited"><c>true</c> to get also methods of interfaces if <paramref name="type"/> represents interface; <c>false</c> otherwise.</param>
+        /// <returns>A found methods.</returns>
+        public static IEnumerable<MethodInfo> GetMethods(this Type type, BindingFlags binding, bool inherited)
+        { 
+            var methods = new List<MethodInfo>();
+
+            // First get methods in current type.
+            var currentMethods = type.GetMethods(binding);
+            if (currentMethods.Length > 0)
+                methods.AddRange(currentMethods);
+
+            // Get inherited methods if so requested and type is interface.
+            if (inherited && type.IsInterface)
+            {
+                var interfaceTypes = type.GetInterfaces();
+
+                foreach (var interfaceType in interfaceTypes)
+                {
+                    currentMethods = interfaceType.GetMethods(binding);
+                    if (currentMethods.Length > 0)
+                        methods.AddRange(currentMethods);
+                }
+
+                //// If type is interface, then get methods of all other interface it might have.
+                //// Otherwise just get methods of base types until object type is reached.
+                //if (type.IsInterface)
+                //{
+
+                //}
+                //else
+                //{
+                //    var baseType = type.BaseType;
+
+                //    while (baseType != null)
+                //    {
+                //        currentMethods = baseType.GetMethods(binding);
+
+                //        if (currentMethods.Length > 0)
+                //            methods.AddRange(currentMethods);
+
+                //        baseType = baseType.BaseType;
+                //    }
+                //}
+            }
+
+            return methods.AsEnumerable();
         }
 
         private static PropertyInfo? GetPropertyRecursive(object instance, IEnumerable<string> propertyNames, BindingFlags bindingFlags)
@@ -331,6 +442,29 @@ namespace Masasamjant.Reflection
             parameters = newParameters;
             
             return method;
+        }
+
+        private static MethodInfo? GetMethodRecursive(Type type, string methodName, Type[] parameterTypes)
+        {
+            if (type.Equals(typeof(object)))
+                return null;
+
+            if (type.IsInterface)
+            { 
+                var interfaceTypes = type.GetInterfaces();
+
+                foreach (var interfaceType in interfaceTypes) 
+                {
+                    var method = GetMethodRecursive(interfaceType, methodName, parameterTypes);
+
+                    if (method != null)
+                        return method;
+                }
+            }
+            else if (type.BaseType != null)
+                return GetMethodRecursive(type.BaseType, methodName, parameterTypes);
+
+            return null;
         }
 
         private static void ValidatePropertyName(string propertyName)

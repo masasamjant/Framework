@@ -15,12 +15,14 @@ namespace Masasamjant
             Age = age;
         }
 
-        public string FirstName { get; }
+        public string FirstName { get; set; }
 
-        public string LastName { get; }
+        public string LastName { get; set; }
 
         [IgnoreProperty]
-        public int Age { get; }
+        public int Age { get; set; }
+
+        public Person? Parent { get; set; }
 
         public bool Equals(Person? other)
         {

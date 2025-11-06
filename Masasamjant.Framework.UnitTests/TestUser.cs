@@ -11,9 +11,12 @@ namespace Masasamjant
 
         public TestUser(string name, int? age)
         {
+            Identifier = Guid.NewGuid();
             this.name = name;
             this.age = age;
         }
+
+        private Guid Identifier { get; set; }
 
         [ResourceString("Name", typeof(PublicUnitTestResource))]
         public string Name
@@ -25,5 +28,9 @@ namespace Masasamjant
         {
             get { return age; }
         }
+
+        public string? NickName { get; set; }
+
+        public Guid GetIdentifier() => Identifier;
     }
 }

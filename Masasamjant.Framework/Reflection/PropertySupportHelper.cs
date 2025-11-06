@@ -19,18 +19,20 @@ namespace Masasamjant.Reflection
                 return BindingFlags.Default;
 
             BindingFlags flags = instance ? BindingFlags.Instance : BindingFlags.Static;
-            
-            if (support.HasFlag(PropertySupport.PublicGetter) || support.HasFlag(PropertySupport.PublicSetter))
+
+#pragma warning disable CS0618 // Type or member is obsolete
+            if (support.HasFlag(PropertySupport.Public) || support.HasFlag(PropertySupport.PublicGetter) || support.HasFlag(PropertySupport.PublicSetter))
                 flags |= BindingFlags.Public;
-            
-            if (support.HasFlag(PropertySupport.NonPublicGetter) || support.HasFlag(PropertySupport.NonPublicSetter))
+
+            if (support.HasFlag(PropertySupport.NonPublic) || support.HasFlag(PropertySupport.NonPublicGetter) || support.HasFlag(PropertySupport.NonPublicSetter))
                 flags |= BindingFlags.NonPublic;
-            
-            if (support.HasFlag(PropertySupport.PublicGetter) || support.HasFlag(PropertySupport.NonPublicGetter))
+
+            if (support.HasFlag(PropertySupport.Getter) || support.HasFlag(PropertySupport.PublicGetter) || support.HasFlag(PropertySupport.NonPublicGetter))
                 flags |= BindingFlags.GetProperty;
-            
-            if (support.HasFlag(PropertySupport.PublicSetter) || support.HasFlag(PropertySupport.NonPublicSetter))
+
+            if (support.HasFlag(PropertySupport.Setter) || support.HasFlag(PropertySupport.PublicSetter) || support.HasFlag(PropertySupport.NonPublicSetter))
                 flags |= BindingFlags.SetProperty;
+#pragma warning restore CS0618 // Type or member is obsolete
             
             return flags;
         }
