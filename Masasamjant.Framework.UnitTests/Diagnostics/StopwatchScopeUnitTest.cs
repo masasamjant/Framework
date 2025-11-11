@@ -13,7 +13,7 @@ namespace Masasamjant.Diagnostics
             using (var scope = StopwatchScope.Create(stopwatch))
             {
                 Assert.IsTrue(stopwatch.IsRunning);
-                Thread.Sleep(100);
+                Thread.Sleep(150);
             }
 
             Assert.IsFalse(stopwatch.IsRunning);

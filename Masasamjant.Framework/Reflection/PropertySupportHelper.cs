@@ -20,19 +20,17 @@ namespace Masasamjant.Reflection
 
             BindingFlags flags = instance ? BindingFlags.Instance : BindingFlags.Static;
 
-#pragma warning disable CS0618 // Type or member is obsolete
-            if (support.HasFlag(PropertySupport.Public) || support.HasFlag(PropertySupport.PublicGetter) || support.HasFlag(PropertySupport.PublicSetter))
+            if (support.HasFlag(PropertySupport.Public))
                 flags |= BindingFlags.Public;
 
-            if (support.HasFlag(PropertySupport.NonPublic) || support.HasFlag(PropertySupport.NonPublicGetter) || support.HasFlag(PropertySupport.NonPublicSetter))
+            if (support.HasFlag(PropertySupport.NonPublic))
                 flags |= BindingFlags.NonPublic;
 
-            if (support.HasFlag(PropertySupport.Getter) || support.HasFlag(PropertySupport.PublicGetter) || support.HasFlag(PropertySupport.NonPublicGetter))
+            if (support.HasFlag(PropertySupport.Getter))
                 flags |= BindingFlags.GetProperty;
 
-            if (support.HasFlag(PropertySupport.Setter) || support.HasFlag(PropertySupport.PublicSetter) || support.HasFlag(PropertySupport.NonPublicSetter))
+            if (support.HasFlag(PropertySupport.Setter))
                 flags |= BindingFlags.SetProperty;
-#pragma warning restore CS0618 // Type or member is obsolete
             
             return flags;
         }
