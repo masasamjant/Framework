@@ -10,6 +10,8 @@ namespace Masasamjant.Security
     {
         private static readonly HashAlgorithmName DefaultHashAlgorithmName = HashAlgorithmName.SHA384;
         private static readonly int DefaultIterations = 1000000;
+        private const int KeyLength = 32;
+        private const int IVLength = 16;
 
         /// <summary>
         /// Initializes new instance of the <see cref="AesCryptoKey"/> class.
@@ -38,12 +40,10 @@ namespace Masasamjant.Security
         /// <returns>A tuple of key and initialization vector bytes for AES algorithm.</returns>
         protected override (byte[] Key, byte[] IV) GenerateKey(string password, Salt salt, int iterations, HashAlgorithmName hashAlgorithmName)
         {
-            using (var derivedBytes = new Rfc2898DeriveBytes(password, salt.ToBytes(), iterations, hashAlgorithmName))
-            {
-                var key = derivedBytes.GetBytes(32);
-                var iv = derivedBytes.GetBytes(16);
-                return (key, iv);
-            }
+            byte[] data = Rfc2898DeriveBytes.Pbkdf2(password, salt.ToBytes(), iterations, hashAlgorithmName, KeyLength + IVLength);
+            var key = data.Take(KeyLength).ToArray();
+            var iv = data.Skip(KeyLength).Take(IVLength).ToArray();
+            return (key, iv);
         }
 
         /// <summary>
