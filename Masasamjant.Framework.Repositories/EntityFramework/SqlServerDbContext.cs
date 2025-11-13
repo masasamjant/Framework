@@ -1,4 +1,4 @@
-﻿using Masasamjant.Repositories.Abstactions;
+﻿using Masasamjant.Repositories.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Masasamjant.Repositories.EntityFramework
