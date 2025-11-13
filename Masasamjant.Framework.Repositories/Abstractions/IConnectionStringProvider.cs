@@ -1,4 +1,4 @@
-﻿namespace Masasamjant.Repositories.Abstactions
+﻿namespace Masasamjant.Repositories.Abstractions
 {
     /// <summary>
     /// Represents component that provides connection string to data source.

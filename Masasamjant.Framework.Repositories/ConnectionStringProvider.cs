@@ -1,4 +1,4 @@
-﻿using Masasamjant.Repositories.Abstactions;
+﻿using Masasamjant.Repositories.Abstractions;
 
 namespace Masasamjant.Repositories
 {
