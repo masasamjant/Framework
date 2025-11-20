@@ -35,6 +35,8 @@ namespace Masasamjant.Repositories.EntityFramework
 
             if (commandTimeout.HasValue && commandTimeout.Value > 0)
                 optionsBuilder.UseSqlServer(connectionString, op => op.CommandTimeout(commandTimeout.Value));
+            else
+                optionsBuilder.UseSqlServer(connectionString);
         }
     }
 }

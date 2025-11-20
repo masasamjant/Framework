@@ -11,9 +11,9 @@
         byte[] Version { get; }
 
         /// <summary>
-        /// Gets <see cref="Version"/> as upper-case base-64 string.
+        /// Gets <see cref="Version"/> as string.
         /// </summary>
-        /// <returns>A <see cref="Version"/> as upper-case base-64 string or empty string.</returns>
+        /// <returns>A <see cref="Version"/> as string.</returns>
         string GetVersionString();
     }
 }
