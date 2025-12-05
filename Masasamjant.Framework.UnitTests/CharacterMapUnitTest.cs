@@ -40,17 +40,6 @@
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void Test_Construtor_Multi_Character_Mapping()
-        {
-            var characters = new Dictionary<char, char>()
-            {
-                { '#', 'A' }, { 'A', 'U' }
-            };
-            new CharacterMap(characters);
-        }
-
-        [TestMethod]
         public void Test_Add()
         {
             var map = new CharacterMap();
@@ -63,7 +52,7 @@
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [ExpectedException(typeof(CharacterMappingException))]
 
         public void Test_Add_Source_Already_Source()
         {
@@ -73,25 +62,7 @@
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void Test_Add_Source_Already_Destination()
-        {
-            var map = new CharacterMap();
-            map.Add('A', 'X');
-            map.Add('X', 'Z');
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void Test_Add_Destination_Already_Source()
-        {
-            var map = new CharacterMap();
-            map.Add('A', 'X');
-            map.Add('F', 'A');
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [ExpectedException(typeof(CharacterMappingException))]
         public void Test_Add_Destination_Already_Destination()
         {
             var map = new CharacterMap();
@@ -137,6 +108,76 @@
             var a = map.GetMapping('A');
             var x = map.GetMapping('X');
             Assert.AreEqual(a, x);
+        }
+
+        [TestMethod]
+        public void Test_ReadOnly()
+        {
+            var map = new CharacterMap();
+            Assert.IsFalse(map.IsReadOnly);
+            map.Add('A', 'B');
+            map.SetReadOnly();
+            Assert.IsTrue(map.IsReadOnly);
+            Assert.ThrowsException<InvalidOperationException>(() => map.Add('C', 'D'));
+            Assert.ThrowsException<InvalidOperationException>(() => map.Clear());
+            Assert.ThrowsException<InvalidOperationException>(() => map.Remove('A', 'B'));
+        }
+
+        [TestMethod]
+        public void Test_GetDestination()
+        {
+            var map = new CharacterMap(new Dictionary<char, char>() { { 'A', '@' } });
+            var dest = map.GetDestination('A');
+            Assert.AreEqual('@', dest);
+            dest = map.GetDestination('@');
+            Assert.IsFalse(dest.HasValue);
+            dest = map.GetDestination('H');
+            Assert.IsFalse(dest.HasValue);
+        }
+
+        [TestMethod]
+        public void Test_GetSource()
+        {
+            var map = new CharacterMap(new Dictionary<char, char>() { { 'A', '@' } });
+            var dest = map.GetSource('A');
+            Assert.IsFalse(dest.HasValue);
+            dest = map.GetSource('@');
+            Assert.AreEqual('A', dest);
+            dest = map.GetSource('H');
+            Assert.IsFalse(dest.HasValue);
+        }
+
+        [TestMethod]
+        public void Test_ToDictionary()
+        {
+            var map = new CharacterMap(new Dictionary<char, char>() 
+            { 
+                { 'A', '@' },
+                { 'B', '#' }
+            });
+            var dictionary = map.ToDictionary();
+            Assert.IsTrue(dictionary.Count == 2);
+            Assert.AreEqual('@', dictionary['A']);
+            Assert.AreEqual('#', dictionary['B']);
+
+            map = new CharacterMap();
+            dictionary = map.ToDictionary();
+            Assert.IsTrue(dictionary.Count == 0);
+        }
+
+        [TestMethod]
+        public void Test_Clone()
+        {
+            var map = new CharacterMap(new Dictionary<char, char>()
+            {
+                { 'A', '@' },
+                { 'B', '#' }
+            });
+            map.SetReadOnly();
+            var clone = map.Clone();
+            Assert.AreNotSame(map, clone);
+            Assert.IsFalse(clone.IsReadOnly);
+            CollectionAssert.AreEqual(map.Mappings.ToArray(), clone.Mappings.ToArray());
         }
     }
 }

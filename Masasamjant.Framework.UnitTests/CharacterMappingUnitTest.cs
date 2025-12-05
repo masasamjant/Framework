@@ -29,5 +29,14 @@
             Assert.IsTrue(mapping.Equals(new CharacterMapping('A', 'T')));
             Assert.AreEqual(mapping.GetHashCode(), new CharacterMapping('A', 'T').GetHashCode());
         }
+
+        [TestMethod]
+        public void Test_Clone()
+        {
+            var mapping = new CharacterMapping('A', 'B');
+            var clone = mapping.Clone();
+            Assert.AreEqual(mapping.Source, clone.Source);
+            Assert.AreEqual(mapping.Destination, clone.Destination);
+        }
     }
 }

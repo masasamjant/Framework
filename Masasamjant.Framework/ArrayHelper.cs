@@ -39,19 +39,11 @@
         public static T[] Combine<T>(T[]? array1, T[]? array2)
         {
             if (array1 != null && array2 != null)
-            {
-                int length = array1.Length + array2.Length;
-                var combined = new T[length];
-                if (length == 0)
-                    return combined;
-                array1.CopyTo(combined, 0);
-                array2.CopyTo(combined, array1.Length);
-                return combined;
-            }
+                return CombineArrays(array1, array2);
             else if (array1 != null)
-                return (T[])array1.Clone();
+                return CloneArray(array1);
             else if (array2 != null)
-                return (T[])array2.Clone();
+                return CloneArray(array2);
             else
                 return [];
         }
@@ -101,5 +93,19 @@
 
             return true;
         }
+
+        private static T[] CombineArrays<T>(T[] array1, T[] array2)
+        {
+            int length = array1.Length + array2.Length;
+            var combined = new T[length];
+            if (length == 0)
+                return combined;
+            array1.CopyTo(combined, 0);
+            array2.CopyTo(combined, array1.Length);
+            return combined;
+        }
+
+        private static T[] CloneArray<T>(T[] array)
+            => (T[])array.Clone();
     }
 }

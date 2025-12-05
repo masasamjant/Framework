@@ -3,16 +3,17 @@
 namespace Masasamjant
 {
     /// <summary>
-    /// Represents one-to-one character map.
+    /// Represents one-to-one character map that accepts any character mappings.
     /// </summary>
-    public sealed class CharacterMap : IEnumerable<CharacterMapping>
+    public class CharacterMap : IEnumerable<CharacterMapping>, ICloneable
     {
         private readonly List<CharacterMapping> mappings;
 
         /// <summary>
         /// Initializes new instance of the <see cref="CharacterMap"/> class with specified characters.
         /// </summary>
-        /// <param name="characters"></param>
+        /// <param name="characters">The mapped characters.</param>
+        /// <exception cref="ArgumentException">If <paramref name="characters"/> contains invalid character mappings.</exception>
         public CharacterMap(IDictionary<char, char> characters)
             : this()
         {
@@ -23,9 +24,13 @@ namespace Masasamjant
                     Add(keyValue.Key, keyValue.Value);
                 }
             }
-            catch (ArgumentException exception)
+            catch (CharacterMappingException exception)
             {
-                throw new ArgumentException("The dictionary contains character(s) mapped more than once.", nameof(characters), exception);
+                throw new ArgumentException("The dictionary contains invalid character mapping.", nameof(characters), exception);
+            }
+            catch (Exception exception)
+            {
+                throw new ArgumentException("The mapping from specified characters failed.", nameof(characters), exception);
             }
         }
 
@@ -74,33 +79,37 @@ namespace Masasamjant
         }
 
         /// <summary>
+        /// Gets a value indicating whether this map is read-only.
+        /// </summary>
+        public bool IsReadOnly { get; private set; }
+
+        /// <summary>
         /// Add mapping between specified source and destination characters.
         /// </summary>
         /// <param name="source">The source character.</param>
         /// <param name="destination">The destination character.</param>
-        /// <exception cref="ArgumentException">
-        /// If <paramref name="source"/> is already mapped as source or destination characters.
+        /// <exception cref="CharacterMappingException">
+        /// If <paramref name="source"/> is already mapped as source character.
         /// -or-
-        /// If <paramref name="destination"/> is already mapped as source or destination character.
+        /// If <paramref name="destination"/> is already mapped as destination character.
         /// </exception>
+        /// <exception cref="InvalidOperationException">If <see cref="IsReadOnly"/> is <c>true</c>.</exception>
         public CharacterMapping Add(char source, char destination)
         {
+            CheckReadOnly();
+
+            ValidateCharacters(source, destination);
+
             var mapping = new CharacterMapping(source, destination);
 
             if (Contains(mapping))
                 return mapping;
 
             if (Mappings.Any(x => x.Source == source))
-                throw new ArgumentException("The character is already mapped as source.", nameof(source));
-
-            if (Mappings.Any(x => x.Destination == source))
-                throw new ArgumentException("The character is already mapped as destination.", nameof(source));
-
-            if (Mappings.Any(x => x.Source == destination))
-                throw new ArgumentException("The character is already mapped as source.", nameof(destination));
+                throw new CharacterMappingException(source, destination, "The source character is already mapped as source.");
 
             if (Mappings.Any(x => x.Destination == destination))
-                throw new ArgumentException("The character is already mapped as destination.", nameof(destination));
+                throw new CharacterMappingException(source, destination, "The destination character is already mapped as destination.");
 
             mappings.Add(mapping);
 
@@ -110,8 +119,10 @@ namespace Masasamjant
         /// <summary>
         /// Remove all mappings.
         /// </summary>
+        /// <exception cref="InvalidOperationException">If <see cref="IsReadOnly"/> is <c>true</c>.</exception>
         public void Clear()
         {
+            CheckReadOnly();
             mappings.Clear();
         }
 
@@ -122,6 +133,7 @@ namespace Masasamjant
         /// <param name="source">The source character.</param>
         /// <param name="destination">The destination character.</param>
         /// <returns><c>true</c> if mapping existed and removed; <c>false</c> otherwise.</returns>
+        /// <exception cref="InvalidOperationException">If <see cref="IsReadOnly"/> is <c>true</c>.</exception>
         public bool Remove(char source, char destination)
         {
             return Remove(new CharacterMapping(source, destination));
@@ -132,8 +144,10 @@ namespace Masasamjant
         /// </summary>
         /// <param name="mapping">The <see cref="CharacterMapping"/> to remove.</param>
         /// <returns><c>true</c> if mapping existed and removed; <c>false</c> otherwise.</returns>
+        /// <exception cref="InvalidOperationException">If <see cref="IsReadOnly"/> is <c>true</c>.</exception>
         public bool Remove(CharacterMapping mapping)
         {
+            CheckReadOnly();
             return mappings.Remove(mapping);
         }
 
@@ -176,6 +190,34 @@ namespace Masasamjant
         }
 
         /// <summary>
+        /// Gets the destination character for specified source character.
+        /// </summary>
+        /// <param name="source">The source character.</param>
+        /// <returns>A destination character or <c>null</c>, if <paramref name="source"/> not mapped.</returns>
+        public char? GetDestination(char source)
+        {
+            var mapping = GetMapping(source);
+            if (mapping.HasValue && mapping.Value.Source == source)
+                return mapping.Value.Destination;
+            else
+                return null;
+        }
+
+        /// <summary>
+        /// Gets the source character for specified destination character.
+        /// </summary>
+        /// <param name="destination">The destination character.</param>
+        /// <returns>A source character or <c>null</c>, if <paramref name="destination"/> not mapped.</returns>
+        public char? GetSource(char destination)
+        {
+            var mapping = GetMapping(destination);
+            if (mapping.HasValue && mapping.Value.Destination == destination)
+                return mapping.Value.Source;
+            else
+                return null;
+        }
+
+        /// <summary>
         /// Gets <see cref="IEnumerator{CharacterMapping}"/> to get all mappings.
         /// </summary>
         /// <returns>A <see cref="IEnumerator{CharacterMapping}"/>.</returns>
@@ -185,9 +227,68 @@ namespace Masasamjant
                 yield return mapping;
         }
 
+        /// <summary>
+        /// Set this character map as read-only.
+        /// </summary>
+        /// <returns>A current instance.</returns>
+        public CharacterMap SetReadOnly()
+        {
+            IsReadOnly = true;
+            return this;
+        }
+
+        /// <summary>
+        /// Convert this character map to dictionary where key is source character and value is destination character.
+        /// </summary>
+        /// <returns>A dictionary of mapped characters.</returns>
+        public Dictionary<char, char> ToDictionary()
+        {
+            var dict = new Dictionary<char, char>();
+            foreach (var mapping in Mappings)
+            {
+                dict[mapping.Source] = mapping.Destination;
+            }
+            return dict;
+        }
+
+        /// <summary>
+        /// Create copy from this character map.
+        /// </summary>
+        /// <returns>A copy from this character map.</returns>
+        /// <remarks>If this map is in read-only state, the copy is not.</remarks>
+        public virtual CharacterMap Clone()
+        {
+            var map = new CharacterMap();
+            foreach (var mapping in this)
+                map.Add(mapping.Source, mapping.Destination);
+            return map;
+        }
+
+        /// <summary>
+        /// Derived classes can override this method to validate source and destination characters.
+        /// </summary>
+        /// <param name="source">The source character.</param>
+        /// <param name="destination">The destination character.</param>
+        /// <exception cref="CharacterMappingException">If source or destination character is not valid.</exception>
+        protected virtual void ValidateCharacters(char source, char destination)
+        {
+            return;
+        }
+
+        private void CheckReadOnly()
+        {
+            if (IsReadOnly)
+                throw new InvalidOperationException("The character map is read-only.");
+        }
+
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
+        }
+
+        object ICloneable.Clone()
+        {
+            return this.Clone();
         }
     }
 }

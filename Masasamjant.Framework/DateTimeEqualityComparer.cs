@@ -40,7 +40,7 @@ namespace Masasamjant
             if (!IgnoreDateTimeKind && x.Kind != y.Kind)
                 return false;
 
-            return x.Year == y.Year && x.Month == y.Month && x.Day == y.Day && EqualTimes(x, y);
+            return EqualDates(x, y) && EqualTimes(x, y);
         }
 
         /// <summary>
@@ -50,12 +50,23 @@ namespace Masasamjant
         /// <returns>A hash code.</returns>
         public virtual int GetHashCode([DisallowNull] DateTime obj)
         {
-            int code = HashCode.Combine(obj.Year, obj.Month, obj.Day) ^ GetTimeHashCode(obj);
+            int code = GetDateHashCode(obj) ^ GetTimeHashCode(obj);
 
             if (!IgnoreDateTimeKind)
                 code ^= obj.Kind.GetHashCode();
 
             return code;
+        }
+
+        /// <summary>
+        /// Check dates of <paramref name="x"/> and <paramref name="y"/> are equal.
+        /// </summary>
+        /// <param name="x">The first <see cref="DateTime"/>.</param>
+        /// <param name="y">The second <see cref="DateTime"/>.</param>
+        /// <returns><c>true</c> if equal year, month and date; <c>false</c> otherwise.</returns>
+        protected static bool EqualDates(DateTime x, DateTime y)
+        {
+            return x.Year == y.Year && x.Month == y.Month && x.Day == y.Day;
         }
 
         /// <summary>
@@ -68,6 +79,16 @@ namespace Masasamjant
         protected virtual bool EqualTimes(DateTime x, DateTime y)
         {
             return x.Hour == y.Hour && x.Minute == y.Minute && x.Second == y.Second && x.Millisecond == y.Millisecond;
+        }
+
+        /// <summary>
+        /// Gets hash code for date of specified <see cref="DateTime"/> value.
+        /// </summary>
+        /// <param name="date">The <see cref="DateTime"/>.</param>
+        /// <returns>A hash code for date of <paramref name="date"/>.</returns>
+        protected static int GetDateHashCode(DateTime date)
+        {
+            return HashCode.Combine(date.Year, date.Month, date.Day);
         }
 
         /// <summary>

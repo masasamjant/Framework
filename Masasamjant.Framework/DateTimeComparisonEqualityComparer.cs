@@ -51,11 +51,11 @@ namespace Masasamjant
             switch (Comparison)
             {
                 case DateTimeComparison.Date:
-                    return x.Year == y.Year && x.Month == y.Month && x.Day == y.Day;
+                    return EqualDates(x, y);
                 case DateTimeComparison.Time:
                     return EqualTimes(x, y);
                 default:
-                    return x.Year == y.Year && x.Month == y.Month && x.Day == y.Day && EqualTimes(x, y);
+                    return EqualDates(x, y) && EqualTimes(x, y);
             }
         }
 
@@ -71,13 +71,13 @@ namespace Masasamjant
             switch (Comparison)
             {
                 case DateTimeComparison.Date:
-                    code = HashCode.Combine(obj.Year, obj.Month, obj.Day);
+                    code = GetDateHashCode(obj);
                     break;
                 case DateTimeComparison.Time:
                     code = GetTimeHashCode(obj);
                     break;
                 default:
-                    code = HashCode.Combine(obj.Year, obj.Month, obj.Day) ^ GetTimeHashCode(obj);
+                    code = GetDateHashCode(obj) ^ GetTimeHashCode(obj);
                     break;
             }
 
