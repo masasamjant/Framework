@@ -1,4 +1,6 @@
-﻿namespace Masasamjant.Collections
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Masasamjant.Collections
 {
     [TestClass]
     public class StackHelperUnitTest : UnitTest
@@ -86,6 +88,40 @@
                 CollectionAssert.AreEqual(new[] { n }, x.ToArray());
                 n--;
             }
+        }
+
+        [TestMethod]
+        public void Test_PopUntil()
+        {
+            var stack = new Stack<int>();
+            stack.Push(1);
+            stack.Push(2);
+            stack.Push(3);
+            stack.Push(4);
+            stack.Push(5);
+
+            Predicate<int> stopPredicate = item => item == 3;
+
+            var expected = new int[] { 5, 4 };
+            var actual = StackHelper.PopUntil(stack, stopPredicate).ToArray();
+
+            CollectionAssert.AreEqual(expected, actual);
+
+            expected = new int[] { 3, 2 };
+            actual = StackHelper.PopUntil(stack, 1).ToArray();
+            CollectionAssert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void Test_PushMatching()
+        {
+            var stack = new Stack<int>();
+            var items = new List<int>() { 1, 2, 3, 4, 5 };
+            Func<int, bool> pushPredicate = item => item >= 3;
+            StackHelper.PushMatches(stack, items, pushPredicate);
+            var expected = new int[] { 5, 4, 3 };
+            var actual = stack.ToArray();
+            CollectionAssert.AreEqual(expected, actual);
         }
     }
 }

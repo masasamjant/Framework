@@ -120,5 +120,74 @@
 
             return result.AsReadOnly();
         }
+
+        /// <summary>
+        /// Dequeue items from specified <see cref="Queue{T}"/> until first item is specified stop item.
+        /// </summary>
+        /// <typeparam name="T">The type of the item.</typeparam>
+        /// <param name="queue">The <see cref="Queue{T}"/> to dequeue items.</param>
+        /// <param name="stopItem">The first item to stop dequeue.</param>
+        /// <returns>A items from <paramref name="queue"/> until <paramref name="stopItem"/> is first item.</returns>
+        public static IEnumerable<T> DequeueUntil<T>(this Queue<T> queue, T stopItem)
+        {
+            Predicate<T> stopPredicate = item => Equals(item, stopItem);
+            return DequeueUntil(queue, stopPredicate);
+        }
+
+        /// <summary>
+        /// Dequeue items from specified <see cref="Queue{T}"/> until first item meets specified stop predicate.
+        /// </summary>
+        /// <typeparam name="T">The type of the item.</typeparam>
+        /// <param name="queue">The <see cref="Queue{T}"/> to dequeue items.</param>
+        /// <param name="stopPredicate">The stop predicate. If first item match this, then stops.</param>
+        /// <returns>A items from <paramref name="queue"/> until first item match <paramref name="stopPredicate"/>.</returns>
+        public static IEnumerable<T> DequeueUntil<T>(this Queue<T> queue, Predicate<T> stopPredicate)
+            => DequeueUntil(queue, new Func<T, bool>(x => stopPredicate(x)));
+
+        /// <summary>
+        /// Dequeue items from specified <see cref="Queue{T}"/> until first item meets specified stop predicate.
+        /// </summary>
+        /// <typeparam name="T">The type of the item.</typeparam>
+        /// <param name="queue">The <see cref="Queue{T}"/> to dequeue items.</param>
+        /// <param name="stopPredicate">The stop predicate. If first item match this, then stops.</param>
+        /// <returns>A items from <paramref name="queue"/> until first item match <paramref name="stopPredicate"/>.</returns>
+        public static IEnumerable<T> DequeueUntil<T>(this Queue<T> queue, Func<T, bool> stopPredicate)
+        {
+            var result = new List<T>();
+
+            while (queue.TryPeek(out var first))
+            {
+                if (stopPredicate(first))
+                    break;
+
+                first = queue.Dequeue();
+                result.Add(first);
+            }
+
+            return result.AsReadOnly();
+        }
+
+        /// <summary>
+        /// Enqueue items that match specified predicate to <see cref="Queue{T}"/>.
+        /// </summary>
+        /// <typeparam name="T">The type of the item.</typeparam>
+        /// <param name="queue">The <see cref="Queue{T}"/> to enqueue items.</param>
+        /// <param name="items">The all items.</param>
+        /// <param name="pushPredicate">The predicate to match to enququed item.</param>
+        public static void EnqueueMatches<T>(this Queue<T> queue, IEnumerable<T> items, Predicate<T> enqueuePredicate)
+            => EnqueueMatches(queue, items, new Func<T, bool>(x => enqueuePredicate(x)));
+
+        /// <summary>
+        /// Enqueue items that match specified predicate to <see cref="Queue{T}"/>.
+        /// </summary>
+        /// <typeparam name="T">The type of the item.</typeparam>
+        /// <param name="queue">The <see cref="Queue{T}"/> to enqueue items.</param>
+        /// <param name="items">The all items.</param>
+        /// <param name="pushPredicate">The predicate to match to enququed item.</param>
+        public static void EnqueueMatches<T>(this Queue<T> queue, IEnumerable<T> items, Func<T, bool> enqueuePredicate)
+        {
+            foreach (var item in items.Where(enqueuePredicate))
+                queue.Enqueue(item);
+        }
     }
 }
