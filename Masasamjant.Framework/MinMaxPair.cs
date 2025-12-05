@@ -3,6 +3,22 @@
 namespace Masasamjant
 {
     /// <summary>
+    /// Factory class to create <see cref="MinMaxPair{T}"/> from specified values.
+    /// </summary>
+    public static class MinMaxPair
+    {
+        /// <summary>
+        /// Creates a <see cref="MinMaxPair{T}"/> from specified values.
+        /// </summary>
+        /// <typeparam name="T">The type of the comparable.</typeparam>
+        /// <param name="x">The first value.</param>
+        /// <param name="y">The second value.</param>
+        /// <returns>A <see cref="MinMaxPair{T}"/>.</returns>
+        public static MinMaxPair<T> Create<T>(T x, T y) where T : struct, IComparable<T>
+            => new MinMaxPair<T>(x, y);
+    }
+
+    /// <summary>
     /// Represents pair of min and max between two values of <typeparamref name="T"/>.
     /// </summary>
     /// <typeparam name="T">The type of the comparable.</typeparam>
