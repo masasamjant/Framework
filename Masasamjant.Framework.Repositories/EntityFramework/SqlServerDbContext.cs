@@ -36,6 +36,10 @@ namespace Masasamjant.Repositories.EntityFramework
             optionsBuilder.UseSqlServer(connectionString, OnConfiguringSqlServer);
         }
 
+        /// <summary>
+        /// Configure SQL server context.
+        /// </summary>
+        /// <param name="options">The <see cref="SqlServerDbContextOptionsBuilder"/>.</param>
         protected virtual void OnConfiguringSqlServer(SqlServerDbContextOptionsBuilder options)
         {
 #pragma warning disable CS0618 // Type or member is obsolete
