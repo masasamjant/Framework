@@ -135,16 +135,10 @@ namespace Masasamjant.Diagnostics
             try
             {
                 stopwatch.Stop();
-
                 AddRecord(message, false);
-
-                foreach (var record in records)
-                    output.WriteLine(record.Message);
-
-                if (Behavior == StopwatchRunBehavior.CalculateTotalTime)
-                    totalTime = UseMilliseconds ? stopwatch.ElapsedMilliseconds : stopwatch.ElapsedTicks;
-
-                output.WriteLine(string.Format(UseMilliseconds ? TotalMillisecondsMessageFormat : TotalTicksMessageFormat, Environment.NewLine, totalTime));
+                WriteRecords(output);
+                CalculateTotalTime();
+                WriteTotalTime(output);
             }
             catch (Exception exception)
             {
@@ -173,6 +167,23 @@ namespace Masasamjant.Diagnostics
                 stopwatch.Start();
 
             records.Add(new StopwatchRunRecord(Behavior, Unit, string.Format(UseMilliseconds ? RecordMillisecondsMessageFormat : RecordTicksMessageFormat, message, elapsedTime, Environment.NewLine), elapsedTime));
+        }
+
+        private void WriteRecords(IOutput output)
+        {
+            foreach (var record in records)
+                output.WriteLine(record.Message);
+        }
+
+        private void CalculateTotalTime()
+        {
+            if (Behavior == StopwatchRunBehavior.CalculateTotalTime)
+                totalTime = UseMilliseconds ? stopwatch.ElapsedMilliseconds : stopwatch.ElapsedTicks;
+        }
+
+        private void WriteTotalTime(IOutput output)
+        {
+            output.WriteLine(string.Format(UseMilliseconds ? TotalMillisecondsMessageFormat : TotalTicksMessageFormat, Environment.NewLine, totalTime));
         }
     }
 }

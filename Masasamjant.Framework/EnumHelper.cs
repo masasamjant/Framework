@@ -181,7 +181,7 @@ namespace Masasamjant
                 var current = (int)value;
                 current |= (int)flag;
                 return current;
-            }
+            } 
             else if (underlyingType.Equals(typeof(long)))
             {
                 var current = (long)value;
@@ -253,26 +253,33 @@ namespace Masasamjant
             if (enumType.Equals(type))
                 return value;
             else if (type.Equals(typeof(string)))
-            {
-                if (!Enum.TryParse(enumType, (string?)value, true, out result))
-                    throw new InvalidCastException($"The conversion from {value} to {enumType} failed.");
-            }
+                result = ConvertStringToEnum(enumType, value);
             else
-            {
-                try
-                {
-                    result = Enum.ToObject(enumType, value);
-                }
-                catch (Exception exception)
-                {
-                    throw new InvalidCastException($"The conversion from {value} to {enumType} failed.", exception);
-                }
-            }
+                result = ConvertObjectToEnum(enumType, value);
 
             if (result == null)
                 throw new InvalidCastException($"The conversion from {value} to {enumType} failed.");
 
             return result;
+        }
+
+        private static object ConvertStringToEnum(Type enumType, object value)
+        {
+            if (!Enum.TryParse(enumType, (string?)value, true, out var result))
+                throw new InvalidCastException($"The conversion from {value} to {enumType} failed.");
+            return result;
+        }
+
+        private static object ConvertObjectToEnum(Type enumType, object value)
+        {
+            try
+            {
+                return Enum.ToObject(enumType, value);
+            }
+            catch (Exception exception)
+            {
+                throw new InvalidCastException($"The conversion from {value} to {enumType} failed.", exception);
+            }
         }
 
         private static readonly HashSet<Type> underlyingEnumTypes = new HashSet<Type>()

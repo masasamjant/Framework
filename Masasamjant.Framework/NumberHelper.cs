@@ -25,13 +25,11 @@ namespace Masasamjant
             if (int.TryParse(value, out int result))
                 return result;
 
-            // Trim so that has valid start and end characters.
             value = TrimToValidStartAndEnd(value);
 
             if (int.TryParse(value, out result))
                 return result;
 
-            // Check if value start with more than one '-' and trim expect 1.
             value = RemoveMultipleMinusSigns(value);
 
             if (int.TryParse(value, out result))
@@ -42,13 +40,11 @@ namespace Masasamjant
             if (int.TryParse(value, out result))
                 return result;
 
-            // Last thing to check is if '-' is somewhere in the middle of the string.
             value = RemoveMiddleMinus(value);
 
             if (int.TryParse(value, out result))
                 return result;
 
-            // Could not parse.
             return null;
         }
 
@@ -67,13 +63,11 @@ namespace Masasamjant
             if (long.TryParse(value, out long result))
                 return result;
 
-            // Trim so that has valid start and end characters.
             value = TrimToValidStartAndEnd(value);
 
             if (long.TryParse(value, out result))
                 return result;
 
-            // Check if value start with more than one '-' and trim expect 1.
             value = RemoveMultipleMinusSigns(value);
 
             if (long.TryParse(value, out result))
@@ -84,13 +78,11 @@ namespace Masasamjant
             if (long.TryParse(value, out result))
                 return result;
 
-            // Last thing to check is if '-' is somewhere in the middle of the string.
             value = RemoveMiddleMinus(value);
 
             if (long.TryParse(value, out result))
                 return result;
 
-            // Could not parse.
             return null;
         }
 

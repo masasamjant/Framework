@@ -15,6 +15,15 @@ namespace Masasamjant
         }
 
         [TestMethod]
+        public void Test_AsciiDigits()
+        {
+            char[] expected = "0123456789".ToCharArray();
+            char[] actual = CharHelper.AsciiDigits;
+            CollectionAssert.AreEqual(expected, actual);
+            Assert.IsFalse(ReferenceEquals(CharHelper.AsciiDigits, CharHelper.AsciiDigits));
+        }
+
+        [TestMethod]
         public void Test_TryGetSeparator()
         {
             var values = new List<string>()
@@ -44,6 +53,25 @@ namespace Masasamjant
             Assert.IsTrue(CharHelper.TryGetSeparator(values, separators, out separator));
             Assert.IsTrue(separator.HasValue);
             Assert.AreEqual('A', separator.Value);
+        }
+
+        [TestMethod]
+        public void Test_GetSeparator()
+        {
+            var values = new List<string>()
+            {
+                "A98", "A48", "A34"
+            };
+            var separators = new List<char>();
+            var separator = CharHelper.GetSeparator(values, separators);
+            Assert.IsFalse(separator.HasValue);
+            separators.Add('A');
+            separators.Add('3');
+            separator = CharHelper.GetSeparator(values, separators);
+            Assert.IsFalse(separator.HasValue);
+            separators.Add('|');
+            separator = CharHelper.GetSeparator(values, separators);
+            Assert.AreEqual('|', separator);
         }
 
         [TestMethod]

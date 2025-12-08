@@ -512,5 +512,51 @@ namespace Masasamjant.Collections
             dictionary.Add(4, 4);
             Assert.IsTrue(DictionaryHelper.ContainsKeys(dictionary, keys));
         }
+
+        [TestMethod]
+        public void Test_ToDictionary_From_Equatables()
+        {
+            var items = new int[] { 1, 2, 3, 4, 4 };
+            var expected = new Dictionary<int, int>() { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } };
+            var actual =DictionaryHelper.ToDictionary(items);
+            CollectionAssert.AreEqual(expected.ToArray(), actual.ToArray());
+
+            actual = DictionaryHelper.ToDictionary(Array.Empty<int>());
+            Assert.IsTrue(actual.Count == 0);
+        }
+
+        [TestMethod]
+        public void Test_RemoveOrphants_Read_Only_Destination()
+        {
+            var destination = new Dictionary<int, int>().AsReadOnly();
+            Assert.ThrowsException<ArgumentException>(() => DictionaryHelper.RemoveOrphants(destination, new Dictionary<int, int>()));
+            Assert.ThrowsException<ArgumentException>(() => DictionaryHelper.RemoveOrphants(destination, new List<Dictionary<int, int>>()));
+        }
+
+        [TestMethod]
+        public void Test_RemoveOrphants()
+        {
+            var destination = DictionaryHelper.ToDictionary(new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+            var compare = DictionaryHelper.ToDictionary(new List<int>() { 1, 3, 5, 7, 9 });
+            DictionaryHelper.RemoveOrphants(destination, compare);
+            CollectionAssert.AreEqual(compare.ToArray(), destination.ToArray());
+
+            var dictionaries = new List<IDictionary<int, int>>()
+            {
+                DictionaryHelper.ToDictionary(new List<int>() { 1 }),
+                DictionaryHelper.ToDictionary(new List<int>() { 5 }),
+                DictionaryHelper.ToDictionary(new List<int>() { 9 }),
+            };
+
+            DictionaryHelper.RemoveOrphants(destination, dictionaries);
+
+            var expected = DictionaryHelper.ToDictionary(new Collection<int>() { 1, 5, 9 });
+
+            CollectionAssert.AreEqual(expected.ToArray(), destination.ToArray());
+
+            DictionaryHelper.RemoveOrphants(destination, new Dictionary<int, int>());
+
+            Assert.IsTrue(destination.Count == 0);
+        }
     }
 }

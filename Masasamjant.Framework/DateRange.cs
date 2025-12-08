@@ -207,19 +207,25 @@ namespace Masasamjant
         public static DateRange FromDays(DateTime date, int days)
         {
             if (days < 0)
-            {
-                var end = date;
-                var begin = end.AddDays(days);
-                return new DateRange(begin, end);
-            }
+                return FromNegativeDays(date, days);
             else if (days > 0)
-            {
-                var begin = date;
-                var end = begin.AddDays(days);
-                return new DateRange(begin, end);
-            }
+                return FromPositiveDays(date, days);
             else
                 return new DateRange(date);
+        }
+
+        private static DateRange FromNegativeDays(DateTime date, int days)
+        {
+            var end = date;
+            var begin = end.AddDays(days);
+            return new DateRange(begin, end);
+        }
+
+        private static DateRange FromPositiveDays(DateTime date, int days)
+        {
+            var begin = date;
+            var end = begin.AddDays(days);
+            return new DateRange(begin, end);
         }
 
         /// <summary>

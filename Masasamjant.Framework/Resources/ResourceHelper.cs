@@ -7,6 +7,8 @@ namespace Masasamjant.Resources
     /// </summary>
     public static class ResourceHelper
     {
+        private const char ResourceStringSeparator = ',';
+
         /// <summary>
         /// Gets resource string of <see cref="ResourceStringAttribute"/> applied to type of <typeparamref name="T"/>.
         /// </summary>
@@ -75,37 +77,40 @@ namespace Masasamjant.Resources
         public static string? GetResourceString<TEnum>(this TEnum value) where TEnum : struct, Enum
         {
             if (value.IsFlagsEnum())
-            {
-                var resources = new List<string>();
-
-                foreach (var flag in value.Flags(true))
-                {
-                    if (value.FlagCount(false) == 1)
-                    {
-                        var resourceStringAttribute = value.GetCustomAttribute<TEnum, ResourceStringAttribute>();
-                        return resourceStringAttribute?.ResourceValue;
-                    }
-                    else
-                    {
-                        if (value.IsDefaultFlag())
-                            continue;
-
-                        var resourceStringAttribute = flag.GetCustomAttribute<TEnum, ResourceStringAttribute>();
-                        if (resourceStringAttribute != null)
-                            resources.Add(resourceStringAttribute.ResourceValue);
-                    }
-                }
-
-                if (resources.Count == 0)
-                    return null;
-
-                return string.Join(',', resources);
-            }
+                return GetFlagsEnumResourceString(value);
             else
             {
                 var resourceStringAttribute = value.GetCustomAttribute<TEnum, ResourceStringAttribute>(false);
                 return resourceStringAttribute?.ResourceValue;
             }
+        }
+
+        private static string? GetFlagsEnumResourceString<TEnum>(TEnum value) where TEnum : struct, Enum
+        {
+            var resources = new List<string>();
+
+            foreach (var flag in value.Flags(true))
+            {
+                if (value.FlagCount(false) == 1)
+                {
+                    var resourceStringAttribute = value.GetCustomAttribute<TEnum, ResourceStringAttribute>();
+                    return resourceStringAttribute?.ResourceValue;
+                }
+                else
+                {
+                    if (value.IsDefaultFlag())
+                        continue;
+
+                    var resourceStringAttribute = flag.GetCustomAttribute<TEnum, ResourceStringAttribute>();
+                    if (resourceStringAttribute != null)
+                        resources.Add(resourceStringAttribute.ResourceValue);
+                }
+            }
+
+            if (resources.Count == 0)
+                return null;
+
+            return string.Join(ResourceStringSeparator, resources);
         }
 
         /// <summary>
@@ -118,36 +123,39 @@ namespace Masasamjant.Resources
         public static string GetResourceStringOrName<TEnum>(this TEnum value) where TEnum : struct, Enum
         {
             if (value.IsFlagsEnum())
-            {
-                var resources = new List<string>();
-
-                foreach (var flag in value.Flags(true))
-                {
-                    if (value.FlagCount(false) == 1)
-                    {
-                        var resourceString = flag.GetResourceString();
-                        return resourceString ?? Enum.GetName(flag) ?? flag.ToString();
-                    }
-                    else
-                    {
-                        if (flag.IsDefaultFlag())
-                            continue;
-
-                        var resourceString = flag.GetResourceString() ?? Enum.GetName(flag) ?? flag.ToString();
-                        resources.Add(resourceString);
-                    }
-                }
-
-                if (resources.Count == 0)
-                    return string.Empty;
-
-                return string.Join(',', resources);
-            }
+                return GetFlagsEnumResourceStringOrName(value);
             else
             {
                 var resourceString = value.GetResourceString();
                 return resourceString ?? Enum.GetName(value) ?? value.ToString();
             }
+        }
+
+        private static string GetFlagsEnumResourceStringOrName<TEnum>(TEnum value) where TEnum : struct, Enum
+        {
+            var resources = new List<string>();
+
+            foreach (var flag in value.Flags(true))
+            {
+                if (value.FlagCount(false) == 1)
+                {
+                    var resourceString = flag.GetResourceString();
+                    return resourceString ?? Enum.GetName(flag) ?? flag.ToString();
+                }
+                else
+                {
+                    if (flag.IsDefaultFlag())
+                        continue;
+
+                    var resourceString = flag.GetResourceString() ?? Enum.GetName(flag) ?? flag.ToString();
+                    resources.Add(resourceString);
+                }
+            }
+
+            if (resources.Count == 0)
+                return string.Empty;
+
+            return string.Join(ResourceStringSeparator, resources);
         }
     }
 }

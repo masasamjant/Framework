@@ -74,6 +74,75 @@
         }
 
         /// <summary>
+        /// Pop items from specified <see cref="Stack{T}"/> until top item is specified stop item.
+        /// </summary>
+        /// <typeparam name="T">The type of the item.</typeparam>
+        /// <param name="stack">The <see cref="Stack{T}"/> to pop items.</param>
+        /// <param name="stopItem">The top item to stop pop.</param>
+        /// <returns>A items from <paramref name="stack"/> until <paramref name="stopItem"/> is top item.</returns>
+        public static IEnumerable<T> PopUntil<T>(this Stack<T> stack, T stopItem)
+        {
+            Predicate<T> stopPredicate = (item) => Equals(stopItem, item);
+            return PopUntil(stack, stopPredicate);
+        }
+
+        /// <summary>
+        /// Pop items from specified <see cref="Stack{T}"/> until top item meets specified stop predicate.
+        /// </summary>
+        /// <typeparam name="T">The type of the item.</typeparam>
+        /// <param name="stack">The <see cref="Stack{T}"/> to pop items.</param>
+        /// <param name="stopPredicate">The stop predicate. If top item match this, then stops.</param>
+        /// <returns>A items from <paramref name="stack"/> until top item match <paramref name="stopPredicate"/>.</returns>
+        public static IEnumerable<T> PopUntil<T>(this Stack<T> stack, Predicate<T> stopPredicate)
+            => PopUntil(stack, new Func<T, bool>(x => stopPredicate(x)));
+
+        /// <summary>
+        /// Pop items from specified <see cref="Stack{T}"/> until top item meets specified stop predicate.
+        /// </summary>
+        /// <typeparam name="T">The type of the item.</typeparam>
+        /// <param name="stack">The <see cref="Stack{T}"/> to pop items.</param>
+        /// <param name="stopPredicate">The stop predicate. If top item match this, then stops.</param>
+        /// <returns>A items from <paramref name="stack"/> until top item match <paramref name="stopPredicate"/>.</returns>
+        public static IEnumerable<T> PopUntil<T>(this Stack<T> stack, Func<T, bool> stopPredicate)
+        {
+            var result = new List<T>(stack.Count);
+
+            while (stack.TryPeek(out var top))
+            {
+                if (stopPredicate(top))
+                    break;
+                
+                top = stack.Pop();
+                result.Add(top);
+            }
+
+            return result.AsReadOnly();
+        }
+
+        /// <summary>
+        /// Push items that match specified predicate to <see cref="Stack{T}"/>.
+        /// </summary>
+        /// <typeparam name="T">The type of the item.</typeparam>
+        /// <param name="stack">The <see cref="Stack{T}"/> to push items.</param>
+        /// <param name="items">The all items.</param>
+        /// <param name="pushPredicate">The predicate to match to pushed item.</param>
+        public static void PushMatches<T>(this Stack<T> stack, IEnumerable<T> items, Predicate<T> pushPredicate)
+            => PushMatches(stack, items, new Func<T, bool>(x => pushPredicate(x)));
+
+        /// <summary>
+        /// Push items that match specified predicate to <see cref="Stack{T}"/>.
+        /// </summary>
+        /// <typeparam name="T">The type of the item.</typeparam>
+        /// <param name="stack">The <see cref="Stack{T}"/> to push items.</param>
+        /// <param name="items">The all items.</param>
+        /// <param name="pushPredicate">The predicate to match to pushed item.</param>
+        public static void PushMatches<T>(this Stack<T> stack, IEnumerable<T> items, Func<T, bool> pushPredicate)
+        {
+            foreach (var item in items.Where(pushPredicate))
+                stack.Push(item);
+        }
+
+        /// <summary>
         /// Split specified <see cref="Stack{T}"/> to several stacks. After split the original 
         /// <see cref="Stack{T}"/> is empty.
         /// </summary>

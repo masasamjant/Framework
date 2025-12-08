@@ -49,22 +49,24 @@ namespace Masasamjant.Linq
             foreach (var nextCondition in Conditions.Skip(1))
             {
                 // Current condition should not be compared with following conditions. Skipt rest.
-                if (currentCondition.LogicalOperator == LogicalOperator.None)
+                if (currentCondition.IsNoneCondition())
                     break;
 
                 ValidateCondition(nextCondition);
-
                 var nextExpression = CreateExpression(parameterExpression, nextCondition);
-
-                if (currentCondition.LogicalOperator == LogicalOperator.And)
-                    currentExpression = Expression.AndAlso(currentExpression, nextExpression);
-                else
-                    currentExpression = Expression.OrElse(currentExpression, nextExpression);
-
+                currentExpression = GetLogicalExpression(currentCondition, currentExpression, nextExpression);
                 currentCondition = nextCondition;
             }
 
             return Expression.Lambda<Func<T, bool>>(currentExpression, parameterExpression);
+        }
+
+        private static BinaryExpression GetLogicalExpression(PredicateBuilderCondition currentCondition, Expression currentExpression, Expression nextExpression)
+        {
+            if (currentCondition.IsAndCondition())
+                return Expression.AndAlso(currentExpression, nextExpression);
+            else
+                return Expression.OrElse(currentExpression, nextExpression);
         }
 
         private static void ValidateCondition(PredicateBuilderCondition condition)
@@ -83,24 +85,31 @@ namespace Masasamjant.Linq
 
         private static BinaryExpression CreateExpression(ParameterExpression parameterExpression, PredicateBuilderCondition condition)
         {
-            if (condition.MemberName.Contains('.'))
+            const char PropertyPathSeparator = '.';
+
+            if (condition.MemberName.Contains(PropertyPathSeparator))
             {
-                var propertyNames = condition.MemberName.Split('.');
-                return CreateExpression(parameterExpression, propertyNames, condition);
+                var propertyNames = condition.MemberName.Split(PropertyPathSeparator);
+                return CreatePropertyExpression(parameterExpression, propertyNames, condition);
             }
             else
             {
-                var member = typeof(T).GetMember(condition.MemberName).FirstOrDefault();
-
-                if (member == null)
-                    throw new InvalidOperationException($"The type '{typeof(T)}' has not member of '{condition.MemberName}'.");
-
-                var memberExpression = Expression.MakeMemberAccess(parameterExpression, member);
-                return CreateEqualityExpression(memberExpression, condition.EqualityOperator, condition.MemberValue);
+                var memberExpression = GetMakeMemberAccessExpression(parameterExpression, condition);
+                return CreateMemberEqualityExpression(memberExpression, condition.EqualityOperator, condition.MemberValue);
             }
         }
 
-        private static BinaryExpression CreateExpression(ParameterExpression paramterExpression, IEnumerable<string> propertyNames, PredicateBuilderCondition condition)
+        private static MemberExpression GetMakeMemberAccessExpression(ParameterExpression parameterExpression, PredicateBuilderCondition condition)
+        {
+            var member = typeof(T).GetMember(condition.MemberName).FirstOrDefault();
+
+            if (member == null)
+                throw new InvalidOperationException($"The type '{typeof(T)}' has not member of '{condition.MemberName}'.");
+
+            return Expression.MakeMemberAccess(parameterExpression, member);
+        }
+
+        private static BinaryExpression CreatePropertyExpression(ParameterExpression paramterExpression, IEnumerable<string> propertyNames, PredicateBuilderCondition condition)
         {
             Expression memberExpression = paramterExpression;
 
@@ -116,10 +125,10 @@ namespace Masasamjant.Linq
                 }
             }
 
-            return CreateEqualityExpression((MemberExpression)memberExpression, condition.EqualityOperator, condition.MemberValue);
+            return CreateMemberEqualityExpression((MemberExpression)memberExpression, condition.EqualityOperator, condition.MemberValue);
         }
 
-        private static BinaryExpression CreateEqualityExpression(MemberExpression memberExpression, EqualityOperator equalityOperator, object? value)
+        private static BinaryExpression CreateMemberEqualityExpression(MemberExpression memberExpression, EqualityOperator equalityOperator, object? value)
         {
             BinaryExpression equalityExpression;
             var constantExpression = Expression.Constant(value);

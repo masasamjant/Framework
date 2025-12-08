@@ -88,7 +88,7 @@
             foreach (var c in value)
             {
                 if (!char.IsAsciiDigit(c))
-                    throw new ArgumentException("Each character must be integer number from 0 to 9.", nameof(value));
+                    throw new ArgumentException("Each character must be ASCII digit from 0 to 9.", nameof(value));
 
                 int i = int.Parse(c.ToString());
 

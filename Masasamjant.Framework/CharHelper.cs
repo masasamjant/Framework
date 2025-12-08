@@ -9,10 +9,17 @@ namespace Masasamjant
     {
         private static readonly char[] commonSeparators = [',', ';', '|', ':', '+', '-'];
 
+        private static readonly char[] asciiDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
         /// <summary>
         /// Gets the characters commonly used to separate string values.
         /// </summary>
         public static char[] CommonSeparators => (char[])commonSeparators.Clone();
+
+        /// <summary>
+        /// Gets the ASCII digit characters (0 to 9).
+        /// </summary>
+        public static char[] AsciiDigits => (char[])asciiDigits.Clone();
 
         /// <summary>
         /// Tries to resolve separator character that could be used to join specified string values.
@@ -21,7 +28,17 @@ namespace Masasamjant
         /// <param name="separators">The possible separators.</param>
         /// <returns>A suitable separator character or <c>null</c>.</returns>
         public static char? GetSeparator(IEnumerable<string> values, IEnumerable<char> separators)
-            => TryGetSeparator(values, separators, out var separator) ? separator : null;
+        {
+            foreach (var c in separators)
+            {
+                if (!values.Any(value => value.Contains(c)))
+                {
+                    return c;
+                }
+            }
+
+            return null;
+        }
 
         /// <summary>
         /// Tries to resolve separator character that could be used to join specified string values.
@@ -40,22 +57,11 @@ namespace Masasamjant
 
             // No any values so first separator is valid.
             if (!values.Any())
-            {
                 separator = separators.First();
-                return true;
-            }
+            else
+                separator = GetSeparator(values, separators);
 
-            // If any of the values does not contain separator, then it is valid.
-            foreach (var c in separators)
-            {
-                if (!values.Any(value => value.Contains(c)))
-                {
-                    separator = c;
-                    return true;
-                }
-            }
-
-            return false;
+            return separator.HasValue;
         }
 
         /// <summary>

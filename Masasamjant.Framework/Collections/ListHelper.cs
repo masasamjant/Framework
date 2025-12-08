@@ -33,15 +33,51 @@
         /// <exception cref="ArgumentException">If <paramref name="destination"/> is in read-only state.</exception>
         public static void Merge<T>(this IList<T> destination, IEnumerable<IList<T>> sources)
         {
-            if (destination.IsReadOnly)
-                throw new ArgumentException("The destination list is read-only.", nameof(destination));
+            CollectionHelper.CheckNotReadOnly(destination, nameof(destination));
+    
+            RemoveOrphants(destination, sources);
+
+            CollectionHelper.AddMissing(destination, sources);
+        }
+
+        /// <summary>
+        /// Remove items from specified destination list that do not exist in comparison list.
+        /// </summary>
+        /// <typeparam name="T">The type of list item.</typeparam>
+        /// <param name="destination">The list to remove items.</param>
+        /// <param name="compare">The list to check items.</param>
+        /// <exception cref="ArgumentException">If <paramref name="destination"/> is in read-only state.</exception>
+        public static void RemoveOrphants<T>(this IList<T> destination, IList<T> compare)
+        {
+            CollectionHelper.CheckNotReadOnly(destination, nameof(destination));
+
+            if (ReferenceEquals(destination, compare))
+                return;
+
+            for (int index = destination.Count - 1; index >= 0; index--)
+            {
+                if (!compare.Contains(destination[index]))
+                    destination.RemoveAt(index);
+            }
+        }
+
+        /// <summary>
+        /// Remove items from specified destination list that do not exist in specified lists.
+        /// </summary>
+        /// <typeparam name="T">The type of the list item.</typeparam>
+        /// <param name="destination">The list to remove items.</param>
+        /// <param name="lists">The lists to check items.</param>
+        /// <exception cref="ArgumentException">If <paramref name="destination"/> is in read-only state.</exception>
+        public static void RemoveOrphants<T>(this IList<T> destination, IEnumerable<IList<T>> lists)
+        {
+            CollectionHelper.CheckNotReadOnly(destination, nameof(destination));
 
             // First remove those items not in any source.
             for (int index = destination.Count - 1; index >= 0; index--)
             {
                 bool remove = true;
 
-                foreach (var source in sources)
+                foreach (var source in lists)
                 {
                     if (ReferenceEquals(destination, source))
                         continue;
@@ -55,19 +91,6 @@
 
                 if (remove)
                     destination.RemoveAt(index);
-            }
-
-            // Then add items that are not in sources.
-            foreach (var source in sources)
-            {
-                if (ReferenceEquals(destination, source))
-                    continue;
-
-                foreach (var item in source)
-                {
-                    if (!destination.Contains(item))
-                        destination.Add(item);
-                }
             }
         }
 
@@ -150,8 +173,7 @@
         /// <exception cref="ArgumentException">If <paramref name="list"/> is in read-only state.</exception>
         public static void Keep<T>(this IList<T> list, Func<T, bool> keepPredicate)
         {
-            if (list.IsReadOnly)
-                throw new ArgumentException("The list is read-only.", nameof(list));
+            CollectionHelper.CheckNotReadOnly(list, nameof(list));
 
             for (int index = list.Count - 1; index >= 0; index--)
             {
@@ -169,7 +191,6 @@
         /// <exception cref="ArgumentException">If <paramref name="list"/> is in read-only state.</exception>
         public static void Remove<T>(this IList<T> list, Predicate<T> removePredicate) => Remove(list, new Func<T, bool>(item => removePredicate(item)));
 
-
         /// <summary>
         /// Remove items in list that satisfy specified predicate. This means that items that satisfy the predicate are removed from the list.
         /// </summary>
@@ -179,14 +200,50 @@
         /// <exception cref="ArgumentException">If <paramref name="list"/> is in read-only state.</exception>
         public static void Remove<T>(this IList<T> list, Func<T, bool> removePredicate)
         {
-            if (list.IsReadOnly)
-                throw new ArgumentException("The list is read-only.", nameof(list));
+            CollectionHelper.CheckNotReadOnly(list, nameof(list));
 
             for (int index = list.Count - 1; index >= 0; index--)
             {
                 if (removePredicate(list[index]))
                     list.RemoveAt(index);
             }
+        }
+
+        /// <summary>
+        /// Add possible duplicate item to list.
+        /// </summary>
+        /// <typeparam name="T">The type of the item.</typeparam>
+        /// <param name="list">The list to add item.</param>
+        /// <param name="item">The item to add.</param>
+        /// <param name="duplicateBehavior">The duplicate behavior, if <paramref name="item"/> happens to be duplicate.</param>
+        /// <exception cref="ArgumentException">
+        /// If <paramref name="list"/> is in read-only state.
+        /// -or-
+        /// If value of <paramref name="duplicateBehavior"/> is not defined.
+        /// </exception>
+        /// <exception cref="DuplicateItemException">If list contains <paramref name="item"/> and <paramref name="duplicateBehavior"/> is <see cref="DuplicateBehavior.Error"/>.</exception>
+        public static void AddDuplicate<T>(this IList<T> list, T item, DuplicateBehavior duplicateBehavior = DuplicateBehavior.Ignore)
+        {
+            CollectionHelper.CheckNotReadOnly(list, nameof(list));
+
+            if (!Enum.IsDefined(duplicateBehavior))
+                throw new ArgumentException("The value is not defined.", nameof(duplicateBehavior));
+
+            if (list.Contains(item))
+            {
+                switch (duplicateBehavior)
+                {
+                    case DuplicateBehavior.Insert:
+                        list.Add(item);
+                        break;
+                    case DuplicateBehavior.Error:
+                        throw new DuplicateItemException(item, "The duplicate item in collections.");
+                    default:
+                        break;
+                }
+            }
+            else
+                list.Add(item);
         }
     }
 }

@@ -688,15 +688,18 @@ namespace Masasamjant
         /// <returns>A quarter of the year.</returns>
         public static int Quarter(this DateTime datetime)
         {
-            if (datetime.Month >= 1 && datetime.Month <= 3)
+            if (IsMonthBetween(datetime.Month, 1, 3))
                 return FirstQuarter;
-            else if (datetime.Month >= 4 && datetime.Month <= 6)
+            else if (IsMonthBetween(datetime.Month, 4, 6))
                 return SecondQuarter;
-            else if (datetime.Month >= 7 && datetime.Month <= 9)
+            else if (IsMonthBetween(datetime.Month, 7, 9))
                 return ThirdQuarter;
             else
                 return FourthQuarter;
         }
+
+        private static bool IsMonthBetween(int currentMonth, int startMonth, int endMonth)
+            => currentMonth >= startMonth && currentMonth <= endMonth;  
 
         /// <summary>
         /// Add weeks to the specified <see cref="DateTime"/>. If <paramref name="value"/> is positive, then 
@@ -766,9 +769,7 @@ namespace Masasamjant
 
             foreach (var other in others)
             {
-                var min = Min(value, other);
-                var max = Max(value, other);
-                var diff = max - min;
+                var diff = DifferenceBetween(value, other);
 
                 if (diff.IsZero())
                     return other;
@@ -798,9 +799,7 @@ namespace Masasamjant
 
             foreach (var other in others)
             {
-                var min = Min(value, other);
-                var max = Max(value, other);
-                var diff = max - min;
+                var diff = DifferenceBetween(value, other);
 
                 if (diff > offset)
                 {
@@ -826,9 +825,8 @@ namespace Masasamjant
 
             foreach (var other in others)
             {
-                var min = Min(value, other);
-                var max = Max(value, other);
-                var diff = max - min;
+                var diff = DifferenceBetween(value, other);
+
                 if (diff <= offset)
                     nearest.Add(other);
             }
@@ -850,9 +848,8 @@ namespace Masasamjant
 
             foreach (var other in others)
             {
-                var min = Min(value, other);
-                var max = Max(value, other);
-                var diff = max - min;
+                var diff = DifferenceBetween(value, other);
+
                 if (diff >= offset)
                     farest.Add(other);
             }
@@ -866,6 +863,12 @@ namespace Masasamjant
                 return 7;
 
             return (int)weekDay;
+        }
+
+        private static TimeSpan DifferenceBetween(DateTime x, DateTime y)
+        {
+            var pair = new MinMaxPair<DateTime>(x, y);
+            return pair.Max - pair.Min;
         }
 
         private static bool IsFuture(DateTime datetime, DateTime futureTime, TimeSpan offset)

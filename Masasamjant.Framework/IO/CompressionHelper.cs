@@ -1,4 +1,5 @@
 ﻿using System.IO.Compression;
+using System.Numerics;
 using System.Text;
 
 namespace Masasamjant.IO
@@ -28,13 +29,35 @@ namespace Masasamjant.IO
             using (var source = new MemoryStream(data))
             using (var destination = new MemoryStream())
             {
-                using (var zip = new GZipStream(destination, level))
-                {
-                    source.CopyTo(zip);
-                    zip.Flush();
-                }
-
+                Compress(source, destination, level);
                 return destination.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Compress data from source stream to destination stream.
+        /// </summary>
+        /// <param name="source">The source stream to read raw data.</param>
+        /// <param name="destination">The destination stream to write compressed data.</param>
+        /// <param name="level">The compression level.</param>
+        /// <exception cref="ArgumentException">
+        /// If value of <paramref name="level"/> is not defined.
+        /// -or-
+        /// If <paramref name="destination"/> is same as <paramref name="source"/>.
+        /// -or-
+        /// If stream specified by <paramref name="source"/> is not readable.
+        /// -or-
+        /// If stream specified by <paramref name="destination"/> is not writable.
+        /// </exception>
+        public static void Compress(Stream source, Stream destination, CompressionLevel level = CompressionLevel.Optimal)
+        {
+            ValidateCompressionLevel(level);
+            ValidateStreams(source, destination);
+
+            using (var zip = new GZipStream(destination, level))
+            {
+                source.CopyTo(zip);
+                zip.Flush();
             }
         }
 
@@ -47,8 +70,6 @@ namespace Masasamjant.IO
         /// <exception cref="ArgumentException">If value of <paramref name="level"/> is not defined.</exception>
         public static async Task<byte[]> CompressAsync(byte[] data, CompressionLevel level = CompressionLevel.Optimal)
         {
-            ValidateCompressionLevel(level);
-
             if (data.Length == 0)
                 return [];
 
@@ -58,13 +79,35 @@ namespace Masasamjant.IO
             using (var source = new MemoryStream(data))
             using (var destination = new MemoryStream())
             {
-                using (var zip = new GZipStream(destination, level))
-                {
-                    await source.CopyToAsync(zip);
-                    await zip.FlushAsync();
-                }
-
+                await CompressAsync(source, destination, level);
                 return destination.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Compress data from source stream to destination stream.
+        /// </summary>
+        /// <param name="source">The source stream to read raw data.</param>
+        /// <param name="destination">The destination stream to write compressed data.</param>
+        /// <param name="level">The compression level.</param>
+        /// <exception cref="ArgumentException">
+        /// If value of <paramref name="level"/> is not defined.
+        /// -or-
+        /// If <paramref name="destination"/> is same as <paramref name="source"/>.
+        /// -or-
+        /// If stream specified by <paramref name="source"/> is not readable.
+        /// -or-
+        /// If stream specified by <paramref name="destination"/> is not writable.
+        /// </exception>
+        public static async Task CompressAsync(Stream source, Stream destination, CompressionLevel level = CompressionLevel.Optimal)
+        {
+            ValidateCompressionLevel(level);
+            ValidateStreams(source, destination);
+
+            using (var zip = new GZipStream(destination, level))
+            {
+                await source.CopyToAsync(zip);
+                await zip.FlushAsync();
             }
         }
 
@@ -115,13 +158,31 @@ namespace Masasamjant.IO
             using (var source = new MemoryStream(data))
             using (var destination = new MemoryStream())
             {
-                using (var zip = new GZipStream(source, CompressionMode.Decompress))
-                {
-                    zip.CopyTo(destination);
-                    destination.Flush();
-                }
-
+                Decompress(source, destination);
                 return destination.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Decompress data from source stream to destination stream.
+        /// </summary>
+        /// <param name="source">The source stream to read compressed data.</param>
+        /// <param name="destination">The destination stream to write decompressed data.</param>
+        /// <exception cref="ArgumentException">
+        /// If <paramref name="destination"/> is same as <paramref name="source"/>.
+        /// -or-
+        /// If stream specified by <paramref name="source"/> is not readable.
+        /// -or-
+        /// If stream specified by <paramref name="destination"/> is not writable.
+        /// </exception>
+        public static void Decompress(Stream source, Stream destination)
+        {
+            ValidateStreams(source, destination);
+
+            using (var zip = new GZipStream(source, CompressionMode.Decompress))
+            {
+                zip.CopyTo(destination);
+                destination.Flush();
             }
         }
 
@@ -140,13 +201,31 @@ namespace Masasamjant.IO
             using (var source = new MemoryStream(data))
             using (var destination = new MemoryStream())
             {
-                using (var zip = new GZipStream(source, CompressionMode.Decompress))
-                {
-                    await zip.CopyToAsync(destination);
-                    await destination.FlushAsync();
-                }
-
+                await DecompressAsync(source, destination);
                 return destination.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Decompress data from source stream to destination stream.
+        /// </summary>
+        /// <param name="source">The source stream to read compressed data.</param>
+        /// <param name="destination">The destination stream to write decompressed data.</param>
+        /// <exception cref="ArgumentException">
+        /// If <paramref name="destination"/> is same as <paramref name="source"/>.
+        /// -or-
+        /// If stream specified by <paramref name="source"/> is not readable.
+        /// -or-
+        /// If stream specified by <paramref name="destination"/> is not writable.
+        /// </exception>
+        public static async Task DecompressAsync(Stream source, Stream destination)
+        {
+            ValidateStreams(source, destination);
+
+            using (var zip = new GZipStream(source, CompressionMode.Decompress))
+            {
+                await zip.CopyToAsync(destination);
+                await destination.FlushAsync();
             }
         }
 
@@ -188,6 +267,18 @@ namespace Masasamjant.IO
         {
             if (!Enum.IsDefined(level))
                 throw new ArgumentException($"The compression level '{level}' is not defined.", nameof(level));
+        }
+
+        private static void ValidateStreams(Stream source, Stream destination)
+        {
+            if (ReferenceEquals(source, destination))
+                throw new ArgumentException("The destination stream is same as source stream.", nameof(destination));
+
+            if (!source.CanRead)
+                throw new ArgumentException("The stream is not readable.", nameof(source));
+
+            if (!destination.CanWrite)
+                throw new ArgumentException("The stream is not writable.", nameof(destination));
         }
     }
 }

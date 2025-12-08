@@ -133,5 +133,64 @@
             ListHelper.Remove(list, removePredicate);
             CollectionAssert.AreEqual(expected, list);
         }
+
+        [TestMethod]
+        public void Test_RemoveOrphants_Read_Only_Destination()
+        {
+            var destination = new List<int>().AsReadOnly();
+            Assert.ThrowsException<ArgumentException>(() => ListHelper.RemoveOrphants(destination, new List<int>()));
+            Assert.ThrowsException<ArgumentException>(() => ListHelper.RemoveOrphants(destination, new List<List<int>>()));
+        }
+
+        [TestMethod]
+        public void Test_RemoveOrphants()
+        {
+            var destination = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            var compare = new List<int>() { 1, 3, 5, 7, 9 };
+            ListHelper.RemoveOrphants(destination, compare);
+            CollectionAssert.AreEqual(compare, destination);
+
+            var lists = new List<List<int>>()
+            {
+                new List<int>() { 1 },
+                new List<int>() { 5 },
+                new List<int>() { 9 },
+            };
+
+            ListHelper.RemoveOrphants(destination, lists);
+
+            var expected = new Collection<int>() { 1, 5, 9 };
+
+            CollectionAssert.AreEqual(expected, destination);
+
+            ListHelper.RemoveOrphants(destination, new List<int>());
+
+            Assert.IsTrue(destination.Count == 0);
+        }
+
+        [TestMethod]
+        public void Test_AddDuplicate()
+        {
+            Assert.ThrowsException<ArgumentException>(() => ListHelper.AddDuplicate(new List<int>().AsReadOnly(), 1, DuplicateBehavior.Ignore));
+            Assert.ThrowsException<ArgumentException>(() => ListHelper.AddDuplicate(new List<int>(), 1, (DuplicateBehavior)999));
+            var list = new List<int>();
+            
+            ListHelper.AddDuplicate(list, 1, DuplicateBehavior.Error);
+            Assert.IsTrue(list.Contains(1));
+            
+            Assert.ThrowsException<DuplicateItemException>(() => ListHelper.AddDuplicate(list, 1, DuplicateBehavior.Error));
+            
+            ListHelper.AddDuplicate(list, 1, DuplicateBehavior.Ignore);
+            Assert.IsTrue(list.Count == 1);
+            Assert.IsTrue(list.Contains(1));
+
+            ListHelper.AddDuplicate(list, 1, DuplicateBehavior.Replace);
+            Assert.IsTrue(list.Count == 1);
+            Assert.IsTrue(list.Contains(1));
+
+            ListHelper.AddDuplicate(list, 1, DuplicateBehavior.Insert);
+            Assert.IsTrue(list.Count == 2);
+            Assert.IsTrue(list.Contains(1));
+        }
     }
 }

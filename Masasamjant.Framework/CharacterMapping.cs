@@ -5,7 +5,7 @@ namespace Masasamjant
     /// <summary>
     /// Represents one-to-one mapping between <see cref="char"/> values.
     /// </summary>
-    public readonly struct CharacterMapping : IEquatable<CharacterMapping>
+    public readonly struct CharacterMapping : IEquatable<CharacterMapping>, ICloneable
     {
         /// <summary>
         /// Initializes new instance of <see cref="CharacterMapping"/> value.
@@ -64,6 +64,15 @@ namespace Masasamjant
         }
 
         /// <summary>
+        /// Creates copy from this mapping.
+        /// </summary>
+        /// <returns>A copy from this mappaing.</returns>
+        public CharacterMapping Clone()
+        {
+            return new CharacterMapping(Source, Destination);
+        }
+
+        /// <summary>
         /// Operator to check if <see cref="CharacterMapping"/>s are equal.
         /// </summary>
         /// <param name="left">The left <see cref="CharacterMapping"/>.</param>
@@ -78,5 +87,10 @@ namespace Masasamjant
         /// <param name="right">The right <see cref="CharacterMapping"/>.</param>
         /// <returns><c>true</c> if <paramref name="left"/> and <paramref name="right"/> are not equal; <c>false</c> otherwise.</returns>
         public static bool operator !=(CharacterMapping left, CharacterMapping right) => !(left == right);
+
+        object ICloneable.Clone()
+        {
+            return Clone();
+        }
     }
 }

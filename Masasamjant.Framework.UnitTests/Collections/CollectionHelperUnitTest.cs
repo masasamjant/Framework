@@ -92,7 +92,7 @@ namespace Masasamjant.Collections
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [ExpectedException(typeof(InvalidOperationException))]
         public void Test_Combine_With_Max_Items()
         {
             var collections = new List<List<int>>()
@@ -125,13 +125,12 @@ namespace Masasamjant.Collections
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void Test_AddMissing_When_Collection_Is_Read_Only()
+        public void Test_AddMissing_Read_Only()
         {
             var collection = new Collection<int>();
             collection.SetReadOnly();
-            var items = new List<int>() { 1, 2, 3 };
-            CollectionHelper.AddMissing(collection, items);
+            Assert.ThrowsException<ArgumentException>(() => CollectionHelper.AddMissing(collection, new Collection<int>()));
+            Assert.ThrowsException<ArgumentException>(() => CollectionHelper.AddMissing(collection, new Collection<Collection<int>>()));
         }
 
         [TestMethod]
@@ -141,6 +140,16 @@ namespace Masasamjant.Collections
             var items = new List<int>() { 1, 2, 3 };
             CollectionHelper.AddMissing(collection, items);
             CollectionAssert.AreEqual(items, collection);
+            
+            var collections = new Collection<Collection<int>>()
+            {
+                new Collection<int>() { 4 },
+                new Collection<int>() { 5 }
+            };
+
+            CollectionHelper.AddMissing(collection, collections);
+
+            CollectionAssert.AreEqual(new Collection<int>() { 1, 2, 3, 4, 5 }, collection);
         }
 
         [TestMethod]
@@ -276,6 +285,41 @@ namespace Masasamjant.Collections
             var expected = new List<int>() { 1, 2, 3, 4, 5 };
             CollectionHelper.Remove(collection, removePredicate);
             CollectionAssert.AreEqual(expected, collection);
+        }
+
+        [TestMethod]
+        public void Test_RemoveOrphants_Read_Only_Destination()
+        {
+            var destination = new Collection<int>();
+            destination.SetReadOnly();
+            Assert.ThrowsException<ArgumentException>(() => CollectionHelper.RemoveOrphants(destination, new Collection<int>()));
+            Assert.ThrowsException<ArgumentException>(() => CollectionHelper.RemoveOrphants(destination, new Collection<Collection<int>>()));
+        }
+
+        [TestMethod]
+        public void Test_RemoveOrphants()
+        {
+            var destination = new Collection<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            var compare = new Collection<int>() { 1, 3, 5, 7, 9 };
+            CollectionHelper.RemoveOrphants(destination, compare);
+            CollectionAssert.AreEqual(compare, destination);
+
+            var collections = new Collection<Collection<int>>()
+            {
+                new Collection<int>() { 1 },
+                new Collection<int>() { 5 },
+                new Collection<int>() { 9 },
+            };
+
+            CollectionHelper.RemoveOrphants(destination, collections);
+
+            var expected = new Collection<int>() { 1, 5, 9 };
+
+            CollectionAssert.AreEqual(expected, destination);
+
+            CollectionHelper.RemoveOrphants(destination, new Collection<int>());
+
+            Assert.IsTrue(destination.Count == 0);
         }
     }
 }

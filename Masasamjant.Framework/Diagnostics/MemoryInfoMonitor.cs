@@ -5,6 +5,28 @@
     /// </summary>
     public sealed class MemoryInfoMonitor : IDisposable
     {
+        private readonly long startBytes;
+        private readonly List<MemoryInfo> list;
+        private readonly Lock listLock;
+        private int size;
+        private System.Timers.Timer? timer;
+        private bool disposed;
+
+        private MemoryInfoMonitor(long startBytes, bool allowMemoryCollection)
+        {
+            AllowMemoryCollection = allowMemoryCollection;
+            this.startBytes = startBytes;
+            this.listLock = new Lock();
+            this.list = new List<MemoryInfo>();
+            this.size = 10;
+            this.disposed = false;
+        }
+
+        ~MemoryInfoMonitor()
+        {
+            Dispose(false);
+        }
+
         /// <summary>
         /// Notifies when memory read if <see cref="IsMonitoring"/> is enabled.
         /// </summary>
@@ -158,27 +180,5 @@
                 list.Add(current);
             }
         }
-
-        private MemoryInfoMonitor(long startBytes, bool allowMemoryCollection)
-        {
-            AllowMemoryCollection = allowMemoryCollection;
-            this.startBytes = startBytes;
-            this.listLock = new Lock();
-            this.list = new List<MemoryInfo>();
-            this.size = 10;
-            this.disposed = false;
-        }
-
-        ~MemoryInfoMonitor()
-        {
-            Dispose(false);
-        }
-
-        private readonly long startBytes;
-        private readonly List<MemoryInfo> list;
-        private readonly Lock listLock;
-        private int size;
-        private System.Timers.Timer? timer;
-        private bool disposed;
     }
 }

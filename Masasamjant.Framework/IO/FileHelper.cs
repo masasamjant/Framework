@@ -219,8 +219,7 @@ namespace Masasamjant.IO
             }
             finally
             {
-                if (failed && File.Exists(tempFilePath))
-                    TryDeleteFile(tempFilePath);
+                TryDeleteFile(failed, tempFilePath);
             }
         }
 
@@ -258,8 +257,7 @@ namespace Masasamjant.IO
             }
             finally
             {
-                if (failed && File.Exists(tempFilePath))
-                    TryDeleteFile(tempFilePath);
+                TryDeleteFile(failed, tempFilePath);
             }
         }
 
@@ -301,17 +299,10 @@ namespace Masasamjant.IO
                 tempDirectoryPath = CreateTempDirectory();
 
                 var sourceFiles = Directory.GetFiles(sourceDirectory);
-
-                foreach (var sourceFile in sourceFiles)
-                {
-                    var destinationFile = Path.Combine(tempDirectoryPath, Path.GetFileName(sourceFile));
-                    File.Copy(sourceFile, destinationFile, true);
-                }
+                CopyFiles(sourceFiles, tempDirectoryPath);
 
                 var childDirectories = Directory.GetDirectories(sourceDirectory);
-
-                foreach (var childDirectory in childDirectories)
-                    CopyDirectory(tempDirectoryPath, childDirectory);
+                CopyDirectories(childDirectories, tempDirectoryPath);
 
                 return tempDirectoryPath;
             }
@@ -331,20 +322,30 @@ namespace Masasamjant.IO
         {
             var dir = new DirectoryInfo(sourceDirectory);
             var destinationDirectory = Path.Combine(parentDirectory, dir.Name);
+
             if (!Directory.Exists(destinationDirectory))
                 Directory.CreateDirectory(destinationDirectory);
-            var sourceFiles = Directory.GetFiles(sourceDirectory);
 
-            foreach (var sourceFile in sourceFiles)
-            {
-                var destinationFile = Path.Combine(destinationDirectory, Path.GetFileName(sourceFile));
-                File.Copy(sourceFile, destinationFile, true);
-            }
+            var sourceFiles = Directory.GetFiles(sourceDirectory);
+            CopyFiles(sourceFiles, destinationDirectory);
 
             var childDirectories = Directory.GetDirectories(sourceDirectory);
+            CopyDirectories(childDirectories, destinationDirectory);
+        }
 
-            foreach (var childDirectory in childDirectories)
-                CopyDirectory(destinationDirectory, childDirectory);
+        private static void CopyFiles(string[] sourceFiles, string directoryPath)
+        {
+            foreach (var sourceFile in sourceFiles)
+            {
+                var destinationFile = Path.Combine(directoryPath, Path.GetFileName(sourceFile));
+                File.Copy(sourceFile, destinationFile, true);
+            }
+        }
+
+        private static void CopyDirectories(string[] directories, string parentDirectory)
+        {
+            foreach (var directory in directories)
+                CopyDirectory(parentDirectory, directory);
         }
 
         private static void ValidateSourceFile(string sourceFile)
@@ -354,6 +355,12 @@ namespace Masasamjant.IO
 
             if (!File.Exists(sourceFile))
                 throw new FileNotFoundException("The source file not exist.", sourceFile);
+        }
+
+        private static void TryDeleteFile(bool failed, string? filePath)
+        {
+            if (failed && filePath != null && File.Exists(filePath))
+                TryDeleteFile(filePath);
         }
 
         private static void TryDeleteFile(string filePath)

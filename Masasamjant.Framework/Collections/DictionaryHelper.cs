@@ -84,8 +84,7 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="dictionary"/> is in read-only state.</exception>
         public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TKey, TValue> valueProvider) where TKey : notnull
         {
-            if (dictionary.IsReadOnly)
-                throw new ArgumentException("The dictionary is read-only.", nameof(dictionary));
+            CollectionHelper.CheckNotReadOnly(dictionary, nameof(dictionary));
 
             if (dictionary.TryGetValue(key, out var value))
                 return value;
@@ -192,18 +191,7 @@ namespace Masasamjant.Collections
                         throw new ArgumentException($"The dictionaries cannot have more than {maxItemCount} items in total.", nameof(dictionaries));
 
                     if (combined.ContainsKey(keyValue.Key))
-                    {
-                        switch (duplicateBehavior)
-                        {
-                            case DuplicateBehavior.Replace:
-                                combined[keyValue.Key] = keyValue.Value;
-                                break;
-                            case DuplicateBehavior.Error:
-                                throw new DuplicateKeyException<TKey>(keyValue.Key, "The dictionaries to combine contain duplicate key(s).");
-                            default:
-                                continue;
-                        }
-                    }
+                        AddDuplicate(combined, keyValue.Key, keyValue.Value, duplicateBehavior, "The dictionaries contains duplicate item(s).");
                     else
                         combined.Add(keyValue.Key, keyValue.Value);
                 }
@@ -236,31 +224,24 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="destination"/> is in read-only state.</exception>
         public static void Merge<TKey, TValue>(this IDictionary<TKey, TValue> destination, IEnumerable<IDictionary<TKey, TValue>> sources) where TKey : notnull
         {
-            if (destination.IsReadOnly)
-                throw new ArgumentException("The destination dictionary is read-only.", nameof(destination));
+            CollectionHelper.CheckNotReadOnly(destination, nameof(destination));
 
-            // Remove keys not found in sources.
-            foreach (var keyValue in CopyEnumerable.CreateCopyEnumerable(destination))
-            {
-                bool remove = true;
+            RemoveOrphants(destination, sources);
+            AddOrReplace(destination, sources);
+        }
 
-                foreach (var source in sources)
-                {
-                    if (source.Count == 0 || ReferenceEquals(destination, source))
-                        continue;
+        /// <summary>
+        /// Adds or replaces values in specified dictionary from values in specified source dictionaries.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <param name="destination">The dictionary to add or replace values.</param>
+        /// <param name="sources">The dictionaries to read values.</param>
+        /// <exception cref="ArgumentException">If <paramref name="destination"/> is in read-only state.</exception>
+        public static void AddOrReplace<TKey, TValue>(this IDictionary<TKey, TValue> destination, IEnumerable<IDictionary<TKey, TValue>> sources) where TKey : notnull
+        {
+            CollectionHelper.CheckNotReadOnly(destination, nameof(destination));
 
-                    if (source.ContainsKey(keyValue.Key))
-                    {
-                        remove = false;
-                        break;
-                    }
-                }
-
-                if (remove)
-                    destination.Remove(keyValue.Key);
-            }
-
-            // Add values from sources that do not exist. Replace values from sources that exist.
             foreach (var source in sources)
             {
                 if (source.Count == 0 || ReferenceEquals(destination, source))
@@ -277,6 +258,85 @@ namespace Masasamjant.Collections
         }
 
         /// <summary>
+        /// Adds or replaces values in specified dictionary from values in specified source dictionary.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <param name="destination">The dictionary to add or replace values.</param>
+        /// <param name="source">The dictionary to read values.</param>
+        /// <exception cref="ArgumentException">If <paramref name="destination"/> is in read-only state.</exception>
+        public static void AddOrReplace<TKey, TValue>(this IDictionary<TKey, TValue> destination, IDictionary<TKey, TValue> source) where TKey : notnull
+        {
+            CollectionHelper.CheckNotReadOnly(destination, nameof(destination));
+
+            if (ReferenceEquals(destination, source) || source.Count == 0)
+                return;
+
+            foreach (var keyValue in source)
+            {
+                if (destination.ContainsKey(keyValue.Key))
+                    destination[keyValue.Key] = keyValue.Value;
+                else
+                    destination.Add(keyValue);
+            }
+        }
+
+        /// <summary>
+        /// Remove items from specified destination dictionary where key do not exist in specified dictionaries.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <param name="destination">The dictionary to remove items.</param>
+        /// <param name="dictionaries">The dictionaries to check items.</param>
+        /// <exception cref="ArgumentException">If <paramref name="destination"/> is in read-only state.</exception>
+        public static void RemoveOrphants<TKey, TValue>(this IDictionary<TKey, TValue> destination, IEnumerable<IDictionary<TKey, TValue>> dictionaries) where TKey : notnull
+        {
+            CollectionHelper.CheckNotReadOnly(destination, nameof(destination));
+
+            foreach (var keyValue in CopyEnumerable.CreateCopyEnumerable(destination))
+            {
+                bool remove = true;
+
+                foreach (var source in dictionaries)
+                {
+                    if (source.Count == 0 || ReferenceEquals(destination, source))
+                        continue;
+
+                    if (source.ContainsKey(keyValue.Key))
+                    {
+                        remove = false;
+                        break;
+                    }
+                }
+
+                if (remove)
+                    destination.Remove(keyValue.Key);
+            }
+        }
+
+        /// <summary>
+        /// Remove items from specified destination dictionary where key do not exist in comparison dictionary.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <param name="destination">The dictionary to remove items.</param>
+        /// <param name="compare">The dictionary to check items.</param>
+        /// <exception cref="ArgumentException">If <paramref name="destination"/> is in read-only state.</exception>
+        public static void RemoveOrphants<TKey, TValue>(this IDictionary<TKey, TValue> destination, IDictionary<TKey, TValue> compare) where TKey : notnull
+        {
+            CollectionHelper.CheckNotReadOnly(destination, nameof(destination));
+
+            if (ReferenceEquals(destination, compare))
+                return;
+
+            foreach (var keyValue in CopyEnumerable.CreateCopyEnumerable(destination))
+            {
+                if (!compare.ContainsKey(keyValue.Key))
+                    destination.Remove(keyValue.Key);
+            }
+        }
+
+        /// <summary>
         /// Remove specified keys from <see cref="IDictionary{TKey, TValue}"/>.
         /// </summary>
         /// <typeparam name="TKey">The type of the key.</typeparam>
@@ -286,8 +346,7 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="dictionary"/> is in read-only state.</exception>
         public static void RemoveRange<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, IEnumerable<TKey> keys)
         {
-            if (dictionary.IsReadOnly)
-                throw new ArgumentException("The dictionary is read-only.", nameof(dictionary));
+            CollectionHelper.CheckNotReadOnly(dictionary, nameof(dictionary));
 
             foreach (var key in keys)
                 dictionary.Remove(key);
@@ -305,8 +364,7 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="dictionary"/> is in read-only state.</exception>
         public static bool TryGetAndRemove<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, out TValue? result)
         {
-            if (dictionary.IsReadOnly)
-                throw new ArgumentException("The dictionary is read-only.", nameof(dictionary));
+            CollectionHelper.CheckNotReadOnly(dictionary, nameof(dictionary));
 
             if (dictionary.TryGetValue(key, out result))
             {
@@ -338,8 +396,7 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="dictionary"/> is in read-only state.</exception>
         public static void Keep<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, Func<KeyValuePair<TKey, TValue>, bool> keepPredicate)
         {
-            if (dictionary.IsReadOnly)
-                throw new ArgumentException("The dictionary is read-only.", nameof(dictionary));
+            CollectionHelper.CheckNotReadOnly(dictionary, nameof(dictionary));
 
             if (dictionary.Count == 0)
                 return;
@@ -370,8 +427,7 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="dictionary"/> is in read-only state.</exception>
         public static void Keep<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, Func<TKey, bool> keepPredicate)
         {
-            if (dictionary.IsReadOnly)
-                throw new ArgumentException("The dictionary is read-only.", nameof(dictionary));
+            CollectionHelper.CheckNotReadOnly(dictionary, nameof(dictionary));
 
             if (dictionary.Count == 0)
                 return;
@@ -402,8 +458,7 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="dictionary"/> is in read-only state.</exception>
         public static void Remove<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, Func<KeyValuePair<TKey, TValue>, bool> removePredicate)
         {
-            if (dictionary.IsReadOnly)
-                throw new ArgumentException("The dictionary is read-only.", nameof(dictionary));
+            CollectionHelper.CheckNotReadOnly(dictionary, nameof(dictionary));
 
             if (dictionary.Count == 0)
                 return;
@@ -434,8 +489,7 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="dictionary"/> is in read-only state.</exception>
         public static void Remove<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, Func<TKey, bool> removePredicate)
         {
-            if (dictionary.IsReadOnly)
-                throw new ArgumentException("The dictionary is read-only.", nameof(dictionary));
+            CollectionHelper.CheckNotReadOnly(dictionary, nameof(dictionary));
 
             if (dictionary.Count == 0)
                 return;
@@ -471,16 +525,7 @@ namespace Masasamjant.Collections
             {
                 if (dictionary.ContainsKey(tuple.Item1))
                 {
-                    switch (duplicateBehavior)
-                    {
-                        case DuplicateBehavior.Replace:
-                            dictionary[tuple.Item1] = tuple.Item2;
-                            break;
-                        case DuplicateBehavior.Error:
-                            throw new DuplicateKeyException<T1>(tuple.Item1, "The tuples contains item that would create duplicate key.");
-                        default:
-                            continue;
-                    }
+                    AddDuplicate(dictionary, tuple.Item1, tuple.Item2, duplicateBehavior, "The tuples contains item that would create duplicate key.");
                 }
                 else
                     dictionary.Add(tuple.Item1, tuple.Item2);
@@ -534,6 +579,39 @@ namespace Masasamjant.Collections
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Create dictionary from specified items of <typeparamref name="T"/> where item is both key and value. Possible duplicate items are ignored.
+        /// </summary>
+        /// <typeparam name="T">The type of the item.</typeparam>
+        /// <param name="items">The source items.</param>
+        /// <returns>A dictionary from <paramref name="items"/> where item is key and value.</returns>
+        public static IDictionary<T, T> ToDictionary<T>(IEnumerable<T> items) where T : notnull, IEquatable<T>
+        {
+            var dictionary = new Dictionary<T, T>();
+
+            foreach (var item in items)
+            {
+                if (!dictionary.ContainsKey(item))
+                    dictionary[item] = item;
+            }
+
+            return dictionary;
+        }
+
+        private static void AddDuplicate<TKey, TValue>(Dictionary<TKey, TValue> dictionary, TKey key, TValue value, DuplicateBehavior duplicateBehavior, string duplicateErrorMessage) where TKey : notnull
+        {
+            switch (duplicateBehavior)
+            {
+                case DuplicateBehavior.Replace:
+                    dictionary[key] = value;
+                    break;
+                case DuplicateBehavior.Error:
+                    throw new DuplicateKeyException<TKey>(key, duplicateErrorMessage);
+                default:
+                    break;
+            }
         }
     }
 }

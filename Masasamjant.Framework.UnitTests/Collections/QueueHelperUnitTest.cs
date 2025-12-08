@@ -83,5 +83,39 @@
                 n++;
             }
         }
+
+        [TestMethod]
+        public void Test_DequeueUntil()
+        {
+            var queue = new Queue<int>();
+            queue.Enqueue(1);
+            queue.Enqueue(2);
+            queue.Enqueue(3);
+            queue.Enqueue(4);
+            queue.Enqueue(5);
+
+            Predicate<int> stopPredicate = item => item == 3;
+
+            var expected = new int[] { 1, 2 };
+            var actual = QueueHelper.DequeueUntil(queue, stopPredicate).ToArray();
+
+            CollectionAssert.AreEqual(expected, actual);
+
+            expected = new int[] { 3, 4 };
+            actual = QueueHelper.DequeueUntil(queue, 5).ToArray();
+            CollectionAssert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void Test_EnqueueMatching()
+        {
+            var queue = new Queue<int>();
+            var items = new List<int>() { 1, 2, 3, 4, 5 };
+            Func<int, bool> enqueuePredicate = item => item >= 3;
+            QueueHelper.EnqueueMatches(queue, items, enqueuePredicate);
+            var expected = new int[] { 3, 4, 5 };
+            var actual = queue.ToArray();
+            CollectionAssert.AreEqual(expected, actual);
+        }
     }
 }

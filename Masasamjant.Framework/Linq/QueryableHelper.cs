@@ -51,15 +51,21 @@ namespace Masasamjant.Linq
                     continue;
 
                 if (descriptor.SortOrder == SortOrder.Ascending)
-                    query = first ? OrderBy(query, descriptor.PropertyName) : ThenBy((IOrderedQueryable<T>)query, descriptor.PropertyName);
+                    query = CreateAscendingOrderQuery(query, first, descriptor);
                 else
-                    query = first ? OrderByDescending(query, descriptor.PropertyName) : ThenByDescending((IOrderedQueryable<T>)query, descriptor.PropertyName);
+                    query = CreateDescendingOrderQuery(query, first, descriptor);
 
                 first = false;
             }
 
             return query;
         }
+
+        private static IQueryable<T> CreateAscendingOrderQuery<T>(IQueryable<T> query, bool first, SortDescriptor descriptor)
+            => first ? OrderBy(query, descriptor.PropertyName) : ThenBy((IOrderedQueryable<T>)query, descriptor.PropertyName);
+
+        private static IQueryable<T> CreateDescendingOrderQuery<T>(IQueryable<T> query, bool first, SortDescriptor descriptor)
+            => first ? OrderByDescending(query, descriptor.PropertyName) : ThenByDescending((IOrderedQueryable<T>)query, descriptor.PropertyName);
 
         /// <summary>
         /// Execute ordering specified <see cref="IQueryable{T}"/> in ascending order using property specified by name.
