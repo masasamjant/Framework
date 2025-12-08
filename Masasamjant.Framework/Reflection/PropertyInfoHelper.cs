@@ -78,11 +78,8 @@ namespace Masasamjant.Reflection
         /// <exception cref="ArgumentException">If the property is not from declaring type.</exception>
         public static Expression<Func<T, TValue?>> GetGetterExpression<T, TValue>(this PropertyInfo property)
         {
-            if (property.DeclaringType == null || !TypeHelper.IsOfType(property.DeclaringType, typeof(T)))
-                throw new ArgumentException($"Property is not from the declaring type of {TypeHelper.GetTypeName(typeof(T))}.", nameof(property));
-
-            var parameterExpression = Expression.Parameter(property.DeclaringType, "x");
-            var memberExpression = Expression.Property(parameterExpression, property);
+            ValidatePropertyDeclaringType<T>(property);
+            var (parameterExpression, memberExpression) = GetPropertyMemberExpressions(property);
             return Expression.Lambda<Func<T, TValue?>>(memberExpression, parameterExpression);
         }
 
@@ -95,12 +92,22 @@ namespace Masasamjant.Reflection
         /// <exception cref="ArgumentException">If the property is not from declaring type.</exception>
         public static Expression<Func<T, object?>> GetGetterExpression<T>(this PropertyInfo property)
         {
+            ValidatePropertyDeclaringType<T>(property);
+            var (parameterExpression, memberExpression) = GetPropertyMemberExpressions(property);
+            return Expression.Lambda<Func<T, object?>>(memberExpression, parameterExpression);
+        }
+
+        private static (ParameterExpression ParameterExpression, MemberExpression MemberExpression) GetPropertyMemberExpressions(PropertyInfo property)
+        {
+            var parameterExpression = Expression.Parameter(property.DeclaringType!, "x");
+            var memberExpression = Expression.Property(parameterExpression, property);
+            return (parameterExpression, memberExpression);
+        }
+
+        private static void ValidatePropertyDeclaringType<T>(PropertyInfo property)
+        {
             if (property.DeclaringType == null || !TypeHelper.IsOfType(property.DeclaringType, typeof(T)))
                 throw new ArgumentException($"Property is not from the declaring type of {TypeHelper.GetTypeName(typeof(T))}.", nameof(property));
-
-            var parameterExpression = Expression.Parameter(property.DeclaringType, "x");
-            var memberExpression = Expression.Property(parameterExpression, property);
-            return Expression.Lambda<Func<T, object?>>(memberExpression, parameterExpression);
         }
     }
 }

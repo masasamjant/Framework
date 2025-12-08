@@ -261,12 +261,6 @@ namespace Masasamjant.IO
             }
         }
 
-        private static void TryDeleteFile(bool failed, string? filePath) 
-        {
-            if (failed && filePath != null && File.Exists(filePath))
-                TryDeleteFile(filePath);
-        }
-
         /// <summary>
         /// Create temporary directory.
         /// </summary>
@@ -361,6 +355,12 @@ namespace Masasamjant.IO
 
             if (!File.Exists(sourceFile))
                 throw new FileNotFoundException("The source file not exist.", sourceFile);
+        }
+
+        private static void TryDeleteFile(bool failed, string? filePath)
+        {
+            if (failed && filePath != null && File.Exists(filePath))
+                TryDeleteFile(filePath);
         }
 
         private static void TryDeleteFile(string filePath)

@@ -28,19 +28,23 @@
                 return ms;
             else
             {
+                StreamTempPosition? tempPosition = null;
+
                 try
                 {
+                    tempPosition = StreamTempPosition.Create(stream, ZeroPosition);
                     ms = new MemoryStream();
-                    var position = stream.Position;
-                    stream.Position = ZeroPosition;
                     stream.CopyTo(ms);
-                    stream.Position = position;
                     ms.Position = ZeroPosition;
                     return ms;
                 }
                 catch (Exception exception)
                 {
                     throw new InvalidOperationException($"Creating memory stream from {stream.GetType()} failed.", exception);
+                }
+                finally
+                {
+                    tempPosition?.RestoreOriginalPosition(stream);
                 }
             }
         }
@@ -58,19 +62,23 @@
                 return ms;
             else
             {
+                StreamTempPosition? tempPosition = null;
+
                 try
                 {
+                    tempPosition = StreamTempPosition.Create(stream, ZeroPosition);
                     ms = new MemoryStream();
-                    var position = stream.Position;
-                    stream.Position = ZeroPosition;
                     await stream.CopyToAsync(ms);
-                    stream.Position = position;
                     ms.Position = ZeroPosition;
                     return ms;
                 }
                 catch (Exception exception)
                 {
                     throw new InvalidOperationException($"Creating memory stream from {stream.GetType()} failed.", exception);
+                }
+                finally
+                {
+                    tempPosition?.RestoreOriginalPosition(stream);
                 }
             }
         }
@@ -142,6 +150,7 @@
         /// <param name="destination">The destination stream.</param>
         /// <param name="progressHandler">The update progress handler.</param>
         /// <param name="bufferSize">The buffer size of each read.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <exception cref="ArgumentException">
         /// If <paramref name="destination"/> is same as <paramref name="source"/>.
         /// -or-
@@ -149,22 +158,22 @@
         /// -or-
         /// If cannot write to <paramref name="destination"/>.
         /// </exception>
-        public static async Task CopyStreamAsync(Stream source, Stream destination, Func<StreamCopyProgress, Task>? progressHandler = null, int bufferSize = DefaultBufferSize)
+        public static async Task CopyStreamAsync(Stream source, Stream destination, Func<StreamCopyProgress, Task>? progressHandler = null, int bufferSize = DefaultBufferSize, CancellationToken cancellationToken = default)
         {
             ValidateStreamCopy(source, destination);
             bufferSize = EnsureBufferSize(bufferSize);
 
             var copied = 0L;
             var buffer = new byte[bufferSize];
-            var read = await source.ReadAsync(buffer, 0, bufferSize);
+            var read = await source.ReadAsync(buffer, 0, bufferSize, cancellationToken);
 
             while (read > 0)
             {
-                await destination.WriteAsync(buffer, 0, read);
+                await destination.WriteAsync(buffer, 0, read, cancellationToken);
                 copied += read;
                 if (progressHandler != null)
                     await progressHandler(new StreamCopyProgress(source, destination, copied));
-                read = await source.ReadAsync(buffer, 0, bufferSize);
+                read = await source.ReadAsync(buffer, 0, bufferSize, cancellationToken);
             }
         }
 
@@ -181,5 +190,27 @@
         }
 
         private static int EnsureBufferSize(int bufferSize) => bufferSize <= 0 ? DefaultBufferSize : bufferSize;
+
+        private class StreamTempPosition
+        {
+            private readonly long originalPosition;
+
+            private StreamTempPosition(long originalPosition)
+            {
+                this.originalPosition = originalPosition;
+            }
+
+            public static StreamTempPosition Create(Stream stream, long tempPosition)
+            {
+                var temp = new StreamTempPosition(stream.Position);
+                stream.Position = tempPosition;
+                return temp;
+            }
+
+            public void RestoreOriginalPosition(Stream stream)
+            {
+                stream.Position = originalPosition;
+            }
+        }
     }
 }

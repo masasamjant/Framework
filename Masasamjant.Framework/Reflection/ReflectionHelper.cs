@@ -1,5 +1,4 @@
-﻿using Masasamjant.Collections;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace Masasamjant.Reflection
@@ -9,6 +8,8 @@ namespace Masasamjant.Reflection
     /// </summary>
     public static class ReflectionHelper
     {
+        private const char PropertyPathSeparator = '.';
+
         /// <summary>
         /// Creates <see cref="ThisType"/> from specified <see cref="Type"/>.   
         /// </summary>
@@ -58,19 +59,19 @@ namespace Masasamjant.Reflection
         /// <summary>
         /// Gets extension methods of an specified <see cref="Type"/> in specified <see cref="Assembly"/>.
         /// </summary>
-        /// <param name="type">The type.</param>
-        /// <param name="assembly">The <see cref="Assembly"/> to search for extension methods or <c>null</c> to use assembly of <paramref name="type"/>.</param>
-        /// <returns>A found extension methods of <paramref name="type"/>.</returns>
-        public static IEnumerable<MethodInfo> GetExtensionMethods(Type type, Assembly? assembly = null)
+        /// <param name="parameterType">The type.</param>
+        /// <param name="assembly">The <see cref="Assembly"/> to search for extension methods or <c>null</c> to use assembly of <paramref name="parameterType"/>.</param>
+        /// <returns>A found extension methods of <paramref name="parameterType"/>.</returns>
+        public static IEnumerable<MethodInfo> GetExtensionMethods(Type parameterType, Assembly? assembly = null)
         {
             if (assembly == null)
-                assembly = type.Assembly;
+                assembly = parameterType.Assembly;
 
             var methods = from t in assembly.GetTypes()
                           where !t.IsGenericType && !t.IsNested
                           from m in t.GetMethods(BindingFlags.Static | BindingFlags.Public)
                           where m.IsDefined(typeof(ExtensionAttribute), false)
-                          where m.GetParameters()[0].ParameterType.Equals(type)
+                          where m.GetParameters()[0].ParameterType.Equals(parameterType)
                           select m;
 
             foreach (var method in methods)
@@ -103,57 +104,72 @@ namespace Masasamjant.Reflection
             else
             {
                 includeThisType = parameterTypes[0].IsThisType();
-
-                // If this type is included, then its actual type must be same as 'type'.
-                if (includeThisType && !((ThisType)parameterTypes[0]).GetActualType().Equals(type))
-                    throw new ArgumentException("When the first type is 'ThisType', then its actual type must be the same as 'type'.", nameof(parameterTypes));
-
-                // Only the first type can be 'ThisType', so check rest of the types.
-                if (parameterTypes.Length > 1)
-                {
-                    for (int index = 1; index < parameterTypes.Length; index++)
-                    {
-                        if (parameterTypes[index].IsThisType())
-                            throw new ArgumentException("The 'ThisType' must be the first type in array.", nameof(parameterTypes));
-                    }
-                }
+                ValidateExtensionMethodParameterTypes(parameterTypes, includeThisType, type);
             }
 
             int length = includeThisType ? parameterTypes.Length : parameterTypes.Length + 1;
+            var methods = GetExtensionMethodsByName(type, assembly, name, length);
+            var method = GetExtensionMethodByParameterTypes(methods, parameterTypes);
+            return method;
+        }
 
-            var methods = (from m in GetExtensionMethods(type, assembly)
-                            where m.Name.Equals(name, StringComparison.OrdinalIgnoreCase) &&
-                            m.GetParameters().Length > 0 &&
-                            m.GetParameters()[0].ParameterType.Equals(type) &&
-                            m.GetParameters().Length == length
-                            select m).ToList();
+        private static void ValidateExtensionMethodParameterTypes(Type[] parameterTypes, bool includeThisType, Type thisType)
+        {
+            // If this type is included, then its actual type must be same as 'type'.
+            if (includeThisType && !((ThisType)parameterTypes[0]).GetActualType().Equals(thisType))
+                throw new ArgumentException("When the first type is 'ThisType', then its actual type must be the same as 'type'.", nameof(parameterTypes));
 
-            if (methods.Count == 0)
-                return null;
-            
-            if (methods.Count == 1)
-                return methods[0];
-
-            foreach (var method in methods)
+            // Only the first type can be 'ThisType', so check rest of the types.
+            if (parameterTypes.Length > 1)
             {
-                var parameters = method.GetParameters();
-
-                bool found = true;
-
-                for (int index = 0; index < parameters.Length; index++)
+                for (int index = 1; index < parameterTypes.Length; index++)
                 {
-                    if (!parameters[index + 1].ParameterType.Equals(parameterTypes[index]))
-                    {
-                        found = false;
-                        break;
-                    }
+                    if (parameterTypes[index].IsThisType())
+                        throw new ArgumentException("The 'ThisType' must be the first type in array.", nameof(parameterTypes));
                 }
+            }
+        }
 
-                if (found)
-                    return method;
+        private static List<MethodInfo> GetExtensionMethodsByName(Type parameterType, Assembly? assembly, string methodName, int parametersLength)
+        {
+            return (from m in GetExtensionMethods(parameterType, assembly)
+                    where m.Name.Equals(methodName, StringComparison.OrdinalIgnoreCase) &&
+                    m.GetParameters().Length > 0 &&
+                    m.GetParameters()[0].ParameterType.Equals(parameterType) &&
+                    m.GetParameters().Length == parametersLength
+                    select m).ToList();
+        }
+
+        private static MethodInfo? GetExtensionMethodByParameterTypes(List<MethodInfo> candidateMethods, Type[] parameterTypes)
+        {
+            if (candidateMethods.Count == 0)
+                return null;
+
+            if (candidateMethods.Count == 1)
+                return candidateMethods[0];
+
+            foreach (var cancidateMethod in candidateMethods)
+            {
+                var parameters = cancidateMethod.GetParameters();
+
+                if (MethodParameterTypesMatch(parameters, parameterTypes))
+                    return cancidateMethod;
             }
 
             return null;
+        }
+
+        private static bool MethodParameterTypesMatch(ParameterInfo[] methodParameters, Type[] expectedParameterTypes)
+        {
+            for (int index = 0; index < methodParameters.Length; index++)
+            {
+                if (!methodParameters[index + 1].ParameterType.Equals(expectedParameterTypes[index]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -176,8 +192,8 @@ namespace Masasamjant.Reflection
 
             PropertyInfo? property;
 
-            if (propertyName.Contains('.'))
-                property = GetPropertyRecursive(instance, propertyName.Split('.', StringSplitOptions.RemoveEmptyEntries), bindingFlags);
+            if (propertyName.Contains(PropertyPathSeparator))
+                property = GetPropertyRecursive(instance, propertyName.Split(PropertyPathSeparator, StringSplitOptions.RemoveEmptyEntries), bindingFlags);
             else
                 property = instance.GetType().GetProperty(propertyName, bindingFlags);
 
@@ -212,8 +228,8 @@ namespace Masasamjant.Reflection
 
             PropertyInfo? property;
 
-            if (propertyName.Contains('.'))
-                property = GetPropertyRecursive(instance, propertyName.Split('.', StringSplitOptions.RemoveEmptyEntries), bindingFlags, out owner);
+            if (propertyName.Contains(PropertyPathSeparator))
+                property = GetPropertyRecursive(instance, propertyName.Split(PropertyPathSeparator, StringSplitOptions.RemoveEmptyEntries), bindingFlags, out owner);
             else
             {
                 property = instance.GetType().GetProperty(propertyName, bindingFlags);
@@ -327,27 +343,6 @@ namespace Masasamjant.Reflection
                     if (currentMethods.Length > 0)
                         methods.AddRange(currentMethods);
                 }
-
-                //// If type is interface, then get methods of all other interface it might have.
-                //// Otherwise just get methods of base types until object type is reached.
-                //if (type.IsInterface)
-                //{
-
-                //}
-                //else
-                //{
-                //    var baseType = type.BaseType;
-
-                //    while (baseType != null)
-                //    {
-                //        currentMethods = baseType.GetMethods(binding);
-
-                //        if (currentMethods.Length > 0)
-                //            methods.AddRange(currentMethods);
-
-                //        baseType = baseType.BaseType;
-                //    }
-                //}
             }
 
             return methods.AsEnumerable();
@@ -415,13 +410,27 @@ namespace Masasamjant.Reflection
 
             var parameterTypes = new Type[parameters.Length];
 
+            BuildMethodParameters(parameters, newParameters, parameterTypes);
+
+            var method = type.GetMethod(methodName, parameterTypes);
+
+            if (method == null)
+                throw new InvalidOperationException($"The type '{TypeHelper.GetTypeName(type)}' does not have public method of '{methodName}'.");
+
+            parameters = newParameters;
+            
+            return method;
+        }
+
+        private static void BuildMethodParameters(object?[] parameters, object?[] newParameters, Type[] parameterTypes)
+        {
             for (int index = 0; index < parameters.Length; index++)
             {
                 var parameter = parameters[index];
 
                 if (parameter == null)
                     throw new ArgumentException($"The null reference parameters must be specified using '{TypeHelper.GetTypeName(typeof(NullType))}'.", nameof(parameters));
-                
+
                 if (parameter is NullType nullType)
                 {
                     parameterTypes[index] = nullType.GetActualType();
@@ -433,15 +442,6 @@ namespace Masasamjant.Reflection
                     newParameters[index] = parameter;
                 }
             }
-
-            var method = type.GetMethod(methodName, parameterTypes);
-
-            if (method == null)
-                throw new InvalidOperationException($"The type '{TypeHelper.GetTypeName(type)}' does not have public method of '{methodName}'.");
-
-            parameters = newParameters;
-            
-            return method;
         }
 
         private static MethodInfo? GetMethodRecursive(Type type, string methodName, Type[] parameterTypes)

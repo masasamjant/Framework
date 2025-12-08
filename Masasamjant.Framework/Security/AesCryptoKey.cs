@@ -41,10 +41,14 @@ namespace Masasamjant.Security
         protected override (byte[] Key, byte[] IV) GenerateKey(string password, Salt salt, int iterations, HashAlgorithmName hashAlgorithmName)
         {
             byte[] data = Rfc2898DeriveBytes.Pbkdf2(password, salt.ToBytes(), iterations, hashAlgorithmName, KeyLength + IVLength);
-            var key = data.Take(KeyLength).ToArray();
-            var iv = data.Skip(KeyLength).Take(IVLength).ToArray();
+            var key = GetKeyBytes(data);
+            var iv = GetIVBytes(data);
             return (key, iv);
         }
+
+        private static byte[] GetKeyBytes(byte[] data) => data.Take(KeyLength).ToArray();
+
+        private static byte[] GetIVBytes(byte[] data) => data.Skip(KeyLength).Take(IVLength).ToArray();
 
         /// <summary>
         /// Export <see cref="AesCryptoKey"/> to specified file.

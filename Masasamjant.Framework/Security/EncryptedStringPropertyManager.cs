@@ -77,33 +77,21 @@ namespace Masasamjant.Security
         public async Task EncryptPropertiesAsync(object instance, string password, Salt salt, CancellationToken cancellationToken = default)
         {
             var type = instance.GetType();
+            var encryptStringProperties = GetEncryptStringProperties(type);
 
-            // Get encrypt string properties.
-            var encryptStringProperties = new List<PropertyInfo>();
-
-            GetEncryptStringProperties(type, encryptStringProperties);
-
-            // No any encrypt string properties.
             if (encryptStringProperties.Count == 0)
                 return;
 
-            // Get setter methods.
-            var setMethods = GetSetMethods(type, encryptStringProperties, AllowNonPublicSetter);
+            var setMethods = GetSetMethods(encryptStringProperties, AllowNonPublicSetter);
 
             if (setMethods.Count == 0)
                 return;
 
+            bool encryption = true;
+
             // Check each property and if value is string and has setter, then encrypt and set cipher text as value.
             foreach (var encryptStringGetProperty in encryptStringProperties)
-            {
-                var value = encryptStringGetProperty.GetValue(instance, null);
-
-                if (value is string clearText && setMethods.TryGetValue(encryptStringGetProperty.Name, out var setMethod))
-                {
-                    var cipherText = await Cryptography.EncryptStringAsync(clearText, password, salt, Encoding, cancellationToken);
-                    setMethod.Invoke(instance, [cipherText]);
-                }
-            }
+                await EncryptOrDecryptStringPropertyAsync(encryptStringGetProperty, encryption, setMethods, instance, password, salt, cancellationToken);
         }
 
         /// <summary>
@@ -118,36 +106,44 @@ namespace Masasamjant.Security
         public async Task DecryptPropertiesAsync(object instance, string password, Salt salt, CancellationToken cancellationToken = default)
         {
             var type = instance.GetType();
+            var encryptStringProperties = GetEncryptStringProperties(type);
 
-            // Get encrypt string properties.
-            var encryptStringProperties = new List<PropertyInfo>();
-
-            GetEncryptStringProperties(type, encryptStringProperties);
-
-            // No any encrypt string properties.
             if (encryptStringProperties.Count == 0)
                 return;
 
-            // Get setter methods.
-            var setMethods = GetSetMethods(type, encryptStringProperties, AllowNonPublicSetter);
+            var setMethods = GetSetMethods(encryptStringProperties, AllowNonPublicSetter);
 
             if (setMethods.Count == 0)
                 return;
 
+            bool encryption = false;
+
             // Check each property and if value is string and has setter, then decrypt and set clear text as value.
             foreach (var encryptStringGetProperty in encryptStringProperties)
-            {
-                var value = encryptStringGetProperty.GetValue(instance, null);
+                await EncryptOrDecryptStringPropertyAsync(encryptStringGetProperty, encryption, setMethods, instance, password, salt, cancellationToken);
+        }
 
-                if (value is string cipherText && setMethods.TryGetValue(encryptStringGetProperty.Name, out var setMethod))
-                {
-                    var clearText = await Cryptography.DecryptStringAsync(cipherText, password, salt, Encoding, cancellationToken);
-                    setMethod.Invoke(instance, [clearText]);
-                }
+        private async Task EncryptOrDecryptStringPropertyAsync(PropertyInfo encryptStringGetProperty, bool encryption, Dictionary<string, MethodInfo> setMethods, object instance, string password, Salt salt, CancellationToken cancellationToken)
+        {
+            var propertyValue = encryptStringGetProperty.GetValue(instance, null);
+
+            if (propertyValue is string propertyValueText && setMethods.TryGetValue(encryptStringGetProperty.Name, out var setMethod))
+            {
+                var propertyValueTextResult = encryption
+                    ? await Cryptography.EncryptStringAsync(propertyValueText, password, salt, Encoding, cancellationToken)
+                    : await Cryptography.DecryptStringAsync(propertyValueText, password, salt, Encoding, cancellationToken);
+
+                setMethod.Invoke(instance, [propertyValueTextResult]);
             }
         }
 
-        protected static Dictionary<string, MethodInfo> GetSetMethods(Type type, IEnumerable<PropertyInfo> properties, bool allowNonPublicSetter)
+        /// <summary>
+        /// Gets setter methods of the specified properties.
+        /// </summary>
+        /// <param name="properties">The properties to get setter methods.</param>
+        /// <param name="allowNonPublicSetter"><c>true</c> to allow using non-public setter; <c>false</c> otherwise.</param>
+        /// <returns>A dictionary where key is property name and value is setter method.</returns>
+        protected static Dictionary<string, MethodInfo> GetSetMethods(IEnumerable<PropertyInfo> properties, bool allowNonPublicSetter)
         {
             var dictionary = new Dictionary<string, MethodInfo>();
 
@@ -161,15 +157,22 @@ namespace Masasamjant.Security
             return dictionary;
         }
 
-        protected static void GetEncryptStringProperties(Type type, List<PropertyInfo> encryptStringProperties)
+        /// <summary>
+        /// Gets properties decorated with <see cref="EncryptedStringPropertyAttribute"/> attribute.
+        /// </summary>
+        /// <param name="type">The type to get properties.</param>
+        /// <returns>A collection of properties that was decorated with <see cref="EncryptedStringPropertyAttribute"/>.</returns>
+        protected static IReadOnlyCollection<PropertyInfo> GetEncryptStringProperties(Type type)
         {
+            var encryptStringProperties = new List<PropertyInfo>();
+
             // Get public string properties.
             var properties = type.GetProperties(GetPropertyBinding())
                 .Where(x => x.PropertyType.Equals(typeof(string)))
                 .ToArray();
 
             if (properties.Length == 0)
-                return;
+                return encryptStringProperties;
 
             // Get encrypt string properties.
             foreach (var property in properties)
@@ -178,6 +181,8 @@ namespace Masasamjant.Security
                 if (attribute != null)
                     encryptStringProperties.Add(property);
             }
+
+            return encryptStringProperties.AsReadOnly();
         }
 
         protected static BindingFlags GetPropertyBinding()
@@ -239,33 +244,21 @@ namespace Masasamjant.Security
         public async Task EncryptPropertiesAsync(object instance, TCryptoKey key, CancellationToken cancellationToken = default)
         {
             var type = instance.GetType();
+            var encryptStringProperties = GetEncryptStringProperties(type);
 
-            // Get encrypt string properties.
-            var encryptStringProperties = new List<PropertyInfo>();
-
-            GetEncryptStringProperties(type, encryptStringProperties);
-
-            // No any encrypt string properties.
             if (encryptStringProperties.Count == 0)
                 return;
 
-            // Get setter methods.
-            var setMethods = GetSetMethods(type, encryptStringProperties, AllowNonPublicSetter);
+            var setMethods = GetSetMethods(encryptStringProperties, AllowNonPublicSetter);
 
             if (setMethods.Count == 0)
                 return;
 
+            bool encryption = true;
+
             // Check each property and if value is string and has setter, then encrypt and set cipher text as value.
             foreach (var encryptStringGetProperty in encryptStringProperties)
-            {
-                var value = encryptStringGetProperty.GetValue(instance, null);
-
-                if (value is string clearText && setMethods.TryGetValue(encryptStringGetProperty.Name, out var setMethod))
-                {
-                    var cipherText = await Cryptography.EncryptStringAsync(clearText, key, Encoding, cancellationToken);
-                    setMethod.Invoke(instance, [cipherText]);
-                }
-            }
+                await EncryptOrDecryptStringPropertyAsync(encryptStringGetProperty, encryption, setMethods, instance, key, cancellationToken);
         }
 
         /// <summary>
@@ -279,32 +272,34 @@ namespace Masasamjant.Security
         public async Task DecryptPropertiesAsync(object instance, TCryptoKey key, CancellationToken cancellationToken = default)
         {
             var type = instance.GetType();
+            var encryptStringProperties = GetEncryptStringProperties(type);
 
-            // Get encrypt string properties.
-            var encryptStringProperties = new List<PropertyInfo>();
-
-            GetEncryptStringProperties(type, encryptStringProperties);
-
-            // No any encrypt string properties.
             if (encryptStringProperties.Count == 0)
                 return;
 
-            // Get setter methods.
-            var setMethods = GetSetMethods(type, encryptStringProperties, AllowNonPublicSetter);
+            var setMethods = GetSetMethods(encryptStringProperties, AllowNonPublicSetter);
 
             if (setMethods.Count == 0)
                 return;
 
+            bool encryption = false;
+
             // Check each property and if value is string and has setter, then decrypt and set clear text as value.
             foreach (var encryptStringGetProperty in encryptStringProperties)
-            {
-                var value = encryptStringGetProperty.GetValue(instance, null);
+                await EncryptOrDecryptStringPropertyAsync(encryptStringGetProperty, encryption, setMethods, instance, key, cancellationToken);
+        }
 
-                if (value is string cipherText && setMethods.TryGetValue(encryptStringGetProperty.Name, out var setMethod))
-                {
-                    var clearText = await Cryptography.DecryptStringAsync(cipherText, key, Encoding, cancellationToken);
-                    setMethod.Invoke(instance, [clearText]);
-                }
+        private async Task EncryptOrDecryptStringPropertyAsync(PropertyInfo encryptStringGetProperty, bool encryption, Dictionary<string, MethodInfo> setMethods, object instance, TCryptoKey key, CancellationToken cancellationToken)
+        {
+            var propertyValue = encryptStringGetProperty.GetValue(instance, null);
+
+            if (propertyValue is string propertyValueText && setMethods.TryGetValue(encryptStringGetProperty.Name, out var setMethod))
+            {
+                var propertyValueTextResult = encryption
+                    ? await Cryptography.EncryptStringAsync(propertyValueText, key, Encoding, cancellationToken)
+                    : await Cryptography.DecryptStringAsync(propertyValueText, key, Encoding, cancellationToken);
+
+                setMethod.Invoke(instance, [propertyValueTextResult]);
             }
         }
 

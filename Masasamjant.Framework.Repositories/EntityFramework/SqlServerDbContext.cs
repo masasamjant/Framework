@@ -1,5 +1,6 @@
 ﻿using Masasamjant.Repositories.Abstractions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Masasamjant.Repositories.EntityFramework
 {
@@ -20,6 +21,7 @@ namespace Masasamjant.Repositories.EntityFramework
         /// Gets global timeout in seconds for executed commands or <c>null</c> to use default timeout.
         /// </summary>
         /// <returns>A command timeout in seconds.</returns>
+        [Obsolete("Use OnConfiguringSqlServer instead. Will be removed in future versions.")]
         protected virtual int? GetCommandTimeoutSeconds() => null;
 
         /// <summary>
@@ -31,12 +33,17 @@ namespace Masasamjant.Repositories.EntityFramework
             base.OnConfiguring(optionsBuilder);
 
             var connectionString = ConnectionStringProvider.GetConnectionString();
+            optionsBuilder.UseSqlServer(connectionString, OnConfiguringSqlServer);
+        }
+
+        protected virtual void OnConfiguringSqlServer(SqlServerDbContextOptionsBuilder options)
+        {
+#pragma warning disable CS0618 // Type or member is obsolete
             var commandTimeout = GetCommandTimeoutSeconds();
+#pragma warning restore CS0618 // Type or member is obsolete
 
             if (commandTimeout.HasValue && commandTimeout.Value > 0)
-                optionsBuilder.UseSqlServer(connectionString, op => op.CommandTimeout(commandTimeout.Value));
-            else
-                optionsBuilder.UseSqlServer(connectionString);
+                options.CommandTimeout(commandTimeout.Value);
         }
     }
 }
