@@ -4,7 +4,7 @@
     /// Represents service that will export <typeparamref name="TCryptoKey"/> to stream.
     /// </summary>
     /// <typeparam name="TCryptoKey">The type of the crypto key.</typeparam>
-    public abstract class CryptoKeyExport<TCryptoKey> : ICryptoKeyExport<TCryptoKey> where TCryptoKey : CryptoKey
+    public interface ICryptoKeyExport<TCryptoKey> where TCryptoKey : CryptoKey
     {
         /// <summary>
         /// Exports specified <typeparamref name="TCryptoKey"/> to specified stream.
@@ -14,6 +14,6 @@
         /// <returns>A task representing export.</returns>
         /// <remarks>It is responsibility of caller to secure data exported to stream.</remarks>
         /// <exception cref="InvalidOperationException">If export fails.</exception>
-        public abstract Task ExportAsync(TCryptoKey key, Stream stream);
+        Task ExportAsync(TCryptoKey key, Stream stream);
     }
 }
