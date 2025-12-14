@@ -15,5 +15,16 @@
         /// <remarks>It is responsibility of caller to secure data exported to stream.</remarks>
         /// <exception cref="InvalidOperationException">If export fails.</exception>
         public abstract Task ExportAsync(TCryptoKey key, Stream stream);
+
+        /// <summary>
+        /// Validate that specified stream is writable.
+        /// </summary>
+        /// <param name="stream">The stream to write.</param>
+        /// <exception cref="ArgumentException">If <paramref name="stream"/> is not writable stream.</exception>
+        protected static void ValidateCanWrite(Stream stream)
+        {
+            if (!stream.CanWrite)
+                throw new ArgumentException("The stream is not writable.", nameof(stream));
+        }
     }
 }

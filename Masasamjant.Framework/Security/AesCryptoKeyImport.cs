@@ -15,24 +15,16 @@ namespace Masasamjant.Security
         /// </summary>
         /// <param name="stream">The stream to read imported key.</param>
         /// <returns>A task representing import.</returns>
+        /// <exception cref="ArgumentException">If <paramref name="stream"/> is not readable.</exception>
         /// <exception cref="InvalidOperationException">If import fails.</exception>
         public override async Task<AesCryptoKey> ImportAsync(Stream stream)
         {
+            ValidateCanRead(stream);
+
             try
             {
-                string s;
-
-                var reader = new StreamReader(stream);
-                s = await reader.ReadToEndAsync();
-
-                if (s.Length != (KeyLength + IVLength))
-                    throw new InvalidOperationException("Stream contains invalid data.");
-
-                string k = s.Left(KeyLength);
-                string v = s.Right(IVLength);
-                byte[] key = Convert.FromBase64String(k);
-                byte[] iv = Convert.FromBase64String(v);
-                return new AesCryptoKey(key, iv);
+                string value = await ReadImportValueAsync(stream);
+                return CreateCryptoKeyFromImportValue(value);
             }
             catch (Exception exception)
             {
@@ -41,6 +33,22 @@ namespace Masasamjant.Security
                 else
                     throw new InvalidOperationException("Importing key from stream failed. See inner exception.", exception);
             }
+        }
+
+        private static async Task<string> ReadImportValueAsync(Stream stream)
+        {
+            var reader = new StreamReader(stream);
+            var value = await reader.ReadToEndAsync();
+            if (value.Length != (KeyLength + IVLength))
+                throw new InvalidOperationException("Stream contains invalid data.");
+            return value;
+        }
+
+        private static AesCryptoKey CreateCryptoKeyFromImportValue(string value)
+        {
+            byte[] key = Convert.FromBase64String(value.Left(KeyLength));
+            byte[] iv = Convert.FromBase64String(value.Right(IVLength));
+            return new AesCryptoKey(key, iv);
         }
     }
 }
