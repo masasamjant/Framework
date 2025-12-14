@@ -14,22 +14,30 @@ namespace Masasamjant.Security
         /// <param name="stream">The stream to export key.</param>
         /// <returns>A task representing export.</returns>
         /// <remarks>It is responsibility of caller to secure data exported to stream.</remarks>
+        /// <exception cref="ArgumentException">If <paramref name="stream"/> is not writable.</exception>
         /// <exception cref="InvalidOperationException">If export fails.</exception>
         public override async Task ExportAsync(AesCryptoKey key, Stream stream)
         {
+            ValidateCanWrite(stream);
+            
             try
             {
-                string k = Convert.ToBase64String(key.Key);
-                string v = Convert.ToBase64String(key.IV);
-                string s = string.Concat(k, v);
+                var value = GetExportValue(key);
                 var writer = new StreamWriter(stream);
-                await writer.WriteAsync(s);
+                await writer.WriteAsync(value);
                 await writer.FlushAsync();
             }
             catch (Exception exception)
             {
                 throw new InvalidOperationException("Exporting key to specified stream failed. See inner exception.", exception);
             }
+        }
+
+        private static string GetExportValue(AesCryptoKey key)
+        {
+            string k = Convert.ToBase64String(key.Key);
+            string v = Convert.ToBase64String(key.IV);
+            return string.Concat(k, v);
         }
     }
 }

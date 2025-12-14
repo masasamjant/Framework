@@ -24,12 +24,12 @@ namespace Masasamjant.Security
             stream = new ReadOnlyStream(new MemoryStream());
         
             using (stream)
-                await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => export.ExportAsync(key, stream));
+                await Assert.ThrowsExceptionAsync<ArgumentException>(() => export.ExportAsync(key, stream));
 
             stream = new WriteOnlyStream(new MemoryStream());
 
             using (stream)
-                await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => import.ImportAsync(stream));
+                await Assert.ThrowsExceptionAsync<ArgumentException>(() => import.ImportAsync(stream));
         }
     }
 }
