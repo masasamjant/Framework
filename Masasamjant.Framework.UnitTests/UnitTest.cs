@@ -42,5 +42,11 @@ namespace Masasamjant
                 return reader.ReadToEnd();
             }
         }
+
+        protected static void AssertLine(string line, string[] expectedContents)
+        {
+            foreach (var expectedContent in expectedContents)
+                Assert.IsTrue(line.Contains(expectedContent));
+        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.13.35825.156
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11312.151 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masasamjant.Framework.Modeling", "Masasamjant.Framework.Modeling\Masasamjant.Framework.Modeling.csproj", "{0B2E5209-580F-417C-B121-4C001272A3C9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masasamjant.Framework.Repositories", "Masasamjant.Framework.Repositories\Masasamjant.Framework.Repositories.csproj", "{102D9A4E-E1B7-417B-8A8C-8DB9B202767A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masasamjant.Framework.Logs", "Masasamjant.Framework.Logs\Masasamjant.Framework.Logs.csproj", "{B2AAE04B-3169-4E72-89FF-075C45EACBBB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +39,10 @@ Global
 		{102D9A4E-E1B7-417B-8A8C-8DB9B202767A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{102D9A4E-E1B7-417B-8A8C-8DB9B202767A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{102D9A4E-E1B7-417B-8A8C-8DB9B202767A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2AAE04B-3169-4E72-89FF-075C45EACBBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2AAE04B-3169-4E72-89FF-075C45EACBBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2AAE04B-3169-4E72-89FF-075C45EACBBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2AAE04B-3169-4E72-89FF-075C45EACBBB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,6 +52,7 @@ Global
 		{075692A4-9AE5-476D-B9E7-A19EE4101A8E} = {B6357D9B-1DE8-481D-A6BC-67DC406B37B0}
 		{0B2E5209-580F-417C-B121-4C001272A3C9} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{102D9A4E-E1B7-417B-8A8C-8DB9B202767A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{B2AAE04B-3169-4E72-89FF-075C45EACBBB} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {599C52B5-160A-4AF9-9951-040D3F362F9E}
