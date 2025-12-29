@@ -30,7 +30,7 @@
     /// </summary>
     /// <typeparam name="TIdentifier">The type of the identifier.</typeparam>
     public abstract class VersionedModel<TIdentifier> : Model<TIdentifier>
-        where TIdentifier : IEquatable<TIdentifier>
+        where TIdentifier : IEquatable<TIdentifier>, new()
     {
         /// <summary>
         /// Gets the version bytes or empty array.

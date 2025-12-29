@@ -72,78 +72,6 @@ namespace Masasamjant.Modeling.Abstractions
             return;
         }
 
-        /// <summary>
-        /// Validate mandatory string value.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <param name="paramName">The name of parameter.</param>
-        /// <param name="allowEmpty"><c>true</c> if <paramref name="value"/> can be empty string; <c>false</c> otherwise.</param>
-        /// <param name="allowWhiteSpace"><c>true</c> if <paramref name="value"/> can contain only whitespace; <c>false</c> otherwise.</param>
-        /// <param name="maxLength">The maximum length.</param>
-        /// <param name="minLength">The minimum length.</param>
-        /// <param name="checkNoLeadingWhiteSpace"><c>true</c> to check that <paramref name="value"/> does not have leading whitespace; <c>false</c> otherwise.</param>
-        /// <param name="checkNoTrailingWhiteSpace"><c>true</c> to check that <paramref name="value"/> does not have trailing whitespace; <c>false</c> otherwise.</param>
-        /// <returns>A valid value.</returns>
-        /// <exception cref="ArgumentException">If value of <paramref name="value"/> is not valid.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">If value of <paramref name="value"/> is shorter than <paramref name="minLength"/> or longer than <paramref name="maxLength"/>.</exception>
-        protected static string ValidateMandatoryString(string? value, string paramName, bool allowEmpty = false, bool allowWhiteSpace = false, int? maxLength = null, int? minLength = null, bool checkNoLeadingWhiteSpace = false, bool checkNoTrailingWhiteSpace = false)
-        {
-            if (value == null)
-                throw new ArgumentException("The value cannot be null.", paramName);
-
-            if (!allowEmpty && !allowWhiteSpace && string.IsNullOrWhiteSpace(value))
-                throw new ArgumentException("The value cannot be null, empty or only white-space.", paramName);
-
-            if (!allowEmpty && allowWhiteSpace && string.IsNullOrEmpty(value))
-                throw new ArgumentException("The value cannot be null or empty.", paramName);
-
-            if (allowEmpty && !allowWhiteSpace && value.Length > 0 && value.Trim().Length == 0)
-                throw new ArgumentException("The value contains only white-space.", paramName);
-
-            if (allowWhiteSpace && value.Length > 0 && value.Trim().Length == 0)
-                return value;
-
-            if (checkNoLeadingWhiteSpace && value.Length != value.TrimStart().Length)
-                throw new ArgumentException("The value cannot start with whitespace.", paramName);
-
-            if (checkNoTrailingWhiteSpace && value.Length != value.TrimEnd().Length)
-                throw new ArgumentException("The value cannot end with whitespace.", paramName);
-
-            if (minLength.HasValue && minLength.Value >= 0 && value.Length < minLength.Value)
-                throw new ArgumentOutOfRangeException(paramName, value.Length, $"The value cannot be shorter than '{minLength.Value}' characters.");
-
-            if (maxLength.HasValue && maxLength.Value >= 0 && value.Length > maxLength.Value)
-                throw new ArgumentOutOfRangeException(paramName, value.Length, $"The value cannot be longer than '{maxLength.Value}' characters.");
-
-            return value;
-        }
-
-        /// <summary>
-        /// Validate optional string value.
-        /// </summary>
-        /// <param name="model">The model.</param>
-        /// <param name="value">The value.</param>
-        /// <param name="paramName">The name of parameter.</param>
-        /// <param name="allowWhiteSpace"><c>true</c> if <paramref name="value"/> can contain only whitespace; <c>false</c> otherwise.</param>
-        /// <param name="maxLength">The maximum length.</param>
-        /// <param name="minLength">The minimum length.</param>
-        /// <param name="emptyAsNull"><c>true</c> to return <c>null</c> if <paramref name="value"/> is empty; <c>false</c> to return empty.</param>
-        /// <param name="checkNoLeadingWhiteSpace"><c>true</c> to check that <paramref name="value"/> does not have leading whitespace; <c>false</c> otherwise.</param>
-        /// <param name="checkNoTrailingWhiteSpace"><c>true</c> to check that <paramref name="value"/> does not have trailing whitespace; <c>false</c> otherwise.</param>
-        /// <returns>A valid value, empty string or <c>null</c>.</returns>
-        /// <exception cref="ArgumentException">If value of <paramref name="value"/> is not valid.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">If value of <paramref name="value"/> is shorter than <paramref name="minLength"/> or longer than <paramref name="maxLength"/>.</exception>
-        public static string? ValidateOptionalString(string? value, string paramName, bool allowWhiteSpace = false, int? maxLength = null, int? minLength = null, bool emptyAsNull = true, bool checkNoLeadingWhiteSpace = false, bool checkNoTrailingWhiteSpace = false)
-        {
-            if (value == null || (emptyAsNull && value.Length == 0))
-                return null;
-
-            if (value.Length == 0 || (allowWhiteSpace && value.Trim().Length == 0))
-                return value;
-
-            return ValidateMandatoryString(value, paramName, true, allowWhiteSpace, maxLength, minLength, checkNoLeadingWhiteSpace, checkNoTrailingWhiteSpace);
-        }
-
         private ModelValidationException HandleValidationException(ValidationException validationException)
         {
             var errors = new List<ModelError>();
@@ -178,7 +106,7 @@ namespace Masasamjant.Modeling.Abstractions
     /// </summary>
     /// <typeparam name="TIdentifier">The type of the identifier.</typeparam>
     public abstract class Model<TIdentifier> : Model, IModel<TIdentifier>
-        where TIdentifier : IEquatable<TIdentifier>
+        where TIdentifier : IEquatable<TIdentifier>, new()
     {
         /// <summary>
         /// Initializes new instance of the <see cref="Model{TIdentifier}"/> class.
@@ -190,7 +118,7 @@ namespace Masasamjant.Modeling.Abstractions
         /// Gets the unique identifier.
         /// </summary>
         [JsonInclude]
-        public TIdentifier Identifier { get; protected set; } = default!;
+        public TIdentifier Identifier { get; protected set; } = new TIdentifier();
 
         /// <summary>
         /// Check if object instance is equal to this model.

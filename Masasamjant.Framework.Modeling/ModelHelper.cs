@@ -62,29 +62,5 @@ namespace Masasamjant.Modeling
         /// <param name="model">The <see cref="IModel"/>.</param>
         /// <returns><c>true</c> if <paramref name="model"/> has any version data; <c>false</c> otherwise.</returns>
         public static bool HasVersion(this ISupportVersion model) => model.Version.Length > 0;
-
-        /// <summary>
-        /// Try update specified <typeparamref name="TTarget"/> instance from specified <typeparamref name="TSource"/> instance.
-        /// </summary>
-        /// <typeparam name="TTarget">The type of the update target.</typeparam>
-        /// <typeparam name="TSource">The type of the update source.</typeparam>
-        /// <param name="target">The update target instance.</param>
-        /// <param name="source">The update source instance.</param>
-        /// <returns><c>true</c> if updated <paramref name="target"/> from <paramref name="source"/>; <c>false</c> otherwise.</returns>
-        public static bool TryUpdate<TTarget, TSource>(this TTarget target, TSource source)
-            where TTarget : IUpdateable<TSource>
-            where TSource : IModel
-        {
-            if (ReferenceEquals(target, source))
-                return false;
-            
-            if (target.CanUpdateFrom(source))
-            { 
-                target.UpdateFrom(source);
-                return true;
-            }
-
-            return false;
-        }
     }
 }

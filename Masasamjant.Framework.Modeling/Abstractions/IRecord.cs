@@ -11,7 +11,7 @@
     /// </summary>
     /// <typeparam name="TIdentifier">The type of the identifier.</typeparam>
     public interface IRecord<TIdentifier> : IRecord, IModel<TIdentifier>
-        where TIdentifier : IEquatable<TIdentifier>
+        where TIdentifier : IEquatable<TIdentifier>, new()
     {
     }
 }

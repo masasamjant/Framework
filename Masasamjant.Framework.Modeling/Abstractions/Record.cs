@@ -5,7 +5,7 @@
     /// </summary>
     /// <typeparam name="TIdentifier">The type of the identifier.</typeparam>
     public abstract class Record<TIdentifier> : Model<TIdentifier>, IRecord<TIdentifier>, ISupportCreated, ISupportModified
-        where TIdentifier : IEquatable<TIdentifier>
+        where TIdentifier : IEquatable<TIdentifier>, new()
     {
         /// <summary>
         /// Gets the identity, like user name or identifier, to identify user who created record.

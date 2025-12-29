@@ -5,7 +5,7 @@
     /// </summary>
     /// <typeparam name="TIdentifier"></typeparam>
     public abstract class VersionedRecord<TIdentifier> : Record<TIdentifier>, ISupportVersion
-        where TIdentifier : IEquatable<TIdentifier>
+        where TIdentifier : IEquatable<TIdentifier>, new()
     {
         /// <summary>
         /// Gets the version bytes or empty array.

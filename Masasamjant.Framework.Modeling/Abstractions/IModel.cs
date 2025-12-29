@@ -17,7 +17,7 @@
     /// </summary>
     /// <typeparam name="TIdentifier">The type of the identifier.</typeparam>
     public interface IModel<TIdentifier> : IModel
-        where TIdentifier : IEquatable<TIdentifier>
+        where TIdentifier : IEquatable<TIdentifier>, new()
     {
         /// <summary>
         /// Gets the unique identifier.
