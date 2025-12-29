@@ -4,7 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyName>Masasamjant.Framwework.Logs</AssemblyName>
+    <AssemblyName>Masasamjant.Framework.Logs</AssemblyName>
     <RootNamespace>Masasamjant.Diagnostics</RootNamespace>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Application Development Logging Framework</Title>
