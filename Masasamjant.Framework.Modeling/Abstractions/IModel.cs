@@ -1,7 +1,7 @@
 ﻿namespace Masasamjant.Modeling.Abstractions
 {
     /// <summary>
-    /// Represents model in application.
+    /// Represents model.
     /// </summary>
     public interface IModel
     {

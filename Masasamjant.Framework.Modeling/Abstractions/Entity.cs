@@ -3,7 +3,7 @@
 namespace Masasamjant.Modeling.Abstractions
 {
     /// <summary>
-    /// Represents model in application that is identified by <typeparamref name="TIdentifier"/>.
+    /// Represents model that is identified by <typeparamref name="TIdentifier"/>.
     /// </summary>
     /// <typeparam name="TIdentifier">The type of the identifier.</typeparam>
     public abstract class Entity<TIdentifier> : Model, IEntity<TIdentifier> where TIdentifier : IEquatable<TIdentifier>, new()
