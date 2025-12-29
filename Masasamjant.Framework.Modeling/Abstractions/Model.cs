@@ -1,13 +1,12 @@
-﻿using Masasamjant.Serialization;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Principal;
 
 namespace Masasamjant.Modeling.Abstractions
 {
     /// <summary>
-    /// Represents model in application.
+    /// Represents abstract model.
     /// </summary>
-    public abstract class Model : IModel, IAddHandler, IUpdateHandler, IRemoveHandler, IJsonSerializable
+    public abstract class Model : IModel, IAddHandler, IUpdateHandler, IRemoveHandler
     {
         /// <summary>
         /// Validates model state.
@@ -44,34 +43,6 @@ namespace Masasamjant.Modeling.Abstractions
             return DateTimeConfigurationProvider.Current.Configuration.GetDateTimeOffsetNow();
         }
 
-        /// <summary>
-        /// Invoked when model instance is added to non-volatile memory like database or file.
-        /// </summary>
-        /// <param name="identity">The identity, like user name or identifier, to identify user who is performing addition.</param>
-        protected virtual void OnAdd(string? identity)
-        {
-            return;
-        }
-
-        /// <summary>
-        /// Invoked when model instance is removed from non-volatile memory like database or file. This usually means physical delete
-        /// where same model does not exist in non-volatile memory after remove.
-        /// </summary>
-        /// <param name="identity">The identity, like user name or identifier, to identify user who is performing remove.</param>
-        protected virtual void OnRemove(string? identity)
-        {
-            return;
-        }
-
-        /// <summary>
-        /// Invoked when model instance is updated in non-volatile memory like database or file.
-        /// </summary>
-        /// <param name="identity">The identity, like user name or identifier, to identify user who is performing update.</param>
-        protected virtual void OnUpdate(string? identity)
-        {
-            return;
-        }
-
         private ModelValidationException HandleValidationException(ValidationException validationException)
         {
             var errors = new List<ModelError>();
@@ -85,64 +56,47 @@ namespace Masasamjant.Modeling.Abstractions
             return new ModelValidationException(this, errors);
         }
 
-        void IAddHandler.OnAdd(string? identity)
+        /// <summary>
+        /// Invoked when model instance is added to non-volatile memory like database or file.
+        /// </summary>
+        /// <param name="identity">The identity to identify who is performing addition.</param>
+        protected virtual void OnAdd(IIdentity? identity)
+        {
+            return;
+        }
+
+        /// <summary>
+        /// Invoked when model instance is updated in non-volatile memory like database or file.
+        /// </summary>
+        /// <param name="identity">The identity to identify who is performing update.</param>
+        protected virtual void OnUpdate(IIdentity? identity)
+        {
+            return;
+        }
+
+        /// <summary>
+        /// Invoked when model instance is removed from non-volatile memory like database or file. This usually means physical delete
+        /// where same model does not exist in non-volatile memory after remove.
+        /// </summary>
+        /// <param name="identity">The identity to identify who is performing remove.</param>
+        protected virtual void OnRemove(IIdentity? identity)
+        {
+            return;
+        }
+
+        void IAddHandler.OnAdd(IIdentity? identity)
         {
             this.OnAdd(identity);
         }
 
-        void IRemoveHandler.OnRemove(string? identity)
-        {
-            this.OnRemove(identity);
-        }
-
-        void IUpdateHandler.OnUpdate(string? identity)
+        void IUpdateHandler.OnUpdate(IIdentity? identity)
         {
             this.OnUpdate(identity);
         }
-    }
 
-    /// <summary>
-    /// Represents model in application that is identified by <typeparamref name="TIdentifier"/>.
-    /// </summary>
-    /// <typeparam name="TIdentifier">The type of the identifier.</typeparam>
-    public abstract class Model<TIdentifier> : Model, IModel<TIdentifier>
-        where TIdentifier : IEquatable<TIdentifier>, new()
-    {
-        /// <summary>
-        /// Initializes new instance of the <see cref="Model{TIdentifier}"/> class.
-        /// </summary>
-        protected Model()
-        { }
-
-        /// <summary>
-        /// Gets the unique identifier.
-        /// </summary>
-        [JsonInclude]
-        public TIdentifier Identifier { get; protected set; } = new TIdentifier();
-
-        /// <summary>
-        /// Check if object instance is equal to this model.
-        /// </summary>
-        /// <param name="obj">The object instance.</param>
-        /// <returns><c>true</c> if <paramref name="obj"/> has same type and identifier is equal to this identifier; <c>false</c> otherwise.</returns>
-        public override bool Equals(object? obj)
+        void IRemoveHandler.OnRemove(IIdentity? identity)
         {
-            if (obj != null && obj.GetType().Equals(GetType()) && obj is Model<TIdentifier> other)
-            {
-                return Equals(Identifier, other.Identifier);
-            }
-
-            return false;
+            this.OnRemove(identity);
         }
-
-        /// <summary>
-        /// Gets hash code.
-        /// </summary>
-        /// <returns>A hash code.</returns>
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(GetType(), Identifier);
-        }
-
     }
 }

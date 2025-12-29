@@ -1,9 +1,13 @@
 ﻿namespace Masasamjant.Applications
 {
     /// <summary>
-    /// Represents application with a name.
+    /// Represents application information.
     /// </summary>
-    public interface IApplication : ISupportName
+    public interface IApplication
     {
+        /// <summary>
+        /// Gets the name of the application.
+        /// </summary>
+        string Name { get; }
     }
 }
