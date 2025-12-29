@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Masasamjant.Framework" Version="2.1.1" />
+    <PackageReference Include="Masasamjant.Framework" Version="2.2.0" />
   </ItemGroup>
 
 </Project>
