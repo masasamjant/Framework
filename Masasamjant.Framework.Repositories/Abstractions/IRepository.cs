@@ -1,74 +1,47 @@
 ﻿using Masasamjant.ComponentModel;
-using Masasamjant.Linq;
 using Masasamjant.Modeling.Abstractions;
 
 namespace Masasamjant.Repositories.Abstractions
 {
     /// <summary>
-    /// Represents repository of <typeparamref name="TModel"/> instances.
+    /// Represents repository of <typeparamref name="TEntity"/> instances.
     /// </summary>
-    /// <typeparam name="TModel">The type of the model.</typeparam>
-    public interface IRepository<TModel> : IWork where TModel : IModel
+    /// <typeparam name="TEntity">The type of the entity.</typeparam>
+    /// <typeparam name="TIdentifier">The type of the entity identifier.</typeparam>
+    public interface IRepository<TEntity, TIdentifier> : IWork
+        where TEntity : IEntity<TIdentifier>
+        where TIdentifier : IEquatable<TIdentifier>, new()
     {
         /// <summary>
-        /// Add specified <typeparamref name="TModel"/> instance to repository.
+        /// Add specified <typeparamref name="TEntity"/> instance to repository.
         /// </summary>
-        /// <param name="model">The model instance to add.</param>
-        /// <returns>A added model.</returns>
-        /// <exception cref="RepositoryException">If operation fails.</exception>
-        Task<TModel> AddAsync(TModel model);
+        /// <param name="entity">The entity to add.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A added <typeparamref name="TEntity"/>.</returns>
+        Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Update specified <typeparamref name="TModel"/> instance in repository.
+        /// Find <typeparamref name="TEntity"/> entity with specified identifier.
         /// </summary>
-        /// <param name="model">The model instance to update.</param>
-        /// <returns>A updated model.</returns>
-        /// <exception cref="RepositoryException">If operation fails.</exception>
-        Task<TModel> UpdateAsync(TModel model);
+        /// <param name="identifier">The entity identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A found <typeparamref name="TEntity"/> or <c>null</c>.</returns>
+        Task<TEntity?> FindAsync(TIdentifier identifier, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Delete specified <typeparamref name="TModel"/> instance from repository.
+        /// Remove specified <typeparamref name="TEntity"/> instance from repository.
         /// </summary>
-        /// <param name="model">The model instance to delete.</param>
-        /// <returns>A deleted model.</returns>
-        /// <exception cref="RepositoryException">If operation fails.</exception>
-        Task<TModel> DeleteAsync(TModel model);
+        /// <param name="entity">The entity to remove.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A removed <typeparamref name="TEntity"/>.</returns>
+        Task<TEntity> RemoveAsync(TEntity entity, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Query instance of <typeparamref name="TModel"/> in repository.
+        /// Mark specified <typeparamref name="TEntity"/> instance as updated in repository.
         /// </summary>
-        /// <returns>A <see cref="IQueryable{TModel}"/>.</returns>
-        IQueryable<TModel> Query();
-
-        /// <summary>
-        /// Query instance of <typeparamref name="TModel"/> in repository using specified <see cref="IQuery{TModel}"/>.
-        /// </summary>
-        /// <param name="query">The query specification.</param>
-        /// <returns>A <see cref="IQueryable{TModel}"/> of result.</returns>
-        IQueryable<TModel> Query(IQuery<TModel> query);
-
-        /// <summary>
-        /// Find <typeparamref name="TModel"/> using specified key.
-        /// </summary>
-        /// <param name="key">The key to identify model.</param>
-        /// <returns>A <typeparamref name="TModel"/> with specified key or <c>null</c>, if not exist.</returns>
-        Task<TModel?> FindAsync(object key);
-    }
-
-    /// <summary>
-    /// Represents repository of <typeparamref name="TModel"/> instances.
-    /// </summary>
-    /// <typeparam name="TModel">The type of the model.</typeparam>
-    /// <typeparam name="TIdentifier">The type of the identifier.</typeparam>
-    public interface IRepository<TModel, TIdentifier> : IRepository<TModel>
-        where TModel : IModel<TIdentifier>
-        where TIdentifier : IEquatable<TIdentifier>
-    {
-        /// <summary>
-        /// Find <typeparamref name="TModel"/> using specified <typeparamref name="TIdentifier"/>.
-        /// </summary>
-        /// <param name="identifier">The identifier.</param>
-        /// <returns>A <typeparamref name="TModel"/> with specified identifier or <c>null</c>, if not exist.</returns>
-        Task<TModel?> FindAsync(TIdentifier identifier);
+        /// <param name="entity">The updated entity.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A updated <typeparamref name="TEntity"/>.</returns>
+        Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default);
     }
 }
