@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Masasamjant.Framework.Logs\Masasamjant.Framework.Logs.csproj" />
     <ProjectReference Include="..\Masasamjant.Framework.Modeling\Masasamjant.Framework.Modeling.csproj" />
     <ProjectReference Include="..\Masasamjant.Framework.Repositories\Masasamjant.Framework.Repositories.csproj" />
     <ProjectReference Include="..\Masasamjant.Framework\Masasamjant.Framework.csproj" />
@@ -49,7 +50,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Repositories\EntityFramework\" />
+    <Folder Include="Modeling\Abstractions\" />
   </ItemGroup>
 
   <ItemGroup>

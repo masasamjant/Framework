@@ -8,8 +8,9 @@
         /// <summary>
         /// Saves the work.
         /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A task.</returns>
         /// <exception cref="InvalidOperationException">If saving work fails.</exception>
-        Task SaveAsync();
+        Task SaveAsync(CancellationToken cancellationToken = default);
     }
 }
