@@ -23,10 +23,16 @@
             var y = new DateTime(2022, 3, 2, 12, 23, 23, 43, DateTimeKind.Utc);
             Assert.IsTrue(ignoringComparer.Equals(x, y));
             Assert.IsFalse(comparer.Equals(x, y));
+            
             y = new DateTime(2022, 3, 2, 12, 23, 23, 43, DateTimeKind.Local);
             Assert.IsTrue(ignoringComparer.Equals(x, y));
             Assert.IsTrue(comparer.Equals(x, y));
+
             y = new DateTime(2022, 3, 2, 16, 23, 23, 43, DateTimeKind.Local);
+            Assert.IsFalse(ignoringComparer.Equals(x, y));
+            Assert.IsFalse(comparer.Equals(x, y));
+
+            y = new DateTime(2022, 3, 3, 12, 23, 23, 43, DateTimeKind.Local);
             Assert.IsFalse(ignoringComparer.Equals(x, y));
             Assert.IsFalse(comparer.Equals(x, y));
         }

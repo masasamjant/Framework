@@ -72,6 +72,7 @@ namespace Masasamjant
             Assert.IsFalse(EnumHelper.IsDefaultFlag(attributes, FileAttributes.None));
             attributes = FileAttributes.None;
             Assert.IsTrue(EnumHelper.IsDefaultFlag(attributes, FileAttributes.None));
+            Assert.ThrowsException<ArgumentException>(() => EnumHelper.IsDefaultFlag(ErrorBehavior.Cancel));
         }
 
         [TestMethod]
@@ -81,6 +82,7 @@ namespace Masasamjant
             Assert.IsFalse(EnumHelper.IsSingleFlagsValue(attributes, FileAttributes.Normal));
             attributes = FileAttributes.Normal;
             Assert.IsTrue(EnumHelper.IsSingleFlagsValue(attributes, FileAttributes.Normal));
+            Assert.IsFalse(EnumHelper.IsSingleFlagsValue(attributes, FileAttributes.Normal | FileAttributes.Hidden));
         }
 
         [TestMethod]
@@ -93,6 +95,7 @@ namespace Masasamjant
             actual = EnumHelper.Flags(attributes, true).ToArray();
             expected = new[] { FileAttributes.None, FileAttributes.Normal, FileAttributes.ReadOnly, FileAttributes.Hidden };
             CollectionAssert.AreEquivalent(expected, actual);
+            Assert.ThrowsException<ArgumentException>(() => EnumHelper.Flags(ErrorBehavior.Cancel));
         }
 
         [TestMethod]
@@ -125,6 +128,21 @@ namespace Masasamjant
             expected = FileAttributes.Normal | FileAttributes.ReadOnly;
             actual = (FileAttributes)EnumHelper.AppendFlag(enumType, value, flag);
             Assert.AreEqual(expected, actual);
+
+            AssertAppendFlag(typeof(Int64Enum), Int64Enum.Value2, Int64Enum.Value8, Int64Enum.Value2 | Int64Enum.Value8);
+            AssertAppendFlag(typeof(UInt64Enum), UInt64Enum.Value2, UInt64Enum.Value8, UInt64Enum.Value2 | UInt64Enum.Value8);
+            AssertAppendFlag(typeof(UInt32Enum), UInt32Enum.Value2, UInt32Enum.Value8, UInt32Enum.Value2 | UInt32Enum.Value8);
+            AssertAppendFlag(typeof(Int16Enum), Int16Enum.Value2, Int16Enum.Value8, Int16Enum.Value2 | Int16Enum.Value8);
+            AssertAppendFlag(typeof(UInt16Enum), UInt16Enum.Value2, UInt16Enum.Value8, UInt16Enum.Value2 | UInt16Enum.Value8);
+            AssertAppendFlag(typeof(ByteEnum), ByteEnum.Value2, ByteEnum.Value8, ByteEnum.Value2 | ByteEnum.Value8);
+            AssertAppendFlag(typeof(SByteEnum), SByteEnum.Value2, SByteEnum.Value8, SByteEnum.Value2 | SByteEnum.Value8);
+        }
+
+        private static void AssertAppendFlag<T>(Type enumType, object value, object flag, T expected)
+            where T : struct, Enum
+        {
+            T actual = (T)EnumHelper.AppendFlag(enumType, value, flag);
+            Assert.AreEqual(expected, actual);
         }
 
         [TestMethod]
@@ -155,6 +173,83 @@ namespace Masasamjant
 
             value = 999;
             Assert.AreEqual((DateTimeKind)999, EnumHelper.ConvertToEnum(enumType, value));
+        }
+
+        [Flags]
+        private enum Int64Enum : long
+        {
+            Value1 = 1,
+            Value2 = 2,
+            Value4 = 4,
+            Value8 = 8,
+            Value16 = 16,
+            Value32 = 32
+        }
+
+        [Flags]
+        private enum UInt64Enum : ulong
+        {
+            Value1 = 1,
+            Value2 = 2,
+            Value4 = 4,
+            Value8 = 8,
+            Value16 = 16,
+            Value32 = 32
+        }
+
+        [Flags]
+        private enum UInt32Enum : uint
+        {
+            Value1 = 1,
+            Value2 = 2,
+            Value4 = 4,
+            Value8 = 8,
+            Value16 = 16,
+            Value32 = 32
+        }
+
+        [Flags]
+        private enum Int16Enum : short
+        {
+            Value1 = 1,
+            Value2 = 2,
+            Value4 = 4,
+            Value8 = 8,
+            Value16 = 16,
+            Value32 = 32
+        }
+
+        [Flags]
+        private enum UInt16Enum : ushort
+        {
+            Value1 = 1,
+            Value2 = 2,
+            Value4 = 4,
+            Value8 = 8,
+            Value16 = 16,
+            Value32 = 32
+        }
+
+        [Flags]
+        private enum ByteEnum : byte
+        {
+            Value1 = 1,
+            Value2 = 2,
+            Value4 = 4,
+            Value8 = 8,
+            Value16 = 16,
+            Value32 = 32
+        }
+
+        [Flags]
+        private enum SByteEnum : sbyte
+        {
+            Value1 = 1,
+            Value2 = 2,
+            Value4 = 4,
+            Value8 = 8,
+            Value16 = 16,
+            Value32 = 32
         }
     }
 }

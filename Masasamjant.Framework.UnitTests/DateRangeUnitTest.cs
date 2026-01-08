@@ -33,6 +33,9 @@ namespace Masasamjant
             Assert.AreEqual(2, range3.Days);
             Assert.AreEqual(begin, range3.Begin);
             Assert.AreEqual(end, range3.End);
+
+            DateTime now = DateTime.Now;
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => new DateRange(now, now.AddDays(-2)));
         }
 
         [TestMethod]
@@ -75,6 +78,8 @@ namespace Masasamjant
             Assert.AreEqual(new DateRange(today, today.AddDays(2)), new DateRange(today, today.AddDays(2)));
             Assert.AreNotEqual(new DateRange(today.AddDays(-1), today.AddDays(2)), new DateRange(today, today.AddDays(2)));
             Assert.AreNotEqual(new DateRange(today, today.AddDays(2)), new DateRange(today, today.AddDays(3)));
+            Assert.IsFalse(new DateRange().Equals(null));
+            Assert.IsFalse(new DateRange().Equals(DateTime.Now));
         }
 
         [TestMethod]
@@ -137,6 +142,8 @@ namespace Masasamjant
             Assert.AreEqual(new DateRange(today.AddDays(-1), today), range);
             range = DateRange.FromDays(today, 1);
             Assert.AreEqual(new DateRange(today, today.AddDays(1)), range);
+            range = DateRange.FromDays(2);
+            Assert.AreEqual(new DateRange(today, today.AddDays(2)), range);
         }
 
         [TestMethod]
@@ -148,6 +155,7 @@ namespace Masasamjant
             range = new DateRange(today);
             dates = range.GetDates();
             Assert.IsTrue(dates.Count() == 1 && dates.First().Equals(today));
+            
             var expected = new[]
             {
                 today.AddDays(-1),
@@ -157,11 +165,15 @@ namespace Masasamjant
             range = new DateRange(today.AddDays(-1), today.AddDays(1));
             var actual = range.GetDates().ToArray();
             CollectionAssert.AreEqual(expected, actual);
+
             var begin = new DateTime(2025, 6, 30); // monday
             var end = new DateTime(2025, 7, 6); // sunday
             range = new DateRange(begin, end);
             dates = range.GetDates(DayOfWeek.Tuesday);
             Assert.IsTrue(dates.Count() == 1 && dates.First().Equals(new DateTime(2025, 7, 1)));
+            dates = range.GetDates(DayOfWeek.Tuesday, null, null);
+            Assert.IsTrue(dates.Count() == 1 && dates.First().Equals(new DateTime(2025, 7, 1)));
+
             expected = new[]
             {
                 new DateTime(2025, 7, 1),
@@ -169,15 +181,17 @@ namespace Masasamjant
             };
             actual = range.GetDates([DayOfWeek.Tuesday, DayOfWeek.Wednesday]).ToArray();
             CollectionAssert.AreEqual(expected, actual);
+
             dates = range.GetDates(null, null, month: 6);
             Assert.IsTrue(dates.Count() == 1 && dates.First().Equals(new DateTime(2025, 6, 30)));
+
             expected = range.GetDates().ToArray();
             actual = range.GetDates(null, year: 2025, null).ToArray();
             CollectionAssert.AreEqual(expected, actual);
         }
 
         [TestMethod]
-        public void Test_GetTotalRays()
+        public void Test_GetTotalDays()
         {
             var begin = new DateTime(2025, 6, 30); // monday
             var end = new DateTime(2025, 7, 6); // sunday
@@ -186,6 +200,7 @@ namespace Masasamjant
             Assert.AreEqual(7, range.GetTotalDays(true));
             Assert.AreEqual(7, range.GetTotalDays(null));
             Assert.AreEqual(1, range.GetTotalDays([DayOfWeek.Tuesday]));
+            Assert.AreEqual(1, range.GetTotalDays(DayOfWeek.Tuesday));
         }
 
         [TestMethod]
@@ -479,7 +494,7 @@ namespace Masasamjant
         }
 
         [TestMethod]
-        public void Test_Overlaps()
+        public void Test_Overlaps_Is_False_When_Empty()
         {
             var range = new DateRange();
             var other = new DateRange(today);
@@ -488,15 +503,32 @@ namespace Masasamjant
             range = new DateRange(today);
             other = new DateRange();
             Assert.IsFalse(range.Overlaps(other));
+        }
 
-            other = new DateRange(today);
+        [TestMethod]
+        public void Test_Overlaps_When_Same_Ranges()
+        {
+            var range = new DateRange(today);
+            var other = new DateRange(today);
+            Assert.IsTrue(range.Overlaps(other));
+
+            range = new DateRange(today, today.AddDays(2));
+            other = new DateRange(today, today.AddDays(2));
+            Assert.IsTrue(range.Overlaps(other));
+        }
+
+        [TestMethod]
+        public void Test_Overlaps()
+        {
+            var range = new DateRange(today.AddDays(-5), today);
+            var other = new DateRange(today.AddDays(-2), today.AddDays(2));
             Assert.IsTrue(range.Overlaps(other));
 
             range = new DateRange(today.AddDays(-5), today);
-            other = new DateRange(today.AddDays(-2), today.AddDays(2));
-            Assert.IsTrue(range.Overlaps(other));
+            other = new DateRange(today.AddDays(1), today.AddDays(2));
+            Assert.IsFalse(range.Overlaps(other));
 
-            range = new DateRange(today.AddDays(-5), today);
+            range = new DateRange(today.AddDays(3), today.AddDays(4));
             other = new DateRange(today.AddDays(1), today.AddDays(2));
             Assert.IsFalse(range.Overlaps(other));
         }
@@ -554,6 +586,15 @@ namespace Masasamjant
             };
             var actual = range.Split(days).ToArray();
             CollectionAssert.AreEqual(expected, actual);
+
+            actual = range.Split(-1).ToArray();
+            CollectionAssert.AreEqual(new DateRange[] { range }, actual);
+
+            actual = range.Split(0).ToArray();
+            CollectionAssert.AreEqual(new DateRange[] { range }, actual);
+
+            actual = range.Split(1).ToArray();
+            CollectionAssert.AreEqual(new DateRange[] { range }, actual);
         }
 
         [TestMethod]
@@ -568,6 +609,14 @@ namespace Masasamjant
             };
             var actual = range.SplitByMonth().ToArray();
             CollectionAssert.AreEqual(expected, actual);
+
+            range = new DateRange(new DateTime(2026, 1, 8));
+            expected = new[]
+            {
+                new DateRange(new DateTime(2026, 1, 8))
+            };
+            actual = range.SplitByMonth().ToArray();
+            CollectionAssert.AreEqual(expected, actual);
         }
 
         [TestMethod]
@@ -581,6 +630,14 @@ namespace Masasamjant
             };
             var actual = range.SplitByYear().ToArray();
             CollectionAssert.AreEqual(expected, actual);
+
+            range = new DateRange(new DateTime(2026, 1, 8));
+            expected = new[]
+            {
+                new DateRange(new DateTime(2026, 1, 8))
+            };
+            actual = range.SplitByYear().ToArray();
+            CollectionAssert.AreEqual(expected, actual);
         }
 
         [TestMethod]
@@ -589,6 +646,9 @@ namespace Masasamjant
             var range = new DateRange(today);
             var other = new DateRange(today);
             Assert.IsTrue(range.Equals(other) && range.GetHashCode() == other.GetHashCode());
+
+            range = new DateRange();
+            Assert.AreEqual(0, range.GetHashCode());
         }
 
         [TestMethod]
@@ -597,6 +657,9 @@ namespace Masasamjant
             var range = new DateRange(today);
             var clone = range.Clone();
             Assert.AreEqual(range, clone);
+
+            ICloneable cloneable = new DateRange(today);
+            Assert.AreEqual(clone, cloneable.Clone());
         }
 
         [TestMethod]
@@ -622,12 +685,27 @@ namespace Masasamjant
             expected = new DateRange(new DateTime(2025, 6, 29), new DateTime(2025, 7, 5));
             actual = DateRange.GetWeek(date, DayOfWeek.Sunday);
             Assert.AreEqual(expected, actual);
-            
+
+            date = new DateTime(2025, 6, 30);
+            expected = new DateRange(new DateTime(2025, 6, 30), new DateTime(2025, 7, 6));
+            actual = DateRange.GetWeek(date, DayOfWeek.Monday);
+            Assert.AreEqual(expected, actual);
+
             Assert.ThrowsException<ArgumentException>(() => DateRange.GetWeek(date, DayOfWeek.Tuesday));
             Assert.ThrowsException<ArgumentException>(() => DateRange.GetWeek(date, DayOfWeek.Wednesday));
             Assert.ThrowsException<ArgumentException>(() => DateRange.GetWeek(date, DayOfWeek.Thursday));
             Assert.ThrowsException<ArgumentException>(() => DateRange.GetWeek(date, DayOfWeek.Friday));
             Assert.ThrowsException<ArgumentException>(() => DateRange.GetWeek(date, DayOfWeek.Saturday));
+
+            date = new DateTime(2026, 1, 8);
+            expected = new DateRange(new DateTime(2026, 1, 5), new DateTime(2026, 1, 11));
+            actual = DateRange.GetWeek(date);
+            Assert.AreEqual(expected, actual);
+
+            date = new DateTime(2026, 1, 8);
+            expected = new DateRange(new DateTime(2026, 1, 5), new DateTime(2026, 1, 11));
+            actual = DateRange.GetWeek(date, CultureInfo.GetCultureInfo("fi-FI"));
+            Assert.AreEqual(expected, actual);
         }
 
         [TestMethod]

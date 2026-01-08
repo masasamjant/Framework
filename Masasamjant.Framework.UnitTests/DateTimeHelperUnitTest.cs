@@ -1,5 +1,6 @@
 ﻿using Masasamjant.Configuration;
 using System.Globalization;
+using System.Xml.XPath;
 
 namespace Masasamjant
 {
@@ -97,28 +98,36 @@ namespace Masasamjant
         [TestMethod]
         public void Test_IsFuture()
         {
+            Assert.IsFalse(DateTimeHelper.IsFuture(DateTime.Now.AddHours(-1)));
             Assert.IsFalse(DateTimeHelper.IsFuture(DateTime.Now.AddHours(-1), TimeSpan.Zero));
             Assert.IsFalse(DateTimeHelper.IsFuture(DateTime.Now.AddHours(-1), TimeSpan.FromMinutes(5)));
+            Assert.IsTrue(DateTimeHelper.IsFuture(DateTime.Now.AddMinutes(1)));
             Assert.IsTrue(DateTimeHelper.IsFuture(DateTime.Now.AddMinutes(1), TimeSpan.Zero));
             Assert.IsFalse(DateTimeHelper.IsFuture(DateTime.Now.AddMinutes(4), TimeSpan.FromMinutes(5)));
             Assert.IsTrue(DateTimeHelper.IsFuture(DateTime.Now.AddMinutes(6), TimeSpan.FromMinutes(5)));
 
+            Assert.IsFalse(DateTimeHelper.IsFuture(DateTime.UtcNow.AddHours(-1)));
             Assert.IsFalse(DateTimeHelper.IsFuture(DateTime.UtcNow.AddHours(-1), TimeSpan.Zero));
             Assert.IsFalse(DateTimeHelper.IsFuture(DateTime.UtcNow.AddHours(-1), TimeSpan.FromMinutes(5)));
+            Assert.IsTrue(DateTimeHelper.IsFuture(DateTime.UtcNow.AddMinutes(1)));
             Assert.IsTrue(DateTimeHelper.IsFuture(DateTime.UtcNow.AddMinutes(1), TimeSpan.Zero));
             Assert.IsFalse(DateTimeHelper.IsFuture(DateTime.UtcNow.AddMinutes(4), TimeSpan.FromMinutes(5)));
             Assert.IsTrue(DateTimeHelper.IsFuture(DateTime.UtcNow.AddMinutes(6), TimeSpan.FromMinutes(5)));
 
             var localConfiguration = new DateTimeConfiguration(DateTimeKind.Local);
+            Assert.IsFalse(DateTimeHelper.IsFuture(DateTime.Now.AddHours(-1), localConfiguration));
             Assert.IsFalse(DateTimeHelper.IsFuture(DateTime.Now.AddHours(-1), localConfiguration, TimeSpan.Zero));
             Assert.IsFalse(DateTimeHelper.IsFuture(DateTime.Now.AddHours(-1), localConfiguration, TimeSpan.FromMinutes(5)));
+            Assert.IsTrue(DateTimeHelper.IsFuture(DateTime.Now.AddMinutes(1), localConfiguration));
             Assert.IsTrue(DateTimeHelper.IsFuture(DateTime.Now.AddMinutes(1), localConfiguration, TimeSpan.Zero));
             Assert.IsFalse(DateTimeHelper.IsFuture(DateTime.Now.AddMinutes(4), localConfiguration, TimeSpan.FromMinutes(5)));
             Assert.IsTrue(DateTimeHelper.IsFuture(DateTime.Now.AddMinutes(6), localConfiguration, TimeSpan.FromMinutes(5)));
 
             var utcConfiguration = new DateTimeConfiguration(DateTimeKind.Utc);
+            Assert.IsFalse(DateTimeHelper.IsFuture(DateTime.UtcNow.AddHours(-1), utcConfiguration));
             Assert.IsFalse(DateTimeHelper.IsFuture(DateTime.UtcNow.AddHours(-1), utcConfiguration, TimeSpan.Zero));
             Assert.IsFalse(DateTimeHelper.IsFuture(DateTime.UtcNow.AddHours(-1), utcConfiguration, TimeSpan.FromMinutes(5)));
+            Assert.IsTrue(DateTimeHelper.IsFuture(DateTime.UtcNow.AddMinutes(1), utcConfiguration));
             Assert.IsTrue(DateTimeHelper.IsFuture(DateTime.UtcNow.AddMinutes(1), utcConfiguration, TimeSpan.Zero));
             Assert.IsFalse(DateTimeHelper.IsFuture(DateTime.UtcNow.AddMinutes(4), utcConfiguration, TimeSpan.FromMinutes(5)));
             Assert.IsTrue(DateTimeHelper.IsFuture(DateTime.UtcNow.AddMinutes(6), utcConfiguration, TimeSpan.FromMinutes(5)));
@@ -127,31 +136,47 @@ namespace Masasamjant
         [TestMethod]
         public void Test_IsPast()
         {
+            Assert.IsTrue(DateTimeHelper.IsPast(DateTime.Now.AddHours(-1)));
             Assert.IsTrue(DateTimeHelper.IsPast(DateTime.Now.AddHours(-1), TimeSpan.Zero));
             Assert.IsTrue(DateTimeHelper.IsPast(DateTime.Now.AddHours(-1), TimeSpan.FromMinutes(5)));
+            Assert.IsFalse(DateTimeHelper.IsPast(DateTime.Now.AddMinutes(1)));
             Assert.IsFalse(DateTimeHelper.IsPast(DateTime.Now.AddMinutes(1), TimeSpan.Zero));
             Assert.IsFalse(DateTimeHelper.IsPast(DateTime.Now.AddMinutes(-4), TimeSpan.FromMinutes(5)));
             Assert.IsTrue(DateTimeHelper.IsPast(DateTime.Now.AddMinutes(-6), TimeSpan.FromMinutes(5)));
 
+            Assert.IsTrue(DateTimeHelper.IsPast(DateTime.UtcNow.AddHours(-1)));
             Assert.IsTrue(DateTimeHelper.IsPast(DateTime.UtcNow.AddHours(-1), TimeSpan.Zero));
             Assert.IsTrue(DateTimeHelper.IsPast(DateTime.UtcNow.AddHours(-1), TimeSpan.FromMinutes(5)));
+            Assert.IsFalse(DateTimeHelper.IsPast(DateTime.UtcNow.AddMinutes(1)));
             Assert.IsFalse(DateTimeHelper.IsPast(DateTime.UtcNow.AddMinutes(1), TimeSpan.Zero));
             Assert.IsFalse(DateTimeHelper.IsPast(DateTime.UtcNow.AddMinutes(-4), TimeSpan.FromMinutes(5)));
             Assert.IsTrue(DateTimeHelper.IsPast(DateTime.UtcNow.AddMinutes(-6), TimeSpan.FromMinutes(5)));
 
             var localConfiguration = new DateTimeConfiguration(DateTimeKind.Local);
+            Assert.IsTrue(DateTimeHelper.IsPast(DateTime.Now.AddHours(-1), localConfiguration));
             Assert.IsTrue(DateTimeHelper.IsPast(DateTime.Now.AddHours(-1), localConfiguration, TimeSpan.Zero));
             Assert.IsTrue(DateTimeHelper.IsPast(DateTime.Now.AddHours(-1), localConfiguration, TimeSpan.FromMinutes(5)));
+            Assert.IsFalse(DateTimeHelper.IsPast(DateTime.Now.AddMinutes(1), localConfiguration));
             Assert.IsFalse(DateTimeHelper.IsPast(DateTime.Now.AddMinutes(1), localConfiguration, TimeSpan.Zero));
             Assert.IsFalse(DateTimeHelper.IsPast(DateTime.Now.AddMinutes(-4), localConfiguration, TimeSpan.FromMinutes(5)));
             Assert.IsTrue(DateTimeHelper.IsPast(DateTime.Now.AddMinutes(-6), localConfiguration, TimeSpan.FromMinutes(5)));
 
             var utcConfiguration = new DateTimeConfiguration(DateTimeKind.Utc);
+            Assert.IsTrue(DateTimeHelper.IsPast(DateTime.UtcNow.AddHours(-1), utcConfiguration));
             Assert.IsTrue(DateTimeHelper.IsPast(DateTime.UtcNow.AddHours(-1), utcConfiguration, TimeSpan.Zero));
             Assert.IsTrue(DateTimeHelper.IsPast(DateTime.UtcNow.AddHours(-1), utcConfiguration, TimeSpan.FromMinutes(5)));
+            Assert.IsFalse(DateTimeHelper.IsPast(DateTime.UtcNow.AddMinutes(1), utcConfiguration));
             Assert.IsFalse(DateTimeHelper.IsPast(DateTime.UtcNow.AddMinutes(1), utcConfiguration, TimeSpan.Zero));
             Assert.IsFalse(DateTimeHelper.IsPast(DateTime.UtcNow.AddMinutes(-4), utcConfiguration, TimeSpan.FromMinutes(5)));
             Assert.IsTrue(DateTimeHelper.IsPast(DateTime.UtcNow.AddMinutes(-6), utcConfiguration, TimeSpan.FromMinutes(5)));
+        }
+
+        [TestMethod]
+        public void Test_DaysLeftInThisMonth()
+        {
+            int a = DateTimeHelper.DaysLeftInThisMonth();
+            int b = DateTimeHelper.DaysLeftInMonth(DateTime.Today);
+            Assert.AreEqual(a, b);
         }
 
         [TestMethod]
@@ -178,6 +203,14 @@ namespace Masasamjant
             }
 
             CultureInfo.CurrentCulture = currentCulture;
+        }
+
+        [TestMethod]
+        public void Test_DaysLeftInThisYear()
+        {
+            int a = DateTimeHelper.DaysLeftInThisYear();
+            int b = DateTimeHelper.DaysLeftInYear(DateTime.Today);
+            Assert.AreEqual(a, b);
         }
 
 
@@ -208,9 +241,20 @@ namespace Masasamjant
         }
 
         [TestMethod]
-        public void Test_DaysLeftInWeek()
+        public void Test_DaysLeftInThisWeek()
         {
+            int a = DateTimeHelper.DaysLeftInThisWeek();
+            int b = DateTimeHelper.DaysLeftInWeek(DateTime.Today);
+            Assert.AreEqual(a, b);
+        }
+
+        [TestMethod]
+        public void Test_DaysLeftInWeek_When_Monday_Is_First_Day_Of_Week()
+        {
+            var currentCulture = CultureInfo.CurrentCulture;
             var culture = CultureInfo.GetCultureInfo("fi-FI");
+            CultureInfo.CurrentCulture = culture;
+
             // 1st of july of 2024 was monday
             int day = 1;
 
@@ -220,29 +264,92 @@ namespace Masasamjant
                 day++;
             }
 
+            CultureInfo.CurrentCulture = currentCulture;
+        }
+
+        [TestMethod]
+        public void Test_DaysLeftInWeek_When_Sunday_Is_First_Day_Of_Week()
+        {
             var currentCulture = CultureInfo.CurrentCulture;
+            var culture = CultureInfo.GetCultureInfo("en-US");
             CultureInfo.CurrentCulture = culture;
 
-            day = 1;
+            // 1st of june of 2025 was sunday
+            int day = 1;
+
             while (day <= 7)
             {
-                Assert.AreEqual(7 - day, DateTimeHelper.DaysLeftInWeek(new DateTime(2024, 7, day)));
+                Assert.AreEqual(7 - day, DateTimeHelper.DaysLeftInWeek(new DateTime(2025, 6, day)));
                 day++;
             }
 
             CultureInfo.CurrentCulture = currentCulture;
         }
 
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void Test_AreClose_Negative_Offset()
+        [TestMethod]
+        public void Test_AreEqual()
         {
-            DateTimeHelper.AreClose(new DateTime(2024, 7, 1, 12, 12, 32, 43), new DateTime(2024, 7, 1, 12, 12, 32, 43), DateTimeComponent.Minute, -5);
+            var x = new DateTime(2020, 3, 1, 12, 0, 0, 0, DateTimeKind.Local);
+            var y = new DateTime(2020, 3, 1, 12, 0, 0, 0, DateTimeKind.Utc);
+            Assert.IsTrue(DateTimeHelper.AreEqual(x, y, DateTimeComparison.Date, true));
+            Assert.IsFalse(DateTimeHelper.AreEqual(x, y, DateTimeComparison.Date, false));
+            x = new DateTime(2020, 3, 1, 12, 0, 0, 0, DateTimeKind.Local);
+            y = new DateTime(2020, 3, 1, 12, 0, 0, 0, DateTimeKind.Local);
+            Assert.IsTrue(DateTimeHelper.AreEqual(x, y, DateTimeComparison.Date, true));
+            Assert.IsTrue(DateTimeHelper.AreEqual(x, y, DateTimeComparison.Date, false));
+            x = new DateTime(2021, 3, 1, 12, 0, 0, 0, DateTimeKind.Local);
+            y = new DateTime(2020, 3, 1, 12, 0, 0, 0, DateTimeKind.Local);
+            Assert.IsFalse(DateTimeHelper.AreEqual(x, y, DateTimeComparison.Date, true));
+            Assert.IsFalse(DateTimeHelper.AreEqual(x, y, DateTimeComparison.Date, false));
+
+            x = new DateTime(2000, 3, 1, 12, 31, 28, 0, DateTimeKind.Local);
+            y = new DateTime(2020, 3, 1, 12, 31, 28, 0, DateTimeKind.Utc);
+            Assert.IsTrue(DateTimeHelper.AreEqual(x, y, DateTimeComparison.Time, true));
+            Assert.IsFalse(DateTimeHelper.AreEqual(x, y, DateTimeComparison.Time, false));
+            x = new DateTime(2000, 3, 1, 12, 31, 28, 0, DateTimeKind.Local);
+            y = new DateTime(2020, 3, 1, 12, 31, 28, 0, DateTimeKind.Local);
+            Assert.IsTrue(DateTimeHelper.AreEqual(x, y, DateTimeComparison.Time, true));
+            Assert.IsTrue(DateTimeHelper.AreEqual(x, y, DateTimeComparison.Time, false));
+            x = new DateTime(2000, 3, 1, 12, 31, 28, 0, DateTimeKind.Local);
+            y = new DateTime(2020, 3, 1, 12, 31, 28, 36, DateTimeKind.Local);
+            Assert.IsFalse(DateTimeHelper.AreEqual(x, y, DateTimeComparison.Time, true));
+            Assert.IsFalse(DateTimeHelper.AreEqual(x, y, DateTimeComparison.Time, false));
+
+            x = new DateTime(2020, 3, 1, 12, 31, 28, 0, DateTimeKind.Local);
+            y = new DateTime(2020, 3, 1, 12, 31, 28, 0, DateTimeKind.Utc);
+            Assert.IsTrue(DateTimeHelper.AreEqual(x, y, DateTimeComparison.DateTime, true));
+            Assert.IsFalse(DateTimeHelper.AreEqual(x, y, DateTimeComparison.DateTime, false));
+
+            x = new DateTime(2020, 3, 1, 12, 31, 28, 0, DateTimeKind.Local);
+            y = new DateTime(2020, 3, 1, 12, 31, 28, 0, DateTimeKind.Local);
+            Assert.IsTrue(DateTimeHelper.AreEqual(x, y, DateTimeComparison.DateTime, true));
+            Assert.IsTrue(DateTimeHelper.AreEqual(x, y, DateTimeComparison.DateTime, false));
+
+            x = new DateTime(2020, 3, 1, 12, 31, 28, 0, DateTimeKind.Local);
+            y = new DateTime(2020, 3, 1, 12, 31, 28, 36, DateTimeKind.Local);
+            Assert.IsFalse(DateTimeHelper.AreEqual(x, y, DateTimeComparison.DateTime, true));
+            Assert.IsFalse(DateTimeHelper.AreEqual(x, y, DateTimeComparison.DateTime, false));
+
+            x = new DateTime(2020, 3, 2, 12, 31, 28, 0, DateTimeKind.Local);
+            y = new DateTime(2020, 3, 1, 12, 31, 28, 0, DateTimeKind.Local);
+            Assert.IsFalse(DateTimeHelper.AreEqual(x, y, DateTimeComparison.DateTime, true));
+            Assert.IsFalse(DateTimeHelper.AreEqual(x, y, DateTimeComparison.DateTime, false));
         }
 
-        [ExpectedException(typeof(ArgumentException))]
+        [TestMethod]
+        public void Test_AreClose_Negative_Offset()
+        {
+            var first = new DateTime(2024, 7, 1, 12, 12, 32, 43);
+            var second = new DateTime(2024, 7, 1, 12, 12, 32, 43);
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => DateTimeHelper.AreClose(first, second, DateTimeComponent.Minute, -5));
+        }
+
+        [TestMethod]
         public void Test_AreClose_Undefined_Component()
         {
-            DateTimeHelper.AreClose(new DateTime(2024, 7, 1, 12, 12, 32, 43), new DateTime(2024, 7, 1, 12, 12, 32, 43), (DateTimeComponent)99, 5);
+            var first = new DateTime(2024, 7, 1, 12, 12, 32, 43);
+            var second = new DateTime(2024, 7, 1, 12, 12, 32, 43);
+            Assert.ThrowsException<ArgumentException>(() => DateTimeHelper.AreClose(first, second, (DateTimeComponent)99, 5));
         }
 
         [TestMethod]
@@ -366,6 +473,8 @@ namespace Masasamjant
             Assert.IsTrue(DateTimeHelper.IsWeekDay(DayOfWeek.Friday));
             Assert.IsFalse(DateTimeHelper.IsWeekDay(DayOfWeek.Saturday));
             Assert.IsFalse(DateTimeHelper.IsWeekDay(DayOfWeek.Sunday));
+            Assert.IsTrue(DateTimeHelper.IsWeekDay(new DateTime(2026, 1, 8)));
+            Assert.IsFalse(DateTimeHelper.IsWeekDay(new DateTime(2026, 1, 10)));
         }
 
         [TestMethod]
@@ -385,6 +494,8 @@ namespace Masasamjant
             Assert.IsFalse(DateTimeHelper.IsWeekend(DayOfWeek.Friday));
             Assert.IsTrue(DateTimeHelper.IsWeekend(DayOfWeek.Saturday));
             Assert.IsTrue(DateTimeHelper.IsWeekend(DayOfWeek.Sunday));
+            Assert.IsFalse(DateTimeHelper.IsWeekend(new DateTime(2026, 1, 8)));
+            Assert.IsTrue(DateTimeHelper.IsWeekend(new DateTime(2026, 1, 10)));
         }
 
         [TestMethod]
@@ -401,6 +512,10 @@ namespace Masasamjant
             var refDate = new DateTime(2024, 7, 9); // Tuesday
             var monday = new DateTime(2024, 7, 8);
             var result = DateTimeHelper.FirstDayOfWeek(refDate, DayOfWeek.Monday);
+            Assert.AreEqual(monday, result);
+
+            refDate = new DateTime(2024, 7, 8);
+            result = DateTimeHelper.FirstDayOfWeek(refDate, DayOfWeek.Monday);
             Assert.AreEqual(monday, result);
         }
 
@@ -421,6 +536,32 @@ namespace Masasamjant
             var monday = new DateTime(2024, 7, 8);
             var result = DateTimeHelper.FirstDayOfWeek(refDate, culture);
             Assert.AreEqual(monday, result);
+        }
+
+        [TestMethod]
+        public void Test_FirstDayOfThisWeek()
+        {
+            var a = DateTimeHelper.FirstDayOfThisWeek(DayOfWeek.Monday);
+            var b = DateTimeHelper.FirstDayOfWeek(DateTime.Today, DayOfWeek.Monday);
+            Assert.AreEqual(a, b);
+
+            var culture = CultureInfo.GetCultureInfo("fi-FI");
+            a = DateTimeHelper.FirstDayOfThisWeek(culture);
+            b = DateTimeHelper.FirstDayOfWeek(DateTime.Today, culture);
+            Assert.AreEqual(a, b);
+        }
+
+        [TestMethod]
+        public void Test_LastDayOfThisWeek()
+        {
+            var a = DateTimeHelper.LastDayOfThisWeek(DayOfWeek.Monday);
+            var b = DateTimeHelper.LastDayOfWeek(DateTime.Today, DayOfWeek.Monday);
+            Assert.AreEqual(a, b);
+
+            var culture = CultureInfo.GetCultureInfo("fi-FI");
+            a = DateTimeHelper.LastDayOfThisWeek(culture);
+            b = DateTimeHelper.LastDayOfWeek(DateTime.Today, culture);
+            Assert.AreEqual(a, b);
         }
 
         [TestMethod]
@@ -458,6 +599,11 @@ namespace Masasamjant
             var expected = new DateTime(2024, 7, 1);
             var actual = DateTimeHelper.FirstDayOfMonth(refDate);
             Assert.AreEqual(expected, actual);
+
+            refDate = DateTime.MinValue;
+            expected = DateTime.MinValue;
+            actual = DateTimeHelper.FirstDayOfMonth(refDate);
+            Assert.AreEqual(expected, actual);
         }
 
         [TestMethod]
@@ -466,6 +612,16 @@ namespace Masasamjant
             var refDate = new DateTime(2024, 7, 9); // Tuesday
             var expected = new DateTime(2024, 7, 31);
             var actual = DateTimeHelper.LastDayOfMonth(refDate);
+            Assert.AreEqual(expected, actual);
+
+            refDate = DateTime.MaxValue;
+            expected = DateTime.MaxValue;
+            actual = DateTimeHelper.LastDayOfMonth(refDate);
+            Assert.AreEqual(expected, actual);
+
+            refDate = DateTime.MaxValue.Date;
+            expected = DateTime.MaxValue;
+            actual = DateTimeHelper.LastDayOfMonth(refDate);
             Assert.AreEqual(expected, actual);
         }
 
@@ -476,6 +632,7 @@ namespace Masasamjant
             var expected = new DateTime(2024, 7, 2);
             var actual = DateTimeHelper.GetPreviousWeekDay(refDate, DayOfWeek.Tuesday);
             Assert.AreEqual(expected, actual);
+            Assert.ThrowsException<ArgumentException>(() => DateTimeHelper.GetPreviousWeekDay(refDate, (DayOfWeek)999));
         }
 
         [TestMethod]
@@ -485,6 +642,7 @@ namespace Masasamjant
             var expected = new DateTime(2024, 7, 16);
             var actual = DateTimeHelper.GetNextWeekDay(refDate, DayOfWeek.Tuesday);
             Assert.AreEqual(expected, actual);
+            Assert.ThrowsException<ArgumentException>(() => DateTimeHelper.GetNextWeekDay(refDate, (DayOfWeek)999));
         }
 
         [TestMethod]
@@ -549,11 +707,18 @@ namespace Masasamjant
             var value = new DateTime(2024, 7, 9);
             var others = new List<DateTime>();
             Assert.IsNull(DateTimeHelper.Nearest(value, others));
+
             others.Add(new DateTime(2024, 8, 9));
             others.Add(new DateTime(2024, 8, 1));
             others.Add(new DateTime(2024, 7, 26));
             var expected = new DateTime(2024, 7, 26);
             var actual = DateTimeHelper.Nearest(value, others);
+            Assert.AreEqual(expected, actual);
+
+            others.Clear();
+            others.Add(value);
+            expected = value;
+            actual = DateTimeHelper.Nearest(value, others);
             Assert.AreEqual(expected, actual);
         }
 

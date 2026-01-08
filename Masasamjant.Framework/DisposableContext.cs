@@ -1,4 +1,6 @@
-﻿namespace Masasamjant
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Masasamjant
 {
     /// <summary>
     /// Represents context of disposables that should be disposed when context is disposed.
@@ -17,6 +19,7 @@
             this.disposed = false;
         }
 
+        [ExcludeFromCodeCoverage]
         ~DisposableContext()
         {
             Dispose(false);

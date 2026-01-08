@@ -263,10 +263,10 @@ namespace Masasamjant
             return result;
         }
 
-        private static object ConvertStringToEnum(Type enumType, object value)
+        private static object? ConvertStringToEnum(Type enumType, object value)
         {
             if (!Enum.TryParse(enumType, (string?)value, true, out var result))
-                throw new InvalidCastException($"The conversion from {value} to {enumType} failed.");
+                return null;
             return result;
         }
 
