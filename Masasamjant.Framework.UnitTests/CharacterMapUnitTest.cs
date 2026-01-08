@@ -1,4 +1,6 @@
-﻿namespace Masasamjant
+﻿using System.Collections;
+
+namespace Masasamjant
 {
     [TestClass]
     public class CharacterMapUnitTest : UnitTest
@@ -178,6 +180,95 @@
             Assert.AreNotSame(map, clone);
             Assert.IsFalse(clone.IsReadOnly);
             CollectionAssert.AreEqual(map.Mappings.ToArray(), clone.Mappings.ToArray());
+        }
+
+        [TestMethod]
+        public void Test_Cloneable()
+        {
+            ICloneable map = new CharacterMap(new Dictionary<char, char>()
+            {
+                { 'A', '@' },
+                { 'B', '#' }
+            });
+            var clone = map.Clone();
+            Assert.AreEqual(map, clone);
+        }
+
+        [TestMethod]
+        public void Test_Equals()
+        {
+            var map = new CharacterMap(new Dictionary<char, char>()
+            {
+                { 'A', '@' },
+                { 'B', '#' }
+            });
+            Assert.IsFalse(map.Equals(null));
+            Assert.IsFalse(map.Equals(DateTime.Now));
+            
+            var other = new CharacterMap();
+            Assert.IsFalse(map.Equals(other));
+            
+            other.Add('A', '@');
+            Assert.IsFalse(map.Equals(other));
+
+            other.Add('C', 'N');
+            Assert.IsFalse(map.Equals(other));
+
+            map.Add('C', 'N');
+            other.Add('B', '#');
+            Assert.IsTrue(map.Equals(other));
+
+            map = new CharacterMap(new Dictionary<char, char>() 
+            {
+                { 'A', 'B' }
+            });
+            var amap = new AsciiCharacterMap(new Dictionary<char, char>() 
+            {
+                { 'A', 'B' }
+            });
+            Assert.IsFalse(map.Equals(amap));
+
+            map = new CharacterMap();
+            other = new CharacterMap();
+            Assert.IsTrue(map.Equals(other));
+        }
+
+        [TestMethod]
+        public void Test_GetHashCode()
+        {
+            var a = new CharacterMap(new Dictionary<char, char>()
+            {
+                { 'A', '@' },
+                { 'B', '#' }
+            });
+
+            var b = new CharacterMap(new Dictionary<char, char>()
+            {
+                { 'A', '@' },
+                { 'B', '#' }
+            });
+
+            Assert.AreEqual(a.GetHashCode(), b.GetHashCode());
+        }
+
+        [TestMethod]
+        public void Test_GetEnumerator()
+        {
+            IEnumerable enumerable = new CharacterMap(new Dictionary<char, char>()
+            {
+                { 'A', '@' },
+                { 'B', '#' }
+            });
+
+            IEnumerable<CharacterMapping> collection = new CharacterMap(new Dictionary<char, char>()
+            {
+                { 'A', '@' },
+                { 'B', '#' }
+            });
+
+            var enumerator1 = enumerable.GetEnumerator();
+            var enumerator2 = collection.GetEnumerator();
+            Assert.AreEqual(enumerator1.GetType(), enumerator2.GetType());
         }
     }
 }

@@ -265,6 +265,47 @@ namespace Masasamjant
         }
 
         /// <summary>
+        /// Check if object instance is same type of character map and has same mappings with this.
+        /// </summary>
+        /// <param name="obj">The object instance.</param>
+        /// <returns><c>true</c> if <paramref name="obj"/> is same type of character map with same mappings; <c>false</c> otherwise.</returns>
+        public override bool Equals(object? obj)
+        {
+            if (obj is CharacterMap map && GetType().Equals(map.GetType()))
+            {
+                if (Count != map.Count)
+                    return false;
+
+                if (Count == 0)
+                    return map.Count == 0;
+
+                foreach (var mapping in Mappings)
+                {
+                    if (!map.Contains(mapping))
+                        return false;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Gets hash code.
+        /// </summary>
+        /// <returns>A hash code.</returns>
+        public override int GetHashCode()
+        {
+            int code = GetType().GetHashCode();
+
+            foreach (var mapping in Mappings)
+                code ^= mapping.GetHashCode();
+
+            return code;
+        }
+
+        /// <summary>
         /// Derived classes can override this method to validate source and destination characters.
         /// </summary>
         /// <param name="source">The source character.</param>

@@ -50,7 +50,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Modeling\Abstractions\" />
+    <Folder Include="Repositories\EntityFramework\" />
   </ItemGroup>
 
   <ItemGroup>

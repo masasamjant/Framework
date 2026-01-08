@@ -18,6 +18,9 @@
             Assert.AreEqual('2', map.GetDestination('1'));
             values.Add('E', 'Ä');
             Assert.ThrowsException<ArgumentException>(() => new AsciiCharacterMap(values));
+            values.Remove('E');
+            values.Add('Ä', 'E');
+            Assert.ThrowsException<ArgumentException>(() => new AsciiCharacterMap(values));
         }
 
         [TestMethod]
@@ -29,6 +32,7 @@
             mapping = map.Add('1', '2');
             Assert.IsTrue(map.Contains(mapping));
             Assert.ThrowsException<CharacterMappingException>(() => map.Add('E', 'Ä'));
+            Assert.ThrowsException<CharacterMappingException>(() => map.Add('Ä', 'E'));
         }
 
         [TestMethod]

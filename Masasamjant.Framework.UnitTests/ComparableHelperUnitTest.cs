@@ -122,27 +122,32 @@
             int? y = null;
             int? result;
             Assert.IsTrue(ComparableHelper.TryCompare(x, y, out result) && result == 0);
+            Assert.IsTrue(ComparableHelper.TryCompare(x, y) == 0);
+
             x = 0;
             y = 0;
             Assert.IsTrue(ComparableHelper.TryCompare(x, y, out result) && result == 0);
+            Assert.IsTrue(ComparableHelper.TryCompare(x, y) == 0);
+
             Comparable cx = new Comparable(0);
             Comparable cy = new Comparable(0);
             Assert.IsTrue(ComparableHelper.TryCompare(cx, cy, out result) && result == 0);
-        }
+            Assert.IsTrue(ComparableHelper.TryCompare(x, y) == 0);
 
-        [TestMethod]
-        public void Test_TryCompare_Objects()
-        {
-            int? x = null;
-            int? y = null;
-            int? result;
-            Assert.IsTrue(ComparableHelper.TryCompare((object?)x, y, out result) && result == 0);
-            x = 0;
-            y = 0;
-            Assert.IsTrue(ComparableHelper.TryCompare((object?)x, y, out result) && result == 0);
-            Comparable cx = new Comparable(0);
-            Comparable cy = new Comparable(0);
-            Assert.IsTrue(ComparableHelper.TryCompare((object?)cx, cy, out result) && result == 0);
+            object? ox = new Timing();
+            object? oy = new Timing();
+            Assert.IsFalse(ComparableHelper.TryCompare(ox, oy, out result) && result == 0);
+            Assert.IsTrue(ComparableHelper.TryCompare(ox, oy) == null);
+
+            ox = new Timing();
+            oy = 1;
+            Assert.IsFalse(ComparableHelper.TryCompare(ox, oy, out result) && result == 0);
+            Assert.IsTrue(ComparableHelper.TryCompare(ox, oy) == null);
+
+            ox = null;
+            oy = null;
+            Assert.IsTrue(ComparableHelper.TryCompare(ox, oy, out result) && result == 0);
+            Assert.IsTrue(ComparableHelper.TryCompare(ox, oy) == 0);
         }
 
         private class Comparable : IComparable

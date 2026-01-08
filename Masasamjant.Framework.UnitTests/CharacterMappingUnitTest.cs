@@ -27,6 +27,10 @@
             Assert.IsFalse(mapping.Equals(new CharacterMapping('A', 'B')));
             Assert.IsFalse(mapping.Equals(new CharacterMapping('H', 'T')));
             Assert.IsTrue(mapping.Equals(new CharacterMapping('A', 'T')));
+            Assert.IsTrue(mapping == new CharacterMapping('A', 'T'));
+            Assert.IsFalse(mapping == new CharacterMapping('H', 'T'));
+            Assert.IsFalse(mapping != new CharacterMapping('A', 'T'));
+            Assert.IsTrue(mapping != new CharacterMapping('H', 'T'));
             Assert.AreEqual(mapping.GetHashCode(), new CharacterMapping('A', 'T').GetHashCode());
         }
 
@@ -37,6 +41,9 @@
             var clone = mapping.Clone();
             Assert.AreEqual(mapping.Source, clone.Source);
             Assert.AreEqual(mapping.Destination, clone.Destination);
+
+            ICloneable cloneable = new CharacterMapping('C', 'D');
+            Assert.AreEqual(cloneable, cloneable.Clone());
         }
     }
 }
