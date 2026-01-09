@@ -58,7 +58,7 @@ namespace Masasamjant
         /// Gets the <see cref="StringFilterType"/>.
         /// </summary>
         [JsonInclude]
-        public StringFilterType FilterType { get; protected set; }
+        public StringFilterType FilterType { get; protected set; } = StringFilterType.Match;
 
         /// <summary>
         /// Gets the <see cref="StringComparison"/>. Default is <see cref="StringComparison.CurrentCulture"/>.

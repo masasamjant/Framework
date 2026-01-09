@@ -26,6 +26,16 @@
             Assert.AreEqual("Foo", filter.FilterValue);
             Assert.AreEqual(StringFilterType.EndsWith, filter.FilterType);
             Assert.AreEqual(StringComparison.InvariantCultureIgnoreCase, filter.Comparison);
+
+            filter = new StringFilter("Foo", StringFilterType.StartsWith);
+            Assert.AreEqual("Foo", filter.FilterValue);
+            Assert.AreEqual(StringFilterType.StartsWith, filter.FilterType);
+            Assert.AreEqual(StringComparison.CurrentCulture, filter.Comparison);
+
+            filter = new StringFilter();
+            Assert.AreEqual(string.Empty, filter.FilterValue);
+            Assert.AreEqual(StringFilterType.Match, filter.FilterType);
+            Assert.AreEqual(StringComparison.CurrentCulture, filter.Comparison);
         }
 
         [TestMethod]

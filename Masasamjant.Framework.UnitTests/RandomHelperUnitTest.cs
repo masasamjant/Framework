@@ -46,5 +46,21 @@
             var result = RandomHelper.GetValue(random, values);
             Assert.IsTrue(values.Contains(result)); 
         }
+
+        [TestMethod]
+        public void Test_GetDateTime()
+        {
+            var random = RandomHelper.CreateRandom();
+            var values = new List<DateTime>();
+            Assert.ThrowsException<ArgumentException>(() => RandomHelper.GetDateTime(random, values));
+            var dt = new DateTime(2026, 1, 1);
+            values.Add(dt);
+            Assert.AreEqual(dt, RandomHelper.GetDateTime(random, values));
+            values.Add(new DateTime(2026, 1, 2));
+            values.Add(new DateTime(2026, 1, 3));
+            values.Add(new DateTime(2026, 1, 4));
+            var result = RandomHelper.GetDateTime(random, values);
+            Assert.IsTrue(values.Contains(result));
+        }
     }
 }

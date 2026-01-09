@@ -59,6 +59,11 @@
             Assert.AreEqual("Aggregate exception (First) (Second)", exception.Message);
             Assert.AreEqual("First", exception.InnerException?.Message);
             Assert.AreEqual("Second", exception?.InnerException?.InnerException?.Message);
+
+            aggregateException = new AggregateException("Aggregate exception");
+            exception = ExceptionHelper.ToInvalidOperationException(aggregateException);
+            Assert.AreEqual("Aggregate exception", exception.Message);
+            Assert.IsNull(exception.InnerException);
         }
 
         [TestMethod]

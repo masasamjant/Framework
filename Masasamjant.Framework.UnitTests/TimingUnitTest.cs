@@ -36,14 +36,24 @@
         {
             var timing = new Timing(new DateOnly(2000, 1, 1), new TimeOnly(10, 0), new TimeOnly(12, 0));
             Assert.IsFalse(timing.Equals(DateTime.Now));
+            
             var other = timing.Clone();
             Assert.IsTrue(timing.Equals(other));
+            
             other = new Timing(timing.StartDateTime, timing.EndDateTime);
             Assert.IsTrue(timing.Equals(other));
+
+            other = new Timing(timing.StartDateTime, timing.EndDateTime.AddHours(3));
+            Assert.IsFalse(timing.Equals(other));
+
+            other = new Timing(timing.StartDateTime.AddHours(1), timing.EndDateTime);
+            Assert.IsFalse(timing.Equals(other));
+
             other = new Timing(new DateOnly(2000, 1, 1), new TimeOnly(10, 0), new TimeOnly(12, 0));
             Assert.IsTrue(timing.Equals(other));
             Assert.IsTrue(timing == other);
             Assert.IsFalse(timing != other);
+            
             other = new Timing(new DateOnly(2000, 1, 1), new TimeOnly(10, 0), new TimeOnly(13, 0));
             Assert.IsFalse(timing.Equals(other));
             Assert.IsFalse(timing == other);
@@ -67,6 +77,8 @@
             Assert.IsTrue(timing.Contains(new DateTime(2000, 1, 1, 11, 22, 22, DateTimeKind.Local)));
             Assert.IsFalse(timing.Contains(new DateTime(2000, 1, 1, 9, 22, 22, DateTimeKind.Local)));
             Assert.IsFalse(timing.Contains(new DateTime(2000, 1, 1, 12, 22, 22, DateTimeKind.Local)));
+            Assert.IsTrue(timing.Contains(new DateOnly(2000, 1, 1), new TimeOnly(11, 0)));
+            Assert.IsFalse(timing.Contains(new DateOnly(2000, 1, 1), new TimeOnly(13, 0)));
         }
 
         [TestMethod]
@@ -133,6 +145,14 @@
             var expected = new Timing(new DateOnly(2000, 1, 1), new TimeOnly(10, 0), new TimeOnly(11, 0));
             actual = timing.Shorten(TimeSpan.FromHours(1));
             Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void Test_Clone()
+        {
+            ICloneable cloneable = new Timing(new DateOnly(2000, 1, 1), new TimeOnly(10, 0), new TimeOnly(12, 0));
+            Timing timing = new Timing(new DateOnly(2000, 1, 1), new TimeOnly(10, 0), new TimeOnly(12, 0));
+            Assert.AreEqual(timing, cloneable.Clone());
         }
     }
 }

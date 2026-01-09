@@ -37,6 +37,9 @@
             Assert.IsTrue(span.Days == 31);
             span = TimeSpanHelper.FromMonths(2, refDate);
             Assert.IsTrue(span.Days == 60);
+            span = TimeSpanHelper.FromMonths(3, DateTime.Today);
+            var other = TimeSpanHelper.FromMonths(3);
+            Assert.AreEqual(span, other);
         }
 
         [TestMethod]
@@ -56,6 +59,9 @@
             Assert.IsTrue(span.Days == 365);
             span = TimeSpanHelper.FromYears(2, refDate);
             Assert.IsTrue(span.Days == 731);
+            span = TimeSpanHelper.FromYears(3, DateTime.Today);
+            var other = TimeSpanHelper.FromYears(3);
+            Assert.AreEqual(span, other);
         }
 
         [TestMethod]

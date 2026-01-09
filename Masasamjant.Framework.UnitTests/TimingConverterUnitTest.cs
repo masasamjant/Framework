@@ -43,6 +43,13 @@
 
             result = converter.ConvertTo(value, typeof(Timing));
             Assert.AreEqual(value, result);
+
+            result = converter.ConvertTo(null, null, value, typeof(string));
+            result = converter.ConvertFrom(null, null, result!);
+            Assert.AreEqual(value, result);
+
+            result = converter.ConvertTo(null, null, DateTime.Now, typeof(string));
+            Assert.IsNull(result);
         }
     }
 }

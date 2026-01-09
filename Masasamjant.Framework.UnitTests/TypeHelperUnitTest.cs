@@ -37,6 +37,8 @@ namespace Masasamjant
             Assert.AreEqual("Assembly Qualified Name", TypeHelper.GetTypeName(type, PreferredTypeName.AssemblyQualifiedName));
             Assert.AreEqual("Full Name", TypeHelper.GetTypeName(type, PreferredTypeName.FullName));
             Assert.AreEqual("Name", TypeHelper.GetTypeName(type, PreferredTypeName.Name));
+            type = new TestType("");
+            Assert.AreEqual("", TypeHelper.GetTypeName(type, PreferredTypeName.Name));
         }
 
         [TestMethod]
@@ -67,8 +69,19 @@ namespace Masasamjant
             string expected = "System.DateTime+Key";
             string actual = TypeHelper.GetTypeScopedKey(typeof(DateTime), key);
             Assert.AreEqual(expected, actual);
+            actual = TypeHelper.GetTypeScopedKey(DateTime.Now, key);
+            Assert.AreEqual(expected, actual);
             string original = TypeHelper.GetOriginalKey(typeof(DateTime), actual);
             Assert.AreEqual(key, original);
+        }
+
+        [TestMethod]
+        public void Test_GetOriginalKey()
+        {
+            Assert.AreEqual("Foo", TypeHelper.GetOriginalKey(typeof(DateTime), "Foo"));
+            Assert.AreEqual("System.DateTimeFoo", TypeHelper.GetOriginalKey(typeof(DateTime), "System.DateTimeFoo"));
+            Assert.AreEqual("Foo", TypeHelper.GetOriginalKey(typeof(DateTime), "System.DateTime+Foo"));
+            Assert.AreEqual("Foo", TypeHelper.GetOriginalKey(DateTime.Now, "System.DateTime+Foo"));
         }
     }
 }

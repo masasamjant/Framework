@@ -39,6 +39,7 @@ namespace Masasamjant
             Assert.AreEqual(string.Empty, StringHelper.Left("ABDC", 0));
             Assert.AreEqual(string.Empty, StringHelper.Left("ABDC", -1));
             Assert.AreEqual("ABD", StringHelper.Left("ABDC", 3));
+            Assert.AreEqual("ABCD", StringHelper.Left("ABCD", 8));
         }
 
         [TestMethod]
@@ -49,6 +50,7 @@ namespace Masasamjant
             Assert.AreEqual(string.Empty, StringHelper.Right("ABDC", 0));
             Assert.AreEqual(string.Empty, StringHelper.Right("ABDC", -1));
             Assert.AreEqual("BDC", StringHelper.Right("ABDC", 3));
+            Assert.AreEqual("ABCD", StringHelper.Right("ABCD", 8));
         }
 
         [TestMethod]
@@ -130,6 +132,8 @@ namespace Masasamjant
             Assert.AreEqual("123", StringHelper.Between("123+45", '-', '+'));
             Assert.AreEqual("45", StringHelper.Between("123-45", '-', '+'));
             Assert.AreEqual("23", StringHelper.Between("1-23+45", '-', '+'));
+            Assert.AreEqual("49", StringHelper.Between("394-49-4920", '-'));
+            Assert.AreEqual("", StringHelper.Between("123++45", '+'));
         }
 
         [TestMethod]
@@ -154,6 +158,7 @@ namespace Masasamjant
             Assert.AreEqual("", StringHelper.TrimUntilStartsWith("123", starts));
             Assert.AreEqual("ABC", StringHelper.TrimUntilStartsWith("123+ABC", starts));
             Assert.ThrowsException<ArgumentException>(() => StringHelper.TrimUntilStartsWith("Test", new char[0]));
+            Assert.AreEqual("ABC", StringHelper.TrimUntilStartsWith("123+ABC", 'A'));
         }
 
         [TestMethod]
@@ -164,6 +169,7 @@ namespace Masasamjant
             Assert.AreEqual("", StringHelper.TrimUntilEndsWith("", ends));
             Assert.AreEqual("", StringHelper.TrimUntilEndsWith("123", ends));
             Assert.AreEqual("123+A", StringHelper.TrimUntilEndsWith("123+ABC", ends));
+            Assert.AreEqual("123+A", StringHelper.TrimUntilEndsWith("123+ABC", 'A'));
             Assert.ThrowsException<ArgumentException>(() => StringHelper.TrimUntilEndsWith("Test", new char[0]));
         }
 
@@ -304,6 +310,68 @@ namespace Masasamjant
             Assert.IsTrue(StringHelper.ContainsOnlyLettersAndNumbers(c));
             Assert.IsFalse(StringHelper.ContainsOnlyLettersAndNumbers(d));
             Assert.IsFalse(StringHelper.ContainsOnlyLettersAndNumbers(f));
+        }
+
+        [TestMethod]
+        public void Test_StartsWithAny()
+        {
+            Assert.ThrowsException<ArgumentException>(() => StringHelper.StartsWithAny("", null, (StringComparison)999));
+            Assert.IsFalse(StringHelper.StartsWithAny("Foo123", null));
+            Assert.IsFalse(StringHelper.StartsWithAny(null, ["1", "2"]));
+            Assert.IsFalse(StringHelper.StartsWithAny("Foo123", Enumerable.Empty<string>()));
+            Assert.IsFalse(StringHelper.StartsWithAny("Foo123", ["1", "2"]));
+            Assert.IsTrue(StringHelper.StartsWithAny("Foo123", ["1", "Fo"]));
+            Assert.IsTrue(StringHelper.StartsWithAny("Foo123", ["1", "", "Fo"]));
+        }
+
+        [TestMethod]
+        public void Test_EndsWithAny()
+        {
+            Assert.ThrowsException<ArgumentException>(() => StringHelper.EndsWithAny("", null, (StringComparison)999));
+            Assert.IsFalse(StringHelper.EndsWithAny("Foo123", null));
+            Assert.IsFalse(StringHelper.EndsWithAny(null, ["1", "2"]));
+            Assert.IsFalse(StringHelper.EndsWithAny("Foo123", Enumerable.Empty<string>()));
+            Assert.IsFalse(StringHelper.EndsWithAny("Foo123", ["1", "Fo"]));
+            Assert.IsTrue(StringHelper.EndsWithAny("Foo123", ["1", "23"]));
+            Assert.IsTrue(StringHelper.EndsWithAny("Foo123", ["1", "", "23"]));
+        }
+
+        [TestMethod]
+        public void Test_Truncate()
+        {
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => StringHelper.Truncate("Foobar", -1));
+            Assert.ThrowsException<ArgumentException>(() => StringHelper.Truncate("Foobar", 2, "..."));
+            Assert.AreEqual(string.Empty, StringHelper.Truncate("", 3));
+            Assert.AreEqual(string.Empty, StringHelper.Truncate("Foobar", 0));
+            Assert.AreEqual("Foo", StringHelper.Truncate("Foobar", 3));
+            Assert.AreEqual("F..", StringHelper.Truncate("Foobar", 3, ".."));
+            Assert.AreEqual("Foobar", StringHelper.Truncate("Foobar", 8));
+        }
+
+        [TestMethod]
+        public void Test_Lines()
+        {
+            var lines = StringHelper.Lines(null);
+            Assert.IsFalse(lines.Any());
+            lines = StringHelper.Lines("");
+            Assert.IsFalse(lines.Any());
+            lines = StringHelper.Lines("Line1" + Environment.NewLine + "Line2");
+            Assert.IsTrue(lines.Count() == 2);
+            Assert.AreEqual("Line1", lines.First());
+            Assert.AreEqual("Line2", lines.Last());
+        }
+
+        [TestMethod]
+        public async Task Test_LinesAsync()
+        {
+            var lines = await StringHelper.LinesAsync(null);
+            Assert.IsFalse(lines.Any());
+            lines = await StringHelper.LinesAsync("");
+            Assert.IsFalse(lines.Any());
+            lines = await StringHelper.LinesAsync("Line1" + Environment.NewLine + "Line2");
+            Assert.IsTrue(lines.Count() == 2);
+            Assert.AreEqual("Line1", lines.First());
+            Assert.AreEqual("Line2", lines.Last());
         }
     }
 }
