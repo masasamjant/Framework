@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using Microsoft.EntityFrameworkCore.Storage.Json;
+using System.Xml;
 
 namespace Masasamjant.Xml
 {
@@ -37,6 +38,26 @@ namespace Masasamjant.Xml
         {
             var serializer = new XmlDataSerializer(typeof(Stream));
             Assert.ThrowsException<XmlSerializationException>(() => serializer.Serialize(new XmlData()));
+        }
+
+        [TestMethod]
+        public void Test_Deserialize()
+        {
+            var serializer = new ErrorXmlDataSerializer(typeof(Stream));
+            Assert.ThrowsException<XmlDeserializationException>(() => serializer.Deserialize(new XmlDocument()));
+        }
+
+        private class ErrorXmlDataSerializer : XmlDataSerializer
+        {
+            public ErrorXmlDataSerializer(Type type) 
+                : base(type)
+            {
+            }
+
+            protected override XmlReader CreateDocumentReader(XmlDocument document)
+            {
+                throw new InvalidOperationException("");
+            }
         }
     }
 }

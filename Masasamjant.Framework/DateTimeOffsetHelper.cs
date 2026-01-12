@@ -1,4 +1,5 @@
 ﻿using Masasamjant.Configuration;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace Masasamjant
@@ -359,6 +360,7 @@ namespace Masasamjant
         /// <param name="milliseconds">The milliseconds to shift.</param>
         /// <param name="microseconds">The microseconds to shift.</param>
         /// <returns>A shifted <see cref="DateTimeOffset"/> or initial, if all components are 0.</returns>
+        [ExcludeFromCodeCoverage]
         public static DateTimeOffset Shift(this DateTimeOffset datetime, int years = 0, int months = 0, int days = 0, int hours = 0, int minutes = 0, int seconds = 0, int milliseconds = 0, int microseconds = 0)
             => datetime.Shift(DateTimeComponent.Year, years)
                 .Shift(DateTimeComponent.Month, months)
@@ -440,6 +442,7 @@ namespace Masasamjant
         /// -or-
         /// <c>false</c> if <paramref name="datetime"/> is <see cref="DayOfWeek.Saturday"/> or <see cref="DayOfWeek.Sunday"/>.
         /// </returns>
+        [ExcludeFromCodeCoverage]
         public static bool IsWeekDay(this DateTimeOffset datetime) => datetime.DateTime.IsWeekDay();
 
         /// <summary>
@@ -447,6 +450,7 @@ namespace Masasamjant
         /// </summary>
         /// <param name="datetime">The <see cref="DateTimeOffset"/>.</param>
         /// <returns><c>true</c> if <paramref name="datetime"/> is <see cref="DayOfWeek.Saturday"/> or <see cref="DayOfWeek.Sunday"/>; <c>false</c> otherwise.</returns>
+        [ExcludeFromCodeCoverage]
         public static bool IsWeekend(this DateTimeOffset datetime) => datetime.DateTime.IsWeekend();
 
         /// <summary>
@@ -455,6 +459,7 @@ namespace Masasamjant
         /// <param name="weekBegin">The <see cref="DayOfWeek"/> of the first day of week; either <see cref="DayOfWeek.Sunday"/> or <see cref="DayOfWeek.Monday"/>.</param>
         /// <returns>A <see cref="DateTimeOffset"/> of first day of this week.</returns>
         /// <exception cref="ArgumentException">If value of <paramref name="weekBegin"/> is not <see cref="DayOfWeek.Sunday"/> or <see cref="DayOfWeek.Monday"/>.</exception>
+        [ExcludeFromCodeCoverage]
         public static DateTimeOffset FirstDayOfWeek(this DateTimeOffset refDate, DayOfWeek weekBegin)
             => refDate.DateTime.FirstDayOfWeek(weekBegin);
 
@@ -463,6 +468,7 @@ namespace Masasamjant
         /// </summary>
         /// <param name="culture">The <see cref="CultureInfo"/> of culture to use or <c>null</c> to use current culture.</param>
         /// <returns>A <see cref="DateTimeOffset"/> of first day of this week.</returns>
+        [ExcludeFromCodeCoverage]
         public static DateTimeOffset FirstDayOfWeek(this DateTimeOffset refDate, CultureInfo? culture = null)
             => refDate.DateTime.FirstDayOfWeek(culture);
 
@@ -473,6 +479,7 @@ namespace Masasamjant
         /// <param name="weekBegin">The <see cref="DayOfWeek"/> of the first day of week; either <see cref="DayOfWeek.Sunday"/> or <see cref="DayOfWeek.Monday"/>.</param>
         /// <returns>A <see cref="DateTimeOffset"/> of last day of week.</returns>
         /// <exception cref="ArgumentException">If value of <paramref name="weekBegin"/> is not <see cref="DayOfWeek.Sunday"/> or <see cref="DayOfWeek.Monday"/>.</exception>
+        [ExcludeFromCodeCoverage]
         public static DateTimeOffset LastDayOfWeek(this DateTimeOffset refDate, DayOfWeek weekBegin)
             => FirstDayOfWeek(refDate, weekBegin).AddDays(6);
 
@@ -482,6 +489,7 @@ namespace Masasamjant
         /// <param name="refDate">The reference <see cref="DateTimeOffset"/>.</param>
         /// <param name="culture">The <see cref="CultureInfo"/> of culture to use or <c>null</c> to use current culture.</param>
         /// <returns>A <see cref="DateTimeOffset"/> of last day of week.</returns>
+        [ExcludeFromCodeCoverage]
         public static DateTimeOffset LastDayOfWeek(this DateTimeOffset refDate, CultureInfo? culture = null)
             => FirstDayOfWeek(refDate, culture).AddDays(6);
 
@@ -490,6 +498,7 @@ namespace Masasamjant
         /// </summary>
         /// <param name="refDate">The reference <see cref="DateTimeOffset"/>.</param>
         /// <returns>A <see cref="DateTimeOffset"/> of first day of month.<</returns>
+        [ExcludeFromCodeCoverage]
         public static DateTimeOffset FirstDayOfMonth(this DateTimeOffset refDate)
             => refDate.DateTime.FirstDayOfMonth();
 
@@ -498,6 +507,7 @@ namespace Masasamjant
         /// </summary>
         /// <param name="refDate">The reference <see cref="DateTimeOffset"/>.</param>
         /// <returns>A <see cref="DateTimeOffset"/> of last day of month.<</returns>
+        [ExcludeFromCodeCoverage]
         public static DateTimeOffset LastDayOfMonth(this DateTimeOffset refDate)
             => refDate.DateTime.LastDayOfMonth();
 
