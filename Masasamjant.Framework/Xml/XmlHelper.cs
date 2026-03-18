@@ -231,6 +231,24 @@ namespace Masasamjant.Xml
             return builder.ToString();
         }
 
+        /// <summary>
+        /// Creates an asynchronous XML writer that writes XML data to the specified text output using the provided settings.
+        /// </summary>
+        /// <param name="writer">The <see cref="TextWriter"/> to which the XML content will be written. Cannot be null.</param>
+        /// <param name="settings">The optional <see cref="XmlWriterSettings"/> that configure the behavior of the XML writer. If null, default settings are used.</param>
+        /// <returns>An <see cref="XmlWriter"/> instance configured for asynchronous operations that writes to the specified <see cref="TextWriter"/>.</returns>
+        /// <remarks>The Async property of the provided or default XmlWriterSettings is set to <see
+        /// langword="true"/>, enabling asynchronous writing. Ensure that the <see cref="TextWriter"/> supports asynchronous
+        /// operations for optimal performance.</remarks>
+        public static XmlWriter CreateAsyncWriter(TextWriter writer, XmlWriterSettings? settings = null)
+        {
+            if (settings == null)
+                settings = new XmlWriterSettings();
+
+            settings.Async = true;
+            return XmlWriter.Create(writer, settings);
+        }
+
         private static XmlNode GetRootElementWithAttributes(XmlDocument document, string rootElementName)
         {
             XmlNode? rootElement = document.SelectSingleNode($"/{rootElementName}");

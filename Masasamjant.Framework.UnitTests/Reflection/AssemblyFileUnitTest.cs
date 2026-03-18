@@ -71,7 +71,8 @@ namespace Masasamjant.Reflection
         public void Test_AssemblyCache()
         {
             bool invoked = false;
-            Func<Assembly> getAssembly = () => {
+            Func<Assembly> getAssembly = () =>
+            {
                 invoked = true;
                 return Assembly.GetExecutingAssembly();
             };
