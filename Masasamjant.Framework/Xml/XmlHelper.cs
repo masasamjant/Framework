@@ -43,7 +43,10 @@ namespace Masasamjant.Xml
         /// <returns>A found <see cref="XmlAttribute"/> or <c>null</c>, if <paramref name="mandatory"/> is <c>false</c>.</returns>
         /// <exception cref="XmlException">If <paramref name="mandatory"/> is <c>true</c> and attribute does not exist.</exception>
         public static XmlAttribute? GetAttribute(this XmlNode node, string attributeName, bool mandatory)
-        { 
+        {
+            ArgumentNullException.ThrowIfNull(node);
+            ArgumentNullException.ThrowIfNull(attributeName);
+
             if (IsAttributeOf(node, attributeName))
                 return (XmlAttribute)node;
 
@@ -67,6 +70,9 @@ namespace Masasamjant.Xml
         /// <returns><c>true</c> if <paramref name="node"/> has attribute with specified name; <c>false</c> otherwise.</returns>
         public static bool TryGetAttribute(this XmlNode node, string attributeName, [MaybeNullWhen(false)] out XmlAttribute attribute)
         {
+            ArgumentNullException.ThrowIfNull(node);
+            ArgumentNullException.ThrowIfNull(attributeName);
+
             attribute = null;
 
             if (IsAttributeOf(node, attributeName))
@@ -91,6 +97,9 @@ namespace Masasamjant.Xml
         /// <param name="ns">The namespace or <c>null</c>.</param>
         public static void WriteElement(this XmlWriter writer, string elementName, string? elementValue, string? prefix = null, string? ns = null)
         {
+            ArgumentNullException.ThrowIfNull(writer);
+            ArgumentNullException.ThrowIfNull(elementName);
+
             WriteXmlElement(writer, elementName, elementValue, prefix, ns);
         }
 
@@ -104,6 +113,9 @@ namespace Masasamjant.Xml
         /// <param name="ns">The namespace or <c>null</c>.</param>
         public static async Task WriteElementAsync(this XmlWriter writer, string elementName, string? elementValue, string? prefix = null, string? ns = null)
         {
+            ArgumentNullException.ThrowIfNull(writer);
+            ArgumentNullException.ThrowIfNull(elementName);
+
             await WriteXmlElementAsync(writer, elementName, elementValue, prefix, ns);
         }
 
@@ -117,6 +129,10 @@ namespace Masasamjant.Xml
         /// <param name="ns">The namespace or <c>null</c>.</param>
         public static void WriteElements(this XmlWriter writer, string elementName, IEnumerable<string?> elementValues, string? prefix = null, string? ns = null)
         {
+            ArgumentNullException.ThrowIfNull(writer);
+            ArgumentNullException.ThrowIfNull(elementName);
+            ArgumentNullException.ThrowIfNull(elementValues);
+
             foreach (var elementValue in elementValues)
                 WriteXmlElement(writer, elementName, elementValue, prefix, ns);
         }
@@ -131,6 +147,10 @@ namespace Masasamjant.Xml
         /// <param name="ns">The namespace or <c>null</c>.</param>
         public static async Task WriteElementsAsync(this XmlWriter writer, string elementName, IEnumerable<string?> elementValues, string? prefix = null, string? ns = null)
         {
+            ArgumentNullException.ThrowIfNull(writer);
+            ArgumentNullException.ThrowIfNull(elementName);
+            ArgumentNullException.ThrowIfNull(elementValues);
+
             foreach (var elementValue in elementValues)
                 await WriteXmlElementAsync(writer, elementName, elementValue, prefix, ns);
         }
@@ -144,6 +164,9 @@ namespace Masasamjant.Xml
         /// <param name="ns">The namespace or <c>null</c>.</param>
         public static void WriteElements(this XmlWriter writer, IDictionary<string, string?> elements, string? prefix = null, string? ns = null)
         {
+            ArgumentNullException.ThrowIfNull(writer);
+            ArgumentNullException.ThrowIfNull(elements);
+
             foreach (var keyValue in elements)
                 WriteXmlElement(writer, keyValue.Key, keyValue.Value, prefix, ns);
         }
@@ -157,6 +180,9 @@ namespace Masasamjant.Xml
         /// <param name="ns">The namespace or <c>null</c>.</param>
         public static async Task WriteElementsAsync(this XmlWriter writer, IDictionary<string, string?> elements, string? prefix = null, string? ns = null)
         {
+            ArgumentNullException.ThrowIfNull(writer);
+            ArgumentNullException.ThrowIfNull(elements);
+
             foreach (var keyValue in elements)
                 await WriteXmlElementAsync(writer, keyValue.Key, keyValue.Value, prefix, ns);
         }
@@ -171,16 +197,14 @@ namespace Masasamjant.Xml
         /// <exception cref="ArgumentException">If <paramref name="document"/> already has attribute with name of <paramref name="checksumAttributeName"/>.</exception>
         public static void AppendChecksumAttribute(XmlDocument document, string rootElementName, string checksumAttributeName)
         {
+            ArgumentNullException.ThrowIfNull(document);
             var rootElement = GetRootElementWithAttributes(document, rootElementName);
             var attribute = GetAttribute(rootElement, checksumAttributeName, false);
 
             if (attribute != null)
                 throw new ArgumentException($"The checksum attribute name '{checksumAttributeName}' is not unique. Element already has attribute with same name.", nameof(checksumAttributeName));
-        
-            var xml = document.ToXml();
-            var buffer = Encoding.Unicode.GetBytes(xml);
-            buffer = SHA256.HashData(buffer);
-            var checksum = Convert.ToBase64String(buffer);
+
+            var checksum = CalculateXmlChecksum(document);
             attribute = document.CreateAttribute(checksumAttributeName);
             attribute.Value = checksum;
             rootElement.Attributes?.Append(attribute);
@@ -188,7 +212,8 @@ namespace Masasamjant.Xml
 
         /// <summary>
         /// Verify checksum attribute appended to <see cref="XmlDocument"/> using <see cref="AppendChecksumAttribute(XmlDocument, string, string)"/> method. 
-        /// Removes the attribute from document before computing the checksum from content and then verifies against the attribute value.
+        /// Removes the attribute from document before computing the checksum from content and then verifies against the attribute value. If checksum match, then
+        /// checksum attribute is removed from document.
         /// </summary>
         /// <param name="document">The <see cref="XmlDocument"/>.</param>
         /// <param name="rootElementName">The root element name.</param>
@@ -203,17 +228,18 @@ namespace Masasamjant.Xml
         /// </exception>
         public static bool VerifyChecksumAttribute(XmlDocument document, string rootElementName, string checksumAttributeName)
         {
+            ArgumentNullException.ThrowIfNull(document);
             var rootElement = GetRootElementWithAttributes(document, rootElementName);
             var attribute = GetAttribute(rootElement, checksumAttributeName, false);
             if (attribute == null)
                 throw new XmlException($"The element '{rootElementName}' has not '{checksumAttributeName}' attribute.");
             var currentChecksum = attribute?.Value ?? string.Empty;
             rootElement.Attributes?.Remove(attribute);
-            var xml = document.ToXml();
-            var buffer = Encoding.Unicode.GetBytes(xml);
-            buffer = SHA256.HashData(buffer);
-            var checksum = Convert.ToBase64String(buffer);
-            return string.Equals(currentChecksum, checksum, StringComparison.Ordinal);
+            var checksum = CalculateXmlChecksum(document);
+            bool result = string.Equals(currentChecksum, checksum, StringComparison.Ordinal);
+            if (!result)
+                rootElement.Attributes?.Append(attribute!);
+            return result;
         }
 
         /// <summary>
@@ -223,8 +249,10 @@ namespace Masasamjant.Xml
         /// <returns>A XML string.</returns>
         public static string ToXml(this XmlDocument document, XmlWriterSettings? settings = null)
         {
+            ArgumentNullException.ThrowIfNull(document);
+            var encoding = settings?.Encoding ?? document.GetEncoding();
             var builder = new StringBuilder();
-            var writer = new StringWriter(builder);
+            var writer = new XmlHelperStringWriter(builder, encoding);
             var xml = XmlWriter.Create(writer, settings);
             document.Save(xml);
             xml.Flush();
@@ -242,11 +270,44 @@ namespace Masasamjant.Xml
         /// operations for optimal performance.</remarks>
         public static XmlWriter CreateAsyncWriter(TextWriter writer, XmlWriterSettings? settings = null)
         {
+            ArgumentNullException.ThrowIfNull(writer);
+
             if (settings == null)
                 settings = new XmlWriterSettings();
 
             settings.Async = true;
             return XmlWriter.Create(writer, settings);
+        }
+
+        /// <summary>
+        /// Gets the encoding used in XML document or if not specified, then UTF8 encoding.
+        /// </summary>
+        /// <param name="document">The XML document.</param>
+        /// <returns>A encoding found from XML document or UTF8 encoding.</returns>
+        public static Encoding GetEncoding(this XmlDocument document)
+        {
+            if (document.FirstChild is XmlDeclaration declaration && !string.IsNullOrWhiteSpace(declaration.Encoding))
+            {
+                try
+                {
+                    return Encoding.GetEncoding(declaration.Encoding);
+                }
+                catch (Exception)
+                {
+                    return Encoding.UTF8;
+                }
+            }
+
+            return Encoding.UTF8;
+        }
+
+        private static string CalculateXmlChecksum(XmlDocument document)
+        {
+            var xml = document.ToXml();
+            var encoding = document.GetEncoding();
+            var buffer = encoding.GetBytes(xml);
+            buffer = SHA256.HashData(buffer);
+            return Convert.ToBase64String(buffer);
         }
 
         private static XmlNode GetRootElementWithAttributes(XmlDocument document, string rootElementName)
@@ -274,6 +335,19 @@ namespace Masasamjant.Xml
             await writer.WriteStartElementAsync(prefix, elementName, ns);
             writer.WriteValue(elementValue ?? string.Empty);
             await writer.WriteEndElementAsync();
+        }
+
+        private class XmlHelperStringWriter : StringWriter
+        {
+            private readonly Encoding encoding;
+
+            public XmlHelperStringWriter(StringBuilder sb, Encoding encoding)
+                : base(sb)
+            {
+                this.encoding = encoding;
+            }
+
+            public override Encoding Encoding => encoding;
         }
     }
 }

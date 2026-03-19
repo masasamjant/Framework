@@ -112,9 +112,33 @@ namespace Masasamjant
         /// </summary>
         /// <param name="array">The array to copy items.</param>
         /// <param name="arrayIndex">The array index to start copy.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="array"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">If <paramref name="arrayIndex"/> is less than 0.</exception>
+        /// <exception cref="ArgumentException">If <paramref name="arrayIndex"/> is greater than length of array.</exception>
         public void CopyTo(DayOfWeek[] array, int arrayIndex)
         {
-            weekDays.CopyTo(array, arrayIndex);
+            if (Count == 0)
+                return;
+
+            CopyTo(array, arrayIndex, Count);
+        }
+
+        /// <summary>
+        /// Copies a specified number of elements from the collection to the provided array, starting at the given
+        /// index.
+        /// </summary>
+        /// <param name="array">The array to copy items.</param>
+        /// <param name="arrayIndex">The array index to start copy.</param>
+        /// <param name="count">The number of elements to copy from the collection.</param>
+        public void CopyTo(DayOfWeek[] array, int arrayIndex, int count)
+        {
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count), count, "Count must be greater than or equal to 0.");
+
+            if (Count == 0 || count == 0)
+                return;
+
+            weekDays.CopyTo(array, arrayIndex, count);
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Reflection.Metadata;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -253,6 +254,125 @@ namespace Masasamjant.Xml
             Assert.IsNotNull(xw);
             Assert.IsNotNull(xw.Settings);
             Assert.IsTrue(xw.Settings.Async);
+        }
+
+        [TestMethod]
+        public void Test_GetEncoding()
+        {
+            var doc = new XmlDocument();
+            doc.LoadXml("<?xml version=\"1.0\" encoding=\"iso-8859-1\" ?><root></root>");
+            var expected = Encoding.GetEncoding("iso-8859-1");
+            var actual = XmlHelper.GetEncoding(doc);
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void Test_GetEncoding_WhenNotAvailable_DefaultUTF8()
+        {
+            var doc = new XmlDocument();
+            doc.LoadXml("<?xml version=\"1.0\" ?><root></root>");
+            var expected = Encoding.GetEncoding("utf-8");
+            var actual = XmlHelper.GetEncoding(doc);
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void Test_AppendChecksumAttribute()
+        {
+            var doc = new XmlDocument();
+            doc.LoadXml("<?xml version=\"1.0\" encoding=\"utf-8\" ?><root></root>");
+            XmlHelper.AppendChecksumAttribute(doc, "root", "checksum");
+            var root = doc.SelectSingleNode("/root");
+            Assert.IsNotNull(root);
+            Assert.IsTrue(XmlHelper.TryGetAttribute(root, "checksum", out var attr));
+            Assert.IsFalse(string.IsNullOrWhiteSpace(attr!.Value));
+        }
+
+        [TestMethod]
+        public void Test_AppendChecksumAttribute_WhenNoRoot_ThrowException()
+        {
+            var doc = new XmlDocument();
+            doc.LoadXml("<foo />");
+            Assert.ThrowsException<XmlException>(() => XmlHelper.AppendChecksumAttribute(doc, "root", "checksum"));
+        }
+
+        [TestMethod]
+        public void Test_AppendChecksumAttribute_WhenContainsAttribute_ThenThrows()
+        {
+            var doc = new XmlDocument();
+            doc.LoadXml("<?xml version=\"1.0\" encoding=\"utf-8\" ?><root checksum=\"1\"></root>");
+            Assert.ThrowsException<ArgumentException>(() => XmlHelper.AppendChecksumAttribute(doc, "root", "checksum"));
+        }
+
+        [TestMethod]
+        public void Test_VerifyChecksumAttribute_WhenNoRoot_ThrowException()
+        {
+            var doc = new XmlDocument();
+            doc.LoadXml("<foo />");
+            Assert.ThrowsException<XmlException>(() => XmlHelper.VerifyChecksumAttribute(doc, "root", "checksum"));
+        }
+
+        [TestMethod]
+        public void Test_VerifyChecksumAttribute_WhenNoAttribute_ThenThrows()
+        {
+            var doc = new XmlDocument();
+            doc.LoadXml("<?xml version=\"1.0\" encoding=\"utf-8\" ?><root></root>");
+            Assert.ThrowsException<XmlException>(() => XmlHelper.VerifyChecksumAttribute(doc, "root", "checksum"));
+        }
+
+        [TestMethod]
+        public void Test_VerifyChecksumAttribute_WhenMatch_ThenRemovesAttribute()
+        {
+            var doc = new XmlDocument();
+            doc.LoadXml("<?xml version=\"1.0\" encoding=\"utf-8\" ?><root><child>child</child></root>");
+            XmlHelper.AppendChecksumAttribute(doc, "root", "checksum");
+            bool result = XmlHelper.VerifyChecksumAttribute(doc, "root", "checksum");
+            var root = doc.SelectSingleNode("/root");
+            Assert.IsNotNull(root);
+            Assert.IsFalse(XmlHelper.TryGetAttribute(root, "checksum", out var attr));
+            Assert.IsNull(attr);
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void Test_VerifyChecksumAttribute_WhenNotMatch_ThenAttributeRemains()
+        {
+            var doc = new XmlDocument();
+            doc.LoadXml("<?xml version=\"1.0\" encoding=\"utf-8\" ?><root><child>child x</child></root>");
+            XmlHelper.AppendChecksumAttribute(doc, "root", "checksum");
+            var xml = XmlHelper.ToXml(doc);
+            xml = xml.Replace("child x", "child y");
+            doc = new XmlDocument();
+            doc.LoadXml(xml);
+            bool result = XmlHelper.VerifyChecksumAttribute(doc, "root", "checksum");
+            var root = doc.SelectSingleNode("/root");
+            Assert.IsNotNull(root);
+            Assert.IsTrue(XmlHelper.TryGetAttribute(root, "checksum", out var attr));
+            Assert.IsNotNull(attr);
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void Test_ToXml_WhenNullDocument_ThenThrows()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => XmlHelper.ToXml(null!));
+        }
+
+        [TestMethod]
+        public void Test_ToXml_WhenNoContent_ReturnsEmptyXml()
+        {
+            var doc = new XmlDocument();
+            var xml = XmlHelper.ToXml(doc);
+            Assert.AreEqual(string.Empty, xml);
+        }
+
+        [TestMethod]
+        public void Test_ToXml_WhenWithContent_ReturnsXmlString()
+        {
+            var doc = new XmlDocument();
+            doc.LoadXml("<?xml version=\"1.0\" encoding=\"utf-8\"?><root><child>child</child></root>");
+            var xml = XmlHelper.ToXml(doc);
+            Assert.AreEqual("<?xml version=\"1.0\" encoding=\"utf-8\"?><root><child>child</child></root>", xml);
         }
 
         private const string Xml = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
