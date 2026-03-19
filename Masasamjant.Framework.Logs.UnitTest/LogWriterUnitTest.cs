@@ -22,7 +22,7 @@ namespace Masasamjant.Diagnostics
             await writer.WriteInformationAsync(InformationMessage, GetType());
             var content = builder.ToString();
             var lines = (await content.LinesAsync()).ToArray();
-            Assert.AreEqual(3, lines.Length);
+            Assert.HasCount(3, lines);
             AssertLine(lines[0], [LogLevel.Error.ToString(), ErrorMessage]);
             AssertLine(lines[1], [LogLevel.Warning.ToString(), WarningMessage]);
             AssertLine(lines[2], [LogLevel.Information.ToString(), InformationMessage]);

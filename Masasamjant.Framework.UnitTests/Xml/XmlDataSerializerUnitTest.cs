@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.Json;
-using System.Xml;
+﻿using System.Xml;
 
 namespace Masasamjant.Xml
 {

@@ -21,7 +21,7 @@ namespace Masasamjant.Diagnostics
             await writer.WriteWarningAsync(WarningMessage, GetType());
             var content = builder.ToString();
             var lines = (await content.LinesAsync()).ToArray();
-            Assert.AreEqual(3, lines.Length);
+            Assert.HasCount(3, lines);
             var typeName = GetType().FullName ?? GetType().Name;
             AssertLine(lines[0], [TextLogWriter.ErrorCategory, ErrorMessage, typeName]);
             AssertLine(lines[1], [TextLogWriter.InformationCategory, InformationMessage, typeName]);
@@ -40,7 +40,7 @@ namespace Masasamjant.Diagnostics
             await writer.WriteWarningAsync(WarningMessage, GetType());
             var content = builder.ToString();
             var lines = (await content.LinesAsync()).ToArray();
-            Assert.AreEqual(3, lines.Length);
+            Assert.HasCount(3, lines);
             var typeName = GetType().FullName ?? GetType().Name;
             var timeString = localTime.ToString(CultureInfo.InvariantCulture);
             AssertLine(lines[0], [TextLogWriter.ErrorCategory, ErrorMessage, typeName]);
