@@ -11,30 +11,11 @@ namespace Masasamjant.Diagnostics
         private const string WarningMessage = "Warning message";
 
         [TestMethod]
-        public async Task Test_Log_Write_Without_Time()
-        {
-            var builder = new StringBuilder();
-            var writer = new StringBuilderLogWriter(builder);
-            writer.AppendTime = false;
-            await writer.WriteErrorAsync(ErrorMessage, GetType());
-            await writer.WriteInformationAsync(InformationMessage, GetType());
-            await writer.WriteWarningAsync(WarningMessage, GetType());
-            var content = builder.ToString();
-            var lines = (await content.LinesAsync()).ToArray();
-            Assert.HasCount(3, lines);
-            var typeName = GetType().FullName ?? GetType().Name;
-            AssertLine(lines[0], [TextLogWriter.ErrorCategory, ErrorMessage, typeName]);
-            AssertLine(lines[1], [TextLogWriter.InformationCategory, InformationMessage, typeName]);
-            AssertLine(lines[2], [TextLogWriter.WarningCategory, WarningMessage, typeName]);
-        }
-
-        [TestMethod]
         public async Task Test_Log_Write_With_Time()
         {
             var localTime = DateTime.Now;
             var builder = new StringBuilder();
             var writer = new TestStringBuilderLogWriter(builder, localTime);
-            writer.AppendTime = true;
             await writer.WriteErrorAsync(ErrorMessage, GetType());
             await writer.WriteInformationAsync(InformationMessage, GetType());
             await writer.WriteWarningAsync(WarningMessage, GetType());
@@ -43,9 +24,9 @@ namespace Masasamjant.Diagnostics
             Assert.HasCount(3, lines);
             var typeName = GetType().FullName ?? GetType().Name;
             var timeString = localTime.ToString(CultureInfo.InvariantCulture);
-            AssertLine(lines[0], [TextLogWriter.ErrorCategory, ErrorMessage, typeName]);
-            AssertLine(lines[1], [TextLogWriter.InformationCategory, InformationMessage, typeName, timeString]);
-            AssertLine(lines[2], [TextLogWriter.WarningCategory, WarningMessage, typeName, timeString]);
+            AssertLine(lines[0], [LogCategory.ErrorCategory, ErrorMessage, typeName]);
+            AssertLine(lines[1], [LogCategory.InformationCategory, InformationMessage, typeName, timeString]);
+            AssertLine(lines[2], [LogCategory.WarningCategory, WarningMessage, typeName, timeString]);
         }
 
         private class TestStringBuilderLogWriter : StringBuilderLogWriter
