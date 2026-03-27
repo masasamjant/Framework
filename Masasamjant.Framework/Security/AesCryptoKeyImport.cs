@@ -3,13 +3,10 @@
 namespace Masasamjant.Security
 {
     /// <summary>
-    /// Represents service that will import <see cref="AesCryptoKey"/> from stream.
+    /// Represents service that will import <see cref="AesCryptoKey"/> from stream in raw bytes.
     /// </summary>
-    public sealed class AesCryptoKeyImport : CryptoKeyImport<AesCryptoKey>
+    public class AesCryptoKeyImport : CryptoKeyImport<AesCryptoKey>
     {
-        private const int KeyLength = 44;
-        private const int IVLength = 24;
-
         /// <summary>
         /// Imports <see cref="AesCryptoKey"/> from specified stream.
         /// </summary>
@@ -17,14 +14,14 @@ namespace Masasamjant.Security
         /// <returns>A task representing import.</returns>
         /// <exception cref="ArgumentException">If <paramref name="stream"/> is not readable.</exception>
         /// <exception cref="InvalidOperationException">If import fails.</exception>
-        public override async Task<AesCryptoKey> ImportAsync(Stream stream)
+        public sealed override async Task<AesCryptoKey> ImportAsync(Stream stream)
         {
             ValidateCanRead(stream);
 
             try
             {
-                string value = await ReadImportValueAsync(stream);
-                return CreateCryptoKeyFromImportValue(value);
+                byte[] value = await ReadImportDataAsync(stream);
+                return CreateCryptoKeyFromImportData(value);
             }
             catch (Exception exception)
             {
@@ -35,19 +32,33 @@ namespace Masasamjant.Security
             }
         }
 
-        private static async Task<string> ReadImportValueAsync(Stream stream)
+        /// <summary>
+        /// Reads import data from stream. By default, it reads bytes until the end of the stream and returns them as an array.
+        /// Derived classes can override this method to implement custom reading logic, such as reading a specific number of bytes 
+        /// or applying additional processing to the data before returning it.
+        /// </summary>
+        /// <param name="stream">The stream containing exported data.</param>
+        /// <returns>A task representing the asynchronous operation, with a byte array containing the imported data.</returns>
+        protected virtual async Task<byte[]> ReadImportDataAsync(Stream stream)
         {
-            var reader = new StreamReader(stream);
-            var value = await reader.ReadToEndAsync();
-            if (value.Length != (KeyLength + IVLength))
-                throw new InvalidOperationException("Stream contains invalid data.");
-            return value;
+            var bytes = new List<byte>();
+            byte[] buffer = new byte[AesCryptoKey.KeyLength + AesCryptoKey.IVLength];
+            int read;
+            while ((read = await stream.ReadAsync(buffer, 0, buffer.Length)) != 0)
+                bytes.AddRange(buffer);
+
+            return bytes.ToArray();
         }
 
-        private static AesCryptoKey CreateCryptoKeyFromImportValue(string value)
+        /// <summary>
+        /// Creates <see cref="AesCryptoKey"/> from import data.
+        /// </summary>
+        /// <param name="data">The import data obtained from <see cref="ReadImportDataAsync(Stream)"/>.</param>
+        /// <returns>A <see cref="AesCryptoKey"/>.</returns>
+        protected virtual AesCryptoKey CreateCryptoKeyFromImportData(byte[] data)
         {
-            byte[] key = Convert.FromBase64String(value.Left(KeyLength));
-            byte[] iv = Convert.FromBase64String(value.Right(IVLength));
+            byte[] key = data.Take(AesCryptoKey.KeyLength).ToArray();
+            byte[] iv = data.Skip(AesCryptoKey.KeyLength).Take(AesCryptoKey.IVLength).ToArray();
             return new AesCryptoKey(key, iv);
         }
     }

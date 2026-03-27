@@ -113,6 +113,17 @@ namespace Masasamjant
         }
 
         [TestMethod]
+        public void Test_GetMapping_CharacterAppearsInMultipleMappings_ThrowsInvalidOperationException()
+        {
+            var map = new CharacterMap();
+            map.Add('A', 'B');
+            map.Add('C', 'A');
+
+            var exception = Assert.ThrowsException<InvalidOperationException>(() => map.GetMapping('A'));
+            Assert.IsTrue(exception.Message.Contains('A'.ToString()));
+        }
+
+        [TestMethod]
         public void Test_ReadOnly()
         {
             var map = new CharacterMap();

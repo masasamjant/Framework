@@ -318,6 +318,102 @@ namespace Masasamjant.IO
             }
         }
 
+        /// <summary>
+        /// Gets the size of the specified file in the given unit.
+        /// </summary>
+        /// <param name="filePath">The full path to the file whose size is to be determined.</param>
+        /// <param name="unit">The unit in which to return the file size.</param>
+        /// <returns>A size of file in specified unit.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="filePath"/> is null, empty, or consists only of white-space characters.</exception>
+        /// <exception cref="FileNotFoundException">If the file does not exist.</exception>
+        /// <exception cref="NotSupportedException">If the specified file size unit is not supported.</exception>
+        public static long GetFileSize(string filePath, FileSizeUnit unit)
+        {
+            if (string.IsNullOrWhiteSpace(filePath))
+                throw new ArgumentNullException(nameof(filePath), "The file path is null, empty or only whitespace.");
+
+            var file = new FileInfo(filePath);
+            return GetFileSize(file, unit);
+        }
+
+
+        /// <summary>
+        /// Gets the size of specified file in specified unit.
+        /// </summary>
+        /// <param name="file">The file.</param>
+        /// <param name="unit">The unit in which to return the file size.</param>
+        /// <returns>A size of file in specified unit.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="file"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">If <paramref name="unit"/> is not defined.</exception>
+        /// <exception cref="FileNotFoundException">If the file does not exist.</exception>
+        /// <exception cref="NotSupportedException">If the specified file size unit is not supported.</exception>
+        public static long GetFileSize(this FileInfo file, FileSizeUnit unit)
+        {
+            ArgumentNullException.ThrowIfNull(file);
+
+            if (!file.Exists)
+                throw new FileNotFoundException("The file not exist.", file.FullName);
+
+            if (!Enum.IsDefined(unit))
+                throw new ArgumentException("The value is not defined.", nameof(unit));
+
+            return GetFileSize(file.Length, unit);
+        }
+
+        /// <summary>
+        /// Tries to delete all the specified files.
+        /// </summary>
+        /// <param name="filePaths">The paths of files to delete.</param>
+        /// <returns>A read-only collection of successfully deleted file paths.</returns>
+        public static IReadOnlyCollection<string> DeleteFiles(params string[] filePaths)
+        {
+            var result = new List<string>();
+
+            foreach (var filePath in filePaths)
+            {
+                if (TryDelete(filePath))
+                    result.Add(filePath);
+            }
+
+            return result.AsReadOnly();
+        }
+
+        /// <summary>
+        /// Tries to delete file specified by path.
+        /// </summary>
+        /// <param name="filePath">The file path.</param>
+        /// <returns><c>true</c> if file existed and was deleted; <c>false</c> otherwise.</returns>
+        public static bool TryDelete(string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath))
+                return false;
+
+            try
+            {
+                if (!File.Exists(filePath))
+                    return false;
+
+                File.Delete(filePath);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        internal static long GetFileSize(long length, FileSizeUnit unit)
+        {
+            return unit switch
+            {
+                FileSizeUnit.Bytes => length,
+                FileSizeUnit.Kilobytes => length / 1024,
+                FileSizeUnit.Megabytes => length / (1024 * 1024),
+                FileSizeUnit.Gigabytes => length / (1024 * 1024 * 1024),
+                _ => throw new NotSupportedException("File size unit not supported.")
+            };
+        }
+
         private static void CopyDirectory(string parentDirectory, string sourceDirectory)
         {
             var dir = new DirectoryInfo(sourceDirectory);
@@ -331,6 +427,21 @@ namespace Masasamjant.IO
 
             var childDirectories = Directory.GetDirectories(sourceDirectory);
             CopyDirectories(childDirectories, destinationDirectory);
+        }
+
+        internal static void ValidateFilePaths(string sourceFile, string destinationFile)
+        {
+            if (string.IsNullOrWhiteSpace(sourceFile))
+                throw new ArgumentNullException(nameof(sourceFile), "The source file path is empty or only whitespace.");
+
+            if (string.IsNullOrWhiteSpace(destinationFile))
+                throw new ArgumentNullException(nameof(destinationFile), "The destination file path is empty or only whitespace.");
+
+            if (string.Equals(sourceFile, destinationFile, StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException("The destination file path is same as source file path.", nameof(destinationFile));
+
+            if (!File.Exists(sourceFile))
+                throw new FileNotFoundException("The source file not exist.", sourceFile);
         }
 
         private static void CopyFiles(string[] sourceFiles, string directoryPath)

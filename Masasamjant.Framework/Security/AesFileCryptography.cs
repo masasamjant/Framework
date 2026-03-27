@@ -1,4 +1,5 @@
-﻿using Masasamjant.Security.Abstractions;
+﻿using Masasamjant.IO;
+using Masasamjant.Security.Abstractions;
 using System.Security.Cryptography;
 
 namespace Masasamjant.Security
@@ -55,7 +56,7 @@ namespace Masasamjant.Security
         /// <exception cref="InvalidOperationException">If file encryption fails.</exception>
         public async Task EncryptAsync(string sourceFile, string destinationFile, AesCryptoKey key, bool overwriteDestination = false, CancellationToken cancellationToken = default)
         {
-            ValidateFilePaths(sourceFile, destinationFile);
+            FileHelper.ValidateFilePaths(sourceFile, destinationFile);
 
             try
             {
@@ -107,7 +108,7 @@ namespace Masasamjant.Security
         /// <exception cref="InvalidOperationException">If file decryption fails.</exception>
         public async Task DecryptAsync(string sourceFile, string destinationFile, AesCryptoKey key, bool overwriteDestination = false, CancellationToken cancellationToken = default)
         {
-            ValidateFilePaths(sourceFile, destinationFile);
+            FileHelper.ValidateFilePaths(sourceFile, destinationFile);
 
             try
             {
@@ -133,20 +134,5 @@ namespace Masasamjant.Security
         /// <returns>A <see cref="AesCryptoKey"/>.</returns>
         /// <exception cref="ArgumentNullException">If value of <paramref name="password"/> is empty or only whitespace.</exception>
         public AesCryptoKey CreateCryptoKey(string password, Salt salt) => cryptography.CreateCryptoKey(password, salt);
-
-        private static void ValidateFilePaths(string sourceFile, string destinationFile)
-        {
-            if (string.IsNullOrWhiteSpace(sourceFile))
-                throw new ArgumentNullException(nameof(sourceFile), "The source file path is empty or only whitespace.");
-
-            if (string.IsNullOrWhiteSpace(destinationFile))
-                throw new ArgumentNullException(nameof(destinationFile), "The destination file path is empty or only whitespace.");
-
-            if (string.Equals(sourceFile, destinationFile, StringComparison.OrdinalIgnoreCase))
-                throw new ArgumentException("The destination file path is same as source file path.", nameof(destinationFile));
-
-            if (!File.Exists(sourceFile))
-                throw new FileNotFoundException("The source file not exist.", sourceFile);
-        }
     }
 }

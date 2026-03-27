@@ -39,7 +39,7 @@ namespace Masasamjant
         /// <param name="context">The <see cref="ITypeDescriptorContext"/>.</param>
         /// <param name="culture">The conversion culture.</param>
         /// <param name="value">The value to convert.</param>
-        /// <returns>A <see cref="Timing"/> converted from <paramref name="value"/> or <c>null</c>, if not convertable.</returns>
+        /// <returns>A <see cref="Timing"/> converted from <paramref name="value"/> or <c>null</c>, if not convertible.</returns>
         public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
         {
             if (value is Timing timing)

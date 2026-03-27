@@ -64,10 +64,18 @@
         }
 
         [TestMethod]
+        public void Test_Matches_WhenInvalidFilterType_ThenThrows()
+        {
+            TestStringFilter filter = new TestStringFilter("Foo", StringFilterType.Match, StringComparison.Ordinal);
+            filter.SetFilterType((StringFilterType)100);
+            Assert.ThrowsException<NotSupportedException>(() => filter.Matches("Foo"));
+        }
+
+        [TestMethod]
         public void Test_Apply()
         {
             var filter = new StringFilter("123", StringFilterType.Contains, StringComparison.Ordinal);
-            var values = new List<string>() 
+            var values = new List<string>()
             {
                 "Mickey 123",
                 "Mickey 456",
@@ -86,5 +94,18 @@
             actual = filter.Apply(values).ToArray();
             CollectionAssert.AreEqual(expected, actual);
         }
+
+        private class TestStringFilter : StringFilter
+        {
+            public TestStringFilter(string filterValue, StringFilterType filterType, StringComparison comparison)
+                : base(filterValue, filterType, comparison)
+            { }
+
+            public void SetFilterType(StringFilterType filterType)
+            {
+                FilterType = filterType;
+            }
+        }
+
     }
 }

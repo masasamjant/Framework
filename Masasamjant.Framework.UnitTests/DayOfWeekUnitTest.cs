@@ -173,6 +173,32 @@ namespace Masasamjant
         }
 
         [TestMethod]
+        public void Test_CopyTo_WhenEmpty_ThenNoCopy()
+        {
+            var collection = new DayOfWeekCollection();
+            var array = new DayOfWeek[4];
+            collection.CopyTo(array, 0);
+            
+            for (int index = 0; index < array.Length; index++)
+                Assert.AreEqual(DayOfWeek.Sunday, array[index]);
+
+            collection.CopyTo(array, 0, 4);
+
+            for (int index = 0; index < array.Length; index++)
+                Assert.AreEqual(DayOfWeek.Sunday, array[index]);
+        }
+
+        [TestMethod]
+        public void Test_CopyTo_WhenCountIsZero_ThenNoCopy()
+        {
+            var collection = new DayOfWeekCollection(new[] { DayOfWeek.Monday, DayOfWeek.Wednesday, DayOfWeek.Friday });
+            var array = new DayOfWeek[4];
+            collection.CopyTo(array, 0, 0);
+            for (int index = 0; index < array.Length; index++)
+                Assert.AreEqual(DayOfWeek.Sunday, array[index]);
+        }
+
+        [TestMethod]
         public void Test_CopyTo_WhenNegativeCount_ThenThrows()
         {
             var collection = new DayOfWeekCollection(new[] { DayOfWeek.Monday, DayOfWeek.Wednesday, DayOfWeek.Friday });
