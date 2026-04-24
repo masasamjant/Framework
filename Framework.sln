@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masasamjant.Framework.Repos
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masasamjant.Framework.Logs", "Masasamjant.Framework.Logs\Masasamjant.Framework.Logs.csproj", "{B2AAE04B-3169-4E72-89FF-075C45EACBBB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demo", "demo", "{556519A6-69C8-4F5B-A18B-3F11B3939A43}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "apps", "apps", "{556519A6-69C8-4F5B-A18B-3F11B3939A43}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masasamjant.Framework.Logs.UnitTest", "Masasamjant.Framework.Logs.UnitTest\Masasamjant.Framework.Logs.UnitTest.csproj", "{51BCE86E-E6B5-450F-B512-47B187105204}"
 EndProject
