@@ -25,7 +25,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masasamjant.Framework.Model
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masasamjant.Framework.Repositories.UnitTest", "Masasamjant.Framework.Repositories.UnitTest\Masasamjant.Framework.Repositories.UnitTest.csproj", "{7E66A3B9-3AA7-4B30-BE4C-AEEDF22722EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masasamjant.PasswordApp", "Masasamjant.PasswordApp\Masasamjant.PasswordApp.csproj", "{5128EE62-177C-4A45-96F4-B16D6878AB67}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masasamjant.Framework.Windows", "Masasamjant.Framework.Windows\Masasamjant.Framework.Windows.csproj", "{A3E70D8C-69CB-4965-92FE-1602B6D97FFD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,10 +65,10 @@ Global
 		{7E66A3B9-3AA7-4B30-BE4C-AEEDF22722EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E66A3B9-3AA7-4B30-BE4C-AEEDF22722EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E66A3B9-3AA7-4B30-BE4C-AEEDF22722EE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5128EE62-177C-4A45-96F4-B16D6878AB67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5128EE62-177C-4A45-96F4-B16D6878AB67}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5128EE62-177C-4A45-96F4-B16D6878AB67}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5128EE62-177C-4A45-96F4-B16D6878AB67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3E70D8C-69CB-4965-92FE-1602B6D97FFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3E70D8C-69CB-4965-92FE-1602B6D97FFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3E70D8C-69CB-4965-92FE-1602B6D97FFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3E70D8C-69CB-4965-92FE-1602B6D97FFD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,7 +82,7 @@ Global
 		{51BCE86E-E6B5-450F-B512-47B187105204} = {B6357D9B-1DE8-481D-A6BC-67DC406B37B0}
 		{272163CA-3210-49FD-97EC-172C50C59C8A} = {B6357D9B-1DE8-481D-A6BC-67DC406B37B0}
 		{7E66A3B9-3AA7-4B30-BE4C-AEEDF22722EE} = {B6357D9B-1DE8-481D-A6BC-67DC406B37B0}
-		{5128EE62-177C-4A45-96F4-B16D6878AB67} = {556519A6-69C8-4F5B-A18B-3F11B3939A43}
+		{A3E70D8C-69CB-4965-92FE-1602B6D97FFD} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {599C52B5-160A-4AF9-9951-040D3F362F9E}
