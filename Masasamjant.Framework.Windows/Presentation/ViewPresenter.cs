@@ -17,7 +17,7 @@
         protected ViewPresenter(TView view)
         {
             this.view = view ?? throw new ArgumentNullException(nameof(view));
-            this.view.ViewLoading.Executed += OnViewLoadingExecuted;
+            this.view.ViewLoadingCommand.Executed += OnViewLoadingExecuted;
         }
 
         /// <summary>
@@ -53,7 +53,7 @@
         /// </summary>
         /// <param name="args">The arguments of original event.</param>
         /// <exception cref="ObjectDisposedException">If instance is disposed.</exception>
-        public virtual void OnViewExecuted(EventArgs args)
+        public virtual void OnViewLoading(EventArgs args)
         {
             CheckDisposed();
         }
@@ -67,7 +67,7 @@
             if (IsDisposed)
                 return;
 
-            View.ViewLoading.Executed -= OnViewLoadingExecuted;
+            View.ViewLoadingCommand.Executed -= OnViewLoadingExecuted;
 
             IsDisposed = true;
         }
@@ -81,9 +81,20 @@
             ObjectDisposedException.ThrowIf(IsDisposed, this);
         }
 
+        /// <summary>
+        /// Check if command associated with specified <see cref="PresentationCommandEventArgs"/> is enabled.
+        /// </summary>
+        /// <param name="args">The <see cref="PresentationCommandEventArgs"/>.</param>
+        /// <returns><c>true</c> if command associated with <paramref name="args"/> is enabled; <c>false</c> otherwise.</returns>
+        protected bool IsEnabledCommand(PresentationCommandEventArgs args)
+        {
+            return args.Command.IsEnabled;
+        }
+
         private void OnViewLoadingExecuted(object? sender, PresentationCommandEventArgs e)
         {
-            OnViewExecuted(e.Original);
+            if (IsEnabledCommand(e))
+                OnViewLoading(e.Original);
         }
     }
 }

@@ -8,12 +8,12 @@
         /// <summary>
         /// Gets presentation command that is executed when the form is closing.
         /// </summary>
-        IPresentationCommand<FormClosingEventArgs> FormClosing { get; }
+        IPresentationCommand<FormClosingEventArgs> FormClosingCommand { get; }
 
         /// <summary>
         /// Gets presentation command that is executed when the form is closed.
         /// </summary>
-        IPresentationCommand<FormClosedEventArgs> FormClosed { get; }
+        IPresentationCommand<FormClosedEventArgs> FormClosedCommand { get; }
 
         /// <summary>
         /// Show form.

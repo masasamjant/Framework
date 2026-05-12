@@ -15,8 +15,8 @@
         protected FormViewPresenter(TView view)
             : base(view)
         {
-            View.FormClosed.Executed += OnFormClosedExecuted;
-            View.FormClosing.Executed += OnFormClosingExecuted;
+            View.FormClosedCommand.Executed += OnFormClosedExecuted;
+            View.FormClosingCommand.Executed += OnFormClosingExecuted;
         }
 
         /// <summary>
@@ -51,20 +51,22 @@
         {
             if (!IsDisposed)
             {
-                View.FormClosed.Executed -= OnFormClosedExecuted;
-                View.FormClosing.Executed -= OnFormClosingExecuted;
+                View.FormClosedCommand.Executed -= OnFormClosedExecuted;
+                View.FormClosingCommand.Executed -= OnFormClosingExecuted;
                 base.Dispose(disposing);
             }
         }
 
         private void OnFormClosingExecuted(object? sender, PresentationCommandEventArgs<FormClosingEventArgs> e)
         {
-            OnFormClosing(e.Original);
+            if (IsEnabledCommand(e))
+                OnFormClosing(e.Original);
         }
 
         private void OnFormClosedExecuted(object? sender, PresentationCommandEventArgs<FormClosedEventArgs> e)
         {
-            OnFormClosed(e.Original);
+            if (IsEnabledCommand(e))
+                OnFormClosed(e.Original);
         }
     }
 }

@@ -9,17 +9,25 @@
         /// Initializes new instance of the <see cref="PresentationCommand"/> event args.
         /// </summary>
         /// <param name="original">The arguments of the original event.</param>
-        /// <exception cref="ArgumentNullException">If <paramref name="original"/> is <c>null</c>.</exception>
-        public PresentationCommandEventArgs(EventArgs original)
+        /// <param name="command">The command that was executed.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="original"/> is <c>null</c> or <paramref name="command"/> is <c>null</c>.</exception>
+        public PresentationCommandEventArgs(EventArgs original, IPresentationCommand command)
         {
             ArgumentNullException.ThrowIfNull(original);
+            ArgumentNullException.ThrowIfNull(command);
             Original = original;
+            Command = command;
         }
 
         /// <summary>
         /// Gets the arguments of the original event.
         /// </summary>
         public EventArgs Original { get; }
+
+        /// <summary>
+        /// Gets the command that was executed.
+        /// </summary>
+        public IPresentationCommand Command { get; }
     }
 
     /// <summary>
@@ -33,9 +41,10 @@
         /// Initializes new instance of the <see cref="PresentationCommand{TEventArgs}"/> event args.
         /// </summary>
         /// <param name="original">The arguments of the original event.</param>
-        /// <exception cref="ArgumentNullException">If <paramref name="original"/> is <c>null</c>.</exception>
-        public PresentationCommandEventArgs(TEventArgs original)
-            : base(original)
+        /// <param name="command">The command that was executed.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="original"/> is <c>null</c> or <paramref name="command"/> is <c>null</c>.</exception>
+        public PresentationCommandEventArgs(TEventArgs original, IPresentationCommand<TEventArgs> command)
+            : base(original, command)
         { }
 
         /// <summary>
@@ -44,6 +53,14 @@
         public new TEventArgs Original
         {
             get { return (TEventArgs)base.Original; }
+        }
+
+        /// <summary>
+        /// Gets the command that was executed.
+        /// </summary>
+        public new IPresentationCommand<TEventArgs> Command
+        {
+            get { return (IPresentationCommand<TEventArgs>)base.Command; }
         }
     }
 }

@@ -8,6 +8,13 @@
         /// <summary>
         /// Gets the presentation command that is executed when the view is loading.
         /// </summary>
-        IPresentationCommand ViewLoading { get; }
+        IPresentationCommand ViewLoadingCommand { get; }
+
+        /// <summary>
+        /// Shows message in view.
+        /// </summary>
+        /// <param name="message">The message to show.</param>
+        /// <returns>A dialog result.</returns>
+        DialogResult ShowMessage(PresentationMessage message);
     }
 }

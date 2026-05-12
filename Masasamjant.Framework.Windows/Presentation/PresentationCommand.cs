@@ -62,7 +62,7 @@
             if (!IsEnabled)
                 return;
         
-            var commandEventArgs = new PresentationCommandEventArgs(original);
+            var commandEventArgs = new PresentationCommandEventArgs(original, this);
             Executed?.Invoke(this, commandEventArgs);
         }
 
@@ -106,7 +106,7 @@
             if (!IsEnabled)
                 return;
 
-            var commandEventArgs = new PresentationCommandEventArgs<TEventArgs>(original);
+            var commandEventArgs = new PresentationCommandEventArgs<TEventArgs>(original, this);
             Executed?.Invoke(this, commandEventArgs);
         }
 
