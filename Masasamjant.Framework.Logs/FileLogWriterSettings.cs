@@ -47,8 +47,4 @@
         /// </summary>
         public int FlushIntervalMilliseconds { get; }
     }
-
-
-
-
 }

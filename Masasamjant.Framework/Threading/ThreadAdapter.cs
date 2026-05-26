@@ -13,9 +13,10 @@ namespace Masasamjant.Threading
         /// Initializes a new instance of the <see cref="ThreadAdapter"/> class.
         /// </summary>
         /// <param name="thread">The thread to adapt.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="thread"/> is <c>null</c>.</exception>
         public ThreadAdapter(Thread thread)
         {
-            this.thread = thread;
+            this.thread = thread ?? throw new ArgumentNullException(nameof(thread));
         }
 
         /// <summary>

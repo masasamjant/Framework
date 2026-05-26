@@ -13,6 +13,7 @@
         /// <param name="batchSize">The maximum number of log entries to batch before writing to the file.</param>
         /// <param name="flushIntervalMilliseconds">The interval, in milliseconds, between automatic flushes of batched log entries to the file.</param>
         /// <exception cref="ArgumentNullException">If <paramref name="directoryPath"/> is <c>null</c>, empty or only whitespace.</exception>
+        /// <exception cref="ArgumentException">If the specified directory does not exist.</exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// If value of <paramref name="batchSize"/> is less than 1 or greater than 1000.
         /// -or-
@@ -23,6 +24,9 @@
         {
             if (string.IsNullOrWhiteSpace(directoryPath))
                 throw new ArgumentNullException(nameof(directoryPath), "Directory path is null, empty or only whitespace.");
+        
+            if (!Directory.Exists(directoryPath))
+                throw new ArgumentException("The specified directory does not exist.", nameof(directoryPath));
         }
 
         private static string GetDailyRollingFilePath(string directoryPath)

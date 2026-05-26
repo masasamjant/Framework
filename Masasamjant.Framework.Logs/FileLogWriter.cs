@@ -15,6 +15,7 @@ namespace Masasamjant.Diagnostics
         private readonly ILogMessageFormatter formatter;
         private readonly SemaphoreSlim semaphore;
         private readonly IEventLogFactory eventLogFactory;
+        private readonly IFileWriter writer;
         private long disposed;
         private const long disposedFlag = 1L;
 
@@ -28,18 +29,24 @@ namespace Masasamjant.Diagnostics
             : this(settings, new DefaultLogMessageFormatter(), eventLogFactory)
         { }
 
+        public FileLogWriter(FileLogWriterSettings settings, ILogMessageFormatter formatter, IEventLogFactory eventLogFactory)
+            : this(settings, formatter, eventLogFactory, new DefaultFileWriter())
+        { }
+
         /// <summary>
         /// Initialiazes a new instance of the <see cref="FileLogWriter"/> class that use specified log message formatter.
         /// </summary>
         /// <param name="settings">The writer settings.</param>
         /// <param name="eventLogFactory">The event log factory.</param>
         /// <param name="formatter">The log message formatter.</param>
+        /// <param name="writer">The file writer.</param>
         /// <exception cref="ArgumentNullException">If any of parameters is <c>null</c>.</exception>
-        public FileLogWriter(FileLogWriterSettings settings, ILogMessageFormatter formatter, IEventLogFactory eventLogFactory)
+        public FileLogWriter(FileLogWriterSettings settings, ILogMessageFormatter formatter, IEventLogFactory eventLogFactory, IFileWriter writer)
         {
             this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
             this.formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
             this.eventLogFactory = eventLogFactory ?? throw new ArgumentNullException(nameof(eventLogFactory));
+            this.writer = writer ?? throw new ArgumentNullException(nameof(writer));
             this.disposed = 0;
             this.queue = new ConcurrentQueue<LogEntry>();
             this.semaphore = new SemaphoreSlim(1, 1);
@@ -65,7 +72,7 @@ namespace Masasamjant.Diagnostics
             queue.Enqueue(new LogEntry(LogCategory.ErrorCategory, message, type, GetLocalDateTime()));
             
             if (IsBatchSizeReached())
-                await FlushQueueToFile();
+                await FlushQueueToFileAsync();
         }
 
         /// <summary>
@@ -81,7 +88,7 @@ namespace Masasamjant.Diagnostics
             queue.Enqueue(new LogEntry(LogCategory.InformationCategory, message, type, GetLocalDateTime()));
 
             if (IsBatchSizeReached())
-                await FlushQueueToFile();
+                await FlushQueueToFileAsync();
         }
 
         /// <summary>
@@ -97,7 +104,7 @@ namespace Masasamjant.Diagnostics
             queue.Enqueue(new LogEntry(LogCategory.WarningCategory, message, type, GetLocalDateTime()));
 
             if (IsBatchSizeReached())
-                await FlushQueueToFile();
+                await FlushQueueToFileAsync();
         }
 
         /// <summary>
@@ -107,6 +114,16 @@ namespace Masasamjant.Diagnostics
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Flush queued messages to log file.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public async Task FlushAsync()
+        {
+            CheckDisposed();
+            await FlushQueueToFileAsync();
         }
 
         /// <summary>
@@ -133,7 +150,7 @@ namespace Masasamjant.Diagnostics
 
                 semaphore.Wait();
 
-                DoFlushQueueToFile().GetAwaiter().GetResult();
+                DoFlushQueueToFileAsync().GetAwaiter().GetResult();
             }
             catch (Exception exception)
             {
@@ -149,7 +166,7 @@ namespace Masasamjant.Diagnostics
         private bool IsBatchSizeReached()
             => queue.Count >= settings.BatchSize;
 
-        private async Task FlushQueueToFile()
+        private async Task FlushQueueToFileAsync()
         {
             if (queue.IsEmpty)
                 return;
@@ -159,8 +176,7 @@ namespace Masasamjant.Diagnostics
 
             try
             {
-
-                await DoFlushQueueToFile();
+                await DoFlushQueueToFileAsync();
             }
             catch (Exception exception)
             {
@@ -178,7 +194,7 @@ namespace Masasamjant.Diagnostics
             eventLog.TryWriteEntry("Application", "Failed to write queued messages to log: " + exception.Message, EventLogEntryLevel.Error);
         }
 
-        private async Task DoFlushQueueToFile()
+        private async Task DoFlushQueueToFileAsync()
         {
             if (queue.IsEmpty)
                 return;
@@ -195,7 +211,7 @@ namespace Masasamjant.Diagnostics
 
             string filePath = settings.FilePathProvider();
 
-            await File.AppendAllLinesAsync(filePath, lines);
+            await writer.AppendAllLinesAsync(filePath, lines);
         }
 
         private IEnumerable<string> GetBatchLines(IEnumerable<LogEntry> batch)
@@ -214,7 +230,7 @@ namespace Masasamjant.Diagnostics
 
         private async void OnTimerElapsed(object? sender, System.Timers.ElapsedEventArgs e)
         {
-            await FlushQueueToFile();
+            await FlushQueueToFileAsync();
         }
 
         private void CheckDisposed()
