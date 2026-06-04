@@ -29,6 +29,9 @@ namespace Masasamjant.Collections
         /// <param name="action">The <see cref="Action{T}"/> to execute for each item.</param>
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
         {
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(action);
+
             foreach (var item in source)
                 action(item);
         }
@@ -42,6 +45,10 @@ namespace Masasamjant.Collections
         /// <param name="action">The <see cref="Action{T}"/> to execute for each match item.</param>
         public static void ForEach<T>(this IEnumerable<T> source, Predicate<T> match, Action<T> action)
         {
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(match);
+            ArgumentNullException.ThrowIfNull(action);
+
             foreach (var item in source)
             {
                 if (match(item))
@@ -58,6 +65,10 @@ namespace Masasamjant.Collections
         /// <param name="action">The <see cref="Action{T}"/> to execute for each match item.</param>
         public static void ForEach<T>(this IEnumerable<T> source, Func<T, bool> match, Action<T> action)
         {
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(match);
+            ArgumentNullException.ThrowIfNull(action);
+
             foreach (var item in source)
             {
                 if (match(item))
@@ -74,6 +85,9 @@ namespace Masasamjant.Collections
         /// <returns><c>true</c> if <paramref name="source"/> contains any items from <paramref name="items"/>; <c>false</c> otherwise.</returns>
         public static bool ContainsAny<T>(this IEnumerable<T> source, IEnumerable<T> items)
         {
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(items);
+
             foreach (var item in items)
             {
                 if (source.Contains(item))
@@ -92,6 +106,9 @@ namespace Masasamjant.Collections
         /// <returns><c>true</c> if <paramref name="source"/> contains all items from <paramref name="items"/>; <c>false</c> otherwise.</returns>
         public static bool ContainsAll<T>(this IEnumerable<T> source, IEnumerable<T> items)
         {
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(items);
+
             foreach (var item in items)
             {
                 if (!source.Contains(item))
@@ -110,7 +127,7 @@ namespace Masasamjant.Collections
         /// <returns>A batches.</returns>
         public static IEnumerable<IEnumerable<T>> Batch<T>(this IEnumerable<T> source, int size)
         {
-            if (size <= 0)
+            if (source is null || size <= 0)
                 yield break;
 
             T[]? array = null;
@@ -190,6 +207,8 @@ namespace Masasamjant.Collections
         /// <returns>A unique items from <paramref name="source"/>.</returns>
         public static IEnumerable<T> Unique<T>(this IEnumerable<T> source, IEqualityComparer<T>? equalityComparer = null)
         {
+            ArgumentNullException.ThrowIfNull(source);
+
             equalityComparer ??= EqualityComparer<T>.Default;
 
             var set = new HashSet<T>(equalityComparer);

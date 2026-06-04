@@ -5,7 +5,6 @@
     /// </summary>
     public static class StackHelper
     {
-
         /// <summary>
         /// Execute specified <see cref="Action{T}"/> to each item popped from specified <see cref="Stack{T}"/>.
         /// </summary>
@@ -14,6 +13,9 @@
         /// <param name="action">The <see cref="Action{T}"/> to execute with item.</param>
         public static void ForEachPop<T>(this Stack<T> stack, Action<T> action)
         {
+            ArgumentNullException.ThrowIfNull(stack);
+            ArgumentNullException.ThrowIfNull(action);
+
             while (stack.TryPop(out var item))
                 action(item);
         }
@@ -26,6 +28,9 @@
         /// <param name="items">The <see cref="IEnumerable{T}"/> of items.</param>
         public static void PushRange<T>(this Stack<T> stack, IEnumerable<T> items)
         {
+            ArgumentNullException.ThrowIfNull(stack);
+            ArgumentNullException.ThrowIfNull(items);
+
             if (ReferenceEquals(stack, items))
                 return;
 
@@ -43,6 +48,8 @@
         /// <exception cref="ArgumentOutOfRangeException">If value of <paramref name="count"/> is less than 0.</exception>
         public static IEnumerable<T> PopRange<T>(this Stack<T> stack, int count)
         {
+            ArgumentNullException.ThrowIfNull(stack);
+
             if (count < 0)
                 throw new ArgumentOutOfRangeException(nameof(count), count, "The value must be greater than or equal to 0.");
 
@@ -65,6 +72,8 @@
         /// <returns>A <see cref="IEnumerable{T}"/> of items.</returns>
         public static IEnumerable<T> PopRange<T>(this Stack<T> stack)
         {
+            ArgumentNullException.ThrowIfNull(stack);
+
             var result = new List<T>(stack.Count);
 
             while (stack.TryPop(out var item))
@@ -82,6 +91,7 @@
         /// <returns>A items from <paramref name="stack"/> until <paramref name="stopItem"/> is top item.</returns>
         public static IEnumerable<T> PopUntil<T>(this Stack<T> stack, T stopItem)
         {
+            ArgumentNullException.ThrowIfNull(stack);
             Predicate<T> stopPredicate = (item) => Equals(stopItem, item);
             return PopUntil(stack, stopPredicate);
         }
@@ -105,6 +115,9 @@
         /// <returns>A items from <paramref name="stack"/> until top item match <paramref name="stopPredicate"/>.</returns>
         public static IEnumerable<T> PopUntil<T>(this Stack<T> stack, Func<T, bool> stopPredicate)
         {
+            ArgumentNullException.ThrowIfNull(stack);
+            ArgumentNullException.ThrowIfNull(stopPredicate);
+
             var result = new List<T>(stack.Count);
 
             while (stack.TryPeek(out var top))
@@ -138,6 +151,10 @@
         /// <param name="pushPredicate">The predicate to match to pushed item.</param>
         public static void PushMatches<T>(this Stack<T> stack, IEnumerable<T> items, Func<T, bool> pushPredicate)
         {
+            ArgumentNullException.ThrowIfNull(stack);
+            ArgumentNullException.ThrowIfNull(items);
+            ArgumentNullException.ThrowIfNull(pushPredicate);
+
             foreach (var item in items.Where(pushPredicate))
                 stack.Push(item);
         }
@@ -153,6 +170,8 @@
         /// <exception cref="ArgumentOutOfRangeException">If value of <paramref name="size"/> is less than 1.</exception>
         public static IEnumerable<Stack<T>> Split<T>(this Stack<T> stack, int size)
         {
+            ArgumentNullException.ThrowIfNull(stack);
+
             if (size < 1)
                 throw new ArgumentOutOfRangeException(nameof(size), size, "The value must be greater than 0.");
 

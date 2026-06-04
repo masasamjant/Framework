@@ -13,6 +13,9 @@
         /// <param name="action">The <see cref="Action{T}"/> to execute for item.</param>
         public static void ForEachDequeue<T>(this Queue<T> queue, Action<T> action)
         {
+            ArgumentNullException.ThrowIfNull(queue);
+            ArgumentNullException.ThrowIfNull(action);
+
             while (queue.TryDequeue(out var item))
                 action(item);
         }
@@ -25,6 +28,9 @@
         /// <param name="items">The <see cref="IEnumerable{T}"/> of items to add.</param>
         public static void EnqueueRange<T>(this Queue<T> queue, IEnumerable<T> items)
         {
+            ArgumentNullException.ThrowIfNull(queue);
+            ArgumentNullException.ThrowIfNull(items);
+
             if (ReferenceEquals(queue, items))
                 return;
 
@@ -42,6 +48,8 @@
         /// <exception cref="ArgumentOutOfRangeException">If <paramref name="count"/> is less than 0.</exception>
         public static IEnumerable<T> DequeueRange<T>(this Queue<T> queue, int count)
         {
+            ArgumentNullException.ThrowIfNull(queue);
+
             if (count < 0)
                 throw new ArgumentOutOfRangeException(nameof(count), count, "The value must be greater than or equal to 0.");
 
@@ -65,6 +73,8 @@
         /// <returns>A <see cref="IEnumerable{T}"/> of dequeued items.</returns>
         public static IEnumerable<T> DequeueRange<T>(this Queue<T> queue)
         {
+            ArgumentNullException.ThrowIfNull(queue);
+
             var result = new List<T>(queue.Count);
 
             while (queue.TryDequeue(out var item))
@@ -84,6 +94,8 @@
         /// <exception cref="ArgumentOutOfRangeException">If <paramref name="size"/> is less than 1.</exception>
         public static IEnumerable<Queue<T>> Split<T>(this Queue<T> queue, int size)
         {
+            ArgumentNullException.ThrowIfNull(queue);
+
             if (size < 1)
                 throw new ArgumentOutOfRangeException(nameof(size), size, "The value must be greater than 0.");
 
@@ -94,10 +106,7 @@
 
             if (queue.Count < size)
             {
-                var copy = new Queue<T>();
-                while (queue.TryDequeue(out var item))
-                    copy.Enqueue(item);
-                result.Add(copy);
+                result.Add(Transfer(queue));
             }
             else
             {
@@ -122,6 +131,39 @@
         }
 
         /// <summary>
+        /// Transfer all items from source <see cref="Queue{T}"/> to target <see cref="Queue{T}"/>. After transfer the source
+        /// <see cref="Queue{T}"/> will be empty.
+        /// </summary>
+        /// <typeparam name="T">The type of the item.</typeparam>
+        /// <param name="source">The source queue.</param>
+        /// <param name="target">The target queue.</param>
+        public static void TransferTo<T>(this Queue<T> source, Queue<T> target)
+        {
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(target);
+
+            if (ReferenceEquals(source, target))
+                return;
+
+            while (source.TryDequeue(out var item))
+                target.Enqueue(item);
+        }
+
+        /// <summary>
+        /// Creates new <see cref="Queue{T}"/> and transfers all items from the source queue to the new queue.
+        /// </summary>
+        /// <typeparam name="T">The type of the item.</typeparam>
+        /// <param name="source">The source queue.</param>
+        /// <returns>A new <see cref="Queue{T}"/> containing all items from the source queue.</returns>
+        public static Queue<T> Transfer<T>(this Queue<T> source)
+        {
+            ArgumentNullException.ThrowIfNull(source);
+            var target = new Queue<T>();
+            source.TransferTo(target);
+            return target;
+        }
+
+        /// <summary>
         /// Dequeue items from specified <see cref="Queue{T}"/> until first item is specified stop item.
         /// </summary>
         /// <typeparam name="T">The type of the item.</typeparam>
@@ -130,6 +172,7 @@
         /// <returns>A items from <paramref name="queue"/> until <paramref name="stopItem"/> is first item.</returns>
         public static IEnumerable<T> DequeueUntil<T>(this Queue<T> queue, T stopItem)
         {
+            ArgumentNullException.ThrowIfNull(queue);
             Predicate<T> stopPredicate = item => Equals(item, stopItem);
             return DequeueUntil(queue, stopPredicate);
         }
@@ -153,15 +196,18 @@
         /// <returns>A items from <paramref name="queue"/> until first item match <paramref name="stopPredicate"/>.</returns>
         public static IEnumerable<T> DequeueUntil<T>(this Queue<T> queue, Func<T, bool> stopPredicate)
         {
+            ArgumentNullException.ThrowIfNull(queue);
+            ArgumentNullException.ThrowIfNull(stopPredicate);
+
             var result = new List<T>();
 
-            while (queue.TryPeek(out var first))
+            while (queue.TryPeek(out var item))
             {
-                if (stopPredicate(first))
+                if (stopPredicate(item))
                     break;
 
-                first = queue.Dequeue();
-                result.Add(first);
+                item = queue.Dequeue();
+                result.Add(item);
             }
 
             return result.AsReadOnly();
@@ -186,6 +232,10 @@
         /// <param name="pushPredicate">The predicate to match to enququed item.</param>
         public static void EnqueueMatches<T>(this Queue<T> queue, IEnumerable<T> items, Func<T, bool> enqueuePredicate)
         {
+            ArgumentNullException.ThrowIfNull(queue);
+            ArgumentNullException.ThrowIfNull(items);
+            ArgumentNullException.ThrowIfNull(enqueuePredicate);
+
             foreach (var item in items.Where(enqueuePredicate))
                 queue.Enqueue(item);
         }

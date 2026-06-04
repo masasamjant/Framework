@@ -20,6 +20,8 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentOutOfRangeException">If value of <paramref name="size"/> is less than 0.</exception>
         public SlidingView(IEnumerable<T> source, int size)
         {
+            ArgumentNullException.ThrowIfNull(source);
+
             if (source is SlidingView<T>)
                 throw new ArgumentException("The source cannot be sliding view.", nameof(source));
 

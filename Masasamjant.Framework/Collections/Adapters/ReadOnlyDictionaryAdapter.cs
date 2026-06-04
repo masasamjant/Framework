@@ -23,8 +23,11 @@ namespace Masasamjant.Collections.Adapters
         /// <exception cref="ArgumentException">If <paramref name="source"/> is <see cref="ReadOnlyDictionaryAdapter{TKey, TValue}"/>.</exception>
         public ReadOnlyDictionaryAdapter(IReadOnlyDictionary<TKey, TValue> source)
         {
+            ArgumentNullException.ThrowIfNull(source);
+
             if (source is ReadOnlyDictionaryAdapter<TKey, TValue>)
                 throw new ArgumentException($"The source cannot be '{typeof(ReadOnlyDictionaryAdapter<TKey, TValue>)}' instance.", nameof(source));
+
             this.source = source;
         }
 

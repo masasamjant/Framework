@@ -177,6 +177,8 @@ namespace Masasamjant.Collections
         /// <exception cref="DuplicateKeyException{TKey}">If <paramref name="duplicateBehavior"/> is <see cref="DuplicateBehavior.Error"/> and duplicate key is found.</exception>
         public static IDictionary<TKey, TValue> Combine<TKey, TValue>(IEnumerable<IDictionary<TKey, TValue>> dictionaries, DuplicateBehavior duplicateBehavior = DuplicateBehavior.Ignore, int maxItemCount = int.MaxValue) where TKey : notnull
         {
+            ArgumentNullException.ThrowIfNull(dictionaries);
+
             if (!Enum.IsDefined(duplicateBehavior))
                 throw new ArgumentException("The value is not defined.", nameof(duplicateBehavior));
 
@@ -232,6 +234,8 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="destination"/> is in read-only state.</exception>
         public static void Merge<TKey, TValue>(this IDictionary<TKey, TValue> destination, IEnumerable<IDictionary<TKey, TValue>> sources) where TKey : notnull
         {
+            ArgumentNullException.ThrowIfNull(destination);
+            ArgumentNullException.ThrowIfNull(sources);
             CollectionHelper.CheckNotReadOnly(destination, nameof(destination));
 
             RemoveOrphants(destination, sources);
@@ -248,6 +252,8 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="destination"/> is in read-only state.</exception>
         public static void AddOrReplace<TKey, TValue>(this IDictionary<TKey, TValue> destination, IEnumerable<IDictionary<TKey, TValue>> sources) where TKey : notnull
         {
+            ArgumentNullException.ThrowIfNull(destination);
+            ArgumentNullException.ThrowIfNull(sources);
             CollectionHelper.CheckNotReadOnly(destination, nameof(destination));
 
             foreach (var source in sources)
@@ -275,6 +281,8 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="destination"/> is in read-only state.</exception>
         public static void AddOrReplace<TKey, TValue>(this IDictionary<TKey, TValue> destination, IDictionary<TKey, TValue> source) where TKey : notnull
         {
+            ArgumentNullException.ThrowIfNull(destination);
+            ArgumentNullException.ThrowIfNull(source);
             CollectionHelper.CheckNotReadOnly(destination, nameof(destination));
 
             if (ReferenceEquals(destination, source) || source.Count == 0)
@@ -299,6 +307,8 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="destination"/> is in read-only state.</exception>
         public static void RemoveOrphants<TKey, TValue>(this IDictionary<TKey, TValue> destination, IEnumerable<IDictionary<TKey, TValue>> dictionaries) where TKey : notnull
         {
+            ArgumentNullException.ThrowIfNull(destination);
+            ArgumentNullException.ThrowIfNull(dictionaries);
             CollectionHelper.CheckNotReadOnly(destination, nameof(destination));
 
             foreach (var keyValue in CopyEnumerable.CreateCopyEnumerable(destination))
@@ -332,6 +342,8 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="destination"/> is in read-only state.</exception>
         public static void RemoveOrphants<TKey, TValue>(this IDictionary<TKey, TValue> destination, IDictionary<TKey, TValue> compare) where TKey : notnull
         {
+            ArgumentNullException.ThrowIfNull(destination);
+            ArgumentNullException.ThrowIfNull(compare);
             CollectionHelper.CheckNotReadOnly(destination, nameof(destination));
 
             if (ReferenceEquals(destination, compare))
@@ -354,6 +366,8 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="dictionary"/> is in read-only state.</exception>
         public static void RemoveRange<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, IEnumerable<TKey> keys)
         {
+            ArgumentNullException.ThrowIfNull(dictionary);
+            ArgumentNullException.ThrowIfNull(keys);
             CollectionHelper.CheckNotReadOnly(dictionary, nameof(dictionary));
 
             foreach (var key in keys)
@@ -372,6 +386,7 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="dictionary"/> is in read-only state.</exception>
         public static bool TryGetAndRemove<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, out TValue? result)
         {
+            ArgumentNullException.ThrowIfNull(dictionary);
             CollectionHelper.CheckNotReadOnly(dictionary, nameof(dictionary));
 
             if (dictionary.TryGetValue(key, out result))
@@ -404,6 +419,7 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="dictionary"/> is in read-only state.</exception>
         public static void Keep<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, Func<KeyValuePair<TKey, TValue>, bool> keepPredicate)
         {
+            ArgumentNullException.ThrowIfNull(dictionary);
             CollectionHelper.CheckNotReadOnly(dictionary, nameof(dictionary));
 
             if (dictionary.Count == 0)
@@ -435,6 +451,8 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="dictionary"/> is in read-only state.</exception>
         public static void Keep<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, Func<TKey, bool> keepPredicate)
         {
+            ArgumentNullException.ThrowIfNull(dictionary);
+            ArgumentNullException.ThrowIfNull(keepPredicate);
             CollectionHelper.CheckNotReadOnly(dictionary, nameof(dictionary));
 
             if (dictionary.Count == 0)
@@ -466,6 +484,8 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="dictionary"/> is in read-only state.</exception>
         public static void Remove<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, Func<KeyValuePair<TKey, TValue>, bool> removePredicate)
         {
+            ArgumentNullException.ThrowIfNull(dictionary);
+            ArgumentNullException.ThrowIfNull(removePredicate);
             CollectionHelper.CheckNotReadOnly(dictionary, nameof(dictionary));
 
             if (dictionary.Count == 0)
@@ -497,6 +517,8 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="dictionary"/> is in read-only state.</exception>
         public static void Remove<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, Func<TKey, bool> removePredicate)
         {
+            ArgumentNullException.ThrowIfNull(dictionary);
+            ArgumentNullException.ThrowIfNull(removePredicate);
             CollectionHelper.CheckNotReadOnly(dictionary, nameof(dictionary));
 
             if (dictionary.Count == 0)
@@ -521,6 +543,8 @@ namespace Masasamjant.Collections
         /// <exception cref="DuplicateKeyException{T1}">If value of <paramref name="duplicateBehavior"/> is <see cref="DuplicateBehavior.Error"/> and <paramref name="tuples"/> contains items that would create duplicate key.</exception>
         public static IDictionary<T1, T2> FromTuples<T1, T2>(IEnumerable<Tuple<T1, T2>> tuples, DuplicateBehavior duplicateBehavior = DuplicateBehavior.Ignore) where T1 : notnull
         {
+            ArgumentNullException.ThrowIfNull(tuples);
+
             if (!Enum.IsDefined(duplicateBehavior))
                 throw new ArgumentException("The value is not defined.", nameof(duplicateBehavior));
 
@@ -551,6 +575,8 @@ namespace Masasamjant.Collections
         /// <returns>A enumerable of <see cref="Tuple{TKey, TValue}"/>.</returns>
         public static IEnumerable<Tuple<TKey, TValue>> ToTuples<TKey, TValue>(this IDictionary<TKey, TValue> dictionary)
         {
+            ArgumentNullException.ThrowIfNull(dictionary);
+
             foreach (var keyValue in dictionary)
                 yield return new Tuple<TKey, TValue>(keyValue.Key, keyValue.Value);
         }
@@ -577,6 +603,9 @@ namespace Masasamjant.Collections
         /// <returns><c>true</c> if <paramref name="dictionary"/> contains all keys in <paramref name="keys"/>; <c>false</c> otherwise.</returns>
         public static bool ContainsKeys<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, IEnumerable<TKey> keys)
         {
+            ArgumentNullException.ThrowIfNull(dictionary);
+            ArgumentNullException.ThrowIfNull(keys);
+
             if (dictionary.Count == 0 || !keys.Any())
                 return false;
 
@@ -597,6 +626,8 @@ namespace Masasamjant.Collections
         /// <returns>A dictionary from <paramref name="items"/> where item is key and value.</returns>
         public static IDictionary<T, T> ToDictionary<T>(IEnumerable<T> items) where T : notnull, IEquatable<T>
         {
+            ArgumentNullException.ThrowIfNull(items);
+
             var dictionary = new Dictionary<T, T>();
 
             foreach (var item in items)
