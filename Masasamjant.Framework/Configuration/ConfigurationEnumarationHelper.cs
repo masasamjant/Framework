@@ -31,6 +31,9 @@ namespace Masasamjant.Configuration
         /// <returns>A specified <see cref="Type"/> with <see cref="ConfigurationEnumerationAttribute"/> or <c>null</c>.</returns>
         public static Type? FindConfigurationEnumerationType(string typeName, IEnumerable<Assembly> assemblies)
         {
+            ArgumentNullException.ThrowIfNull(typeName);
+            ArgumentNullException.ThrowIfNull(assemblies);
+
             foreach (var assembly in assemblies)
             {
                 var configurationEnumerationType = FindConfigurationEnumerationType(typeName, assembly);
@@ -50,9 +53,10 @@ namespace Masasamjant.Configuration
         /// <returns>A specified <see cref="Type"/> with <see cref="ConfigurationEnumerationAttribute"/> or <c>null</c>.</returns>
         public static Type? FindConfigurationEnumerationType(string typeName, Assembly assembly)
         {
+            ArgumentNullException.ThrowIfNull(typeName);
+
             return GetConfigurationEnumerationTypes(assembly)
-                .Where(type => type.Name == typeName)
-                .FirstOrDefault();
+                .FirstOrDefault(type => type.Name == typeName);
         }
 
         /// <summary>
@@ -75,6 +79,8 @@ namespace Masasamjant.Configuration
         /// <returns>A types with <see cref="ConfigurationEnumerationAttribute"/>.</returns>
         public static IEnumerable<Type> GetConfigurationEnumerationTypes(IEnumerable<Assembly> assemblies)
         {
+            ArgumentNullException.ThrowIfNull(assemblies);
+
             var types = new List<Type>();
 
             foreach (var assembly in assemblies)
@@ -90,6 +96,8 @@ namespace Masasamjant.Configuration
         /// <returns>A types with <see cref="ConfigurationEnumerationAttribute"/>.</returns>
         public static IEnumerable<Type> GetConfigurationEnumerationTypes(Assembly assembly)
         {
+            ArgumentNullException.ThrowIfNull(assembly);
+
             return assembly.GetTypes()
                 .Where(type => type.IsEnum && type.GetCustomAttribute<ConfigurationEnumerationAttribute>(false) != null);
         }

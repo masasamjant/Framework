@@ -16,9 +16,9 @@
         /// <param name="errorContext">The context related to error or <c>null</c>.</param>
         public ErrorEventArgs(Type errorType, string? errorSource, Exception error, object? errorContext = null)
         {
-            ErrorType = errorType;
+            ErrorType = errorType ?? throw new ArgumentNullException(nameof(errorType));
+            Error = error ?? throw new ArgumentNullException(nameof(error));
             ErrorSource = errorSource;
-            Error = error;
             ErrorBehavior = ErrorBehavior.Throw;
             ErrorContext = errorContext;
         }

@@ -48,6 +48,8 @@
         /// <exception cref="ArgumentOutOfRangeException">If value of <paramref name="count"/> is less than 0.</exception>
         public void GenerateValues(List<T> values, int count)
         {
+            ArgumentNullException.ThrowIfNull(values);
+
             foreach (var value in GenerateValues(count))
             {
                 values.Add(value);

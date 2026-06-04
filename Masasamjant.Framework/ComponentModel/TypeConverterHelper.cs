@@ -17,6 +17,7 @@ namespace Masasamjant.ComponentModel
         /// <returns><c>true</c> if type has <see cref="TypeConverterAttribute"/> attribute; <c>false</c> otherwise.</returns>
         public static bool HasTypeConverter(Type type, [MaybeNullWhen(false)] out TypeConverterAttribute attribute)
         {
+            ArgumentNullException.ThrowIfNull(type);
             attribute = type.GetCustomAttribute<TypeConverterAttribute>(true);
             return attribute != null;
         }
@@ -28,6 +29,8 @@ namespace Masasamjant.ComponentModel
         /// <returns>A <see cref="TypeConverter"/> or <c>null</c>.</returns>
         public static TypeConverter? CreateTypeConverter(this TypeConverterAttribute attribute)
         {
+            ArgumentNullException.ThrowIfNull(attribute);
+
             var converterType = Type.GetType(attribute.ConverterTypeName);
 
             if (converterType == null)
