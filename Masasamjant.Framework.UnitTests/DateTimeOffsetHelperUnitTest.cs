@@ -1,4 +1,5 @@
 ﻿using Masasamjant.Configuration;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -335,6 +336,26 @@ namespace Masasamjant
             var actual = DateTimeOffsetHelper.GetNextWeekDay(refDate, DayOfWeek.Tuesday);
             Assert.AreEqual(expected, actual);
             Assert.ThrowsException<ArgumentException>(() => DateTimeOffsetHelper.GetNextWeekDay(refDate, (DayOfWeek)999));
+        }
+
+        [TestMethod]
+        public void Test_AccurateBy_Throws_When_Undefined_Accuracy()
+        {
+            var datetime = new DateTimeOffset(2024, 7, 9, 0, 0, 0, TimeSpan.Zero);
+            Assert.ThrowsException<ArgumentException>(() => DateTimeOffsetHelper.AccurateBy(datetime, (DateTimeAccuracy)99));
+        }
+
+        [TestMethod]
+        public void Test_AccurateBy()
+        {
+            var datetime = new DateTimeOffset(2024, 7, 9, 12, 34, 56, 789, TimeSpan.Zero);
+            Assert.AreEqual(new AccurateDateTimeOffset(new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), DateTimeAccuracy.Year), DateTimeOffsetHelper.AccurateBy(datetime, DateTimeAccuracy.Year));
+            Assert.AreEqual(new AccurateDateTimeOffset(new DateTimeOffset(2024, 7, 1, 0, 0, 0, TimeSpan.Zero), DateTimeAccuracy.Month), DateTimeOffsetHelper.AccurateBy(datetime, DateTimeAccuracy.Month));
+            Assert.AreEqual(new AccurateDateTimeOffset(new DateTimeOffset(2024, 7, 9, 0, 0, 0, TimeSpan.Zero), DateTimeAccuracy.Day), DateTimeOffsetHelper.AccurateBy(datetime, DateTimeAccuracy.Day));
+            Assert.AreEqual(new AccurateDateTimeOffset(new DateTimeOffset(2024, 7, 9, 12, 0, 0, TimeSpan.Zero), DateTimeAccuracy.Hour), DateTimeOffsetHelper.AccurateBy(datetime, DateTimeAccuracy.Hour));
+            Assert.AreEqual(new AccurateDateTimeOffset(new DateTimeOffset(2024, 7, 9, 12, 34, 0, TimeSpan.Zero), DateTimeAccuracy.Minute), DateTimeOffsetHelper.AccurateBy(datetime, DateTimeAccuracy.Minute));
+            Assert.AreEqual(new AccurateDateTimeOffset(new DateTimeOffset(2024, 7, 9, 12, 34, 56, TimeSpan.Zero), DateTimeAccuracy.Second), DateTimeOffsetHelper.AccurateBy(datetime, DateTimeAccuracy.Second));
+            Assert.AreEqual(new AccurateDateTimeOffset(new DateTimeOffset(2024, 7, 9, 12, 34, 56, 789, TimeSpan.Zero), DateTimeAccuracy.Millisecond), DateTimeOffsetHelper.AccurateBy(datetime, DateTimeAccuracy.Millisecond));
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Masasamjant.Configuration;
+using Masasamjant.Reflection;
 using System.Globalization;
 
 namespace Masasamjant
@@ -688,6 +689,9 @@ namespace Masasamjant
         /// <returns>A quarter of the year.</returns>
         public static int Quarter(this DateTime datetime)
         {
+            static bool IsMonthBetween(int currentMonth, int startMonth, int endMonth)
+                => currentMonth >= startMonth && currentMonth <= endMonth;
+
             if (IsMonthBetween(datetime.Month, 1, 3))
                 return FirstQuarter;
             else if (IsMonthBetween(datetime.Month, 4, 6))
@@ -697,9 +701,6 @@ namespace Masasamjant
             else
                 return FourthQuarter;
         }
-
-        private static bool IsMonthBetween(int currentMonth, int startMonth, int endMonth)
-            => currentMonth >= startMonth && currentMonth <= endMonth;  
 
         /// <summary>
         /// Add weeks to the specified <see cref="DateTime"/>. If <paramref name="value"/> is positive, then 
@@ -761,6 +762,8 @@ namespace Masasamjant
         /// <returns>A nearest <see cref="DateTime"/> of <paramref name="value"/> from <paramref name="others"/> or <c>null</c>.</returns>
         public static DateTime? Nearest(this DateTime value, IEnumerable<DateTime> others)
         {
+            ArgumentNullException.ThrowIfNull(others);
+
             if (!others.Any())
                 return null;
 
@@ -791,6 +794,8 @@ namespace Masasamjant
         /// <returns>A farest <see cref="DateTime"/> of <paramref name="value"/> from <paramref name="others"/> or <c>null</c>.</returns>
         public static DateTime? Farest(this DateTime value, IEnumerable<DateTime> others)
         {
+            ArgumentNullException.ThrowIfNull(others);
+
             if (!others.Any())
                 return null;
 
@@ -820,6 +825,8 @@ namespace Masasamjant
         /// <returns>A nearest <see cref="DateTime"/>s to <paramref name="value"/> from <paramref name="others"/>.</returns>
         public static IEnumerable<DateTime> Nearest(this DateTime value, IEnumerable<DateTime> others, TimeSpan offset)
         {
+            ArgumentNullException.ThrowIfNull(others);
+
             offset = offset.Duration();
             var nearest = new List<DateTime>();
 
@@ -843,6 +850,8 @@ namespace Masasamjant
         /// <returns>A farest <see cref="DateTime"/>s to <paramref name="value"/> from <paramref name="others"/>.</returns>
         public static IEnumerable<DateTime> Farest(this DateTime value, IEnumerable<DateTime> others, TimeSpan offset)
         {
+            ArgumentNullException.ThrowIfNull(others);
+
             offset = offset.Duration();
             var farest = new List<DateTime>();
 
@@ -855,6 +864,40 @@ namespace Masasamjant
             }
 
             return farest.OrderBy(x => x);
+        }
+
+        /// <summary>
+        /// Create new <see cref="AccurateDateTime"/> from specified <see cref="DateTime"/> using specified accuracy.
+        /// </summary>
+        /// <param name="value">The original <see cref="DateTime"/>.</param>
+        /// <param name="accuracy">The desired <see cref="DateTimeAccuracy"/>.</param>
+        /// <returns>A new <see cref="AccurateDateTime"/>.</returns>
+        /// <exception cref="ArgumentException">If value of <paramref name="accuracy"/> is not defined.</exception>
+        /// <exception cref="NotSupportedException">If value of <paramref name="accuracy"/> is not supported.</exception>
+        public static AccurateDateTime AccurateBy(this DateTime value, DateTimeAccuracy accuracy)
+        {
+            if (!Enum.IsDefined(accuracy))
+                throw new ArgumentException("The value is not defined.", nameof(accuracy));
+
+            switch (accuracy)
+            {
+                case DateTimeAccuracy.Year:
+                    return new AccurateDateTime(new DateTime(value.Year, 1, 1, 0, 0, 0, 0, value.Kind), accuracy);
+                case DateTimeAccuracy.Month:
+                    return new AccurateDateTime(new DateTime(value.Year, value.Month, 1, 0, 0, 0, 0, value.Kind), accuracy);
+                case DateTimeAccuracy.Day:
+                    return new AccurateDateTime(new DateTime(value.Year, value.Month, value.Day, 0, 0, 0, 0, value.Kind), accuracy);
+                case DateTimeAccuracy.Hour:
+                    return new AccurateDateTime(new DateTime(value.Year, value.Month, value.Day, value.Hour, 0, 0, 0, value.Kind), accuracy);
+                case DateTimeAccuracy.Minute:
+                    return new AccurateDateTime(new DateTime(value.Year, value.Month, value.Day, value.Hour, value.Minute, 0, 0, value.Kind), accuracy);
+                case DateTimeAccuracy.Second:
+                    return new AccurateDateTime(new DateTime(value.Year, value.Month, value.Day, value.Hour, value.Minute, value.Second, 0, value.Kind), accuracy);
+                case DateTimeAccuracy.Millisecond:
+                    return new AccurateDateTime(new DateTime(value.Year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind), accuracy);
+                default:
+                    throw new NotSupportedException($"The '{accuracy}' accuracy is not supported.");
+            }
         }
 
         internal static int GetSundayValue(DayOfWeek weekDay)

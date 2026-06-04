@@ -13,10 +13,13 @@ namespace Masasamjant
         /// Initializes new instance of the <see cref="CharacterMap"/> class with specified characters.
         /// </summary>
         /// <param name="characters">The mapped characters.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="characters"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentException">If <paramref name="characters"/> contains invalid character mappings.</exception>
         public CharacterMap(IDictionary<char, char> characters)
             : this()
         {
+            ArgumentNullException.ThrowIfNull(characters);
+
             try
             {
                 foreach (var keyValue in characters)

@@ -16,6 +16,9 @@
         /// <exception cref="ArgumentException">If <paramref name="interfaceType"/> does not represent interface.</exception>
         public static bool Implements(Type type, Type interfaceType)
         {
+            ArgumentNullException.ThrowIfNull(type);
+            ArgumentNullException.ThrowIfNull(interfaceType);
+
             if (!interfaceType.IsInterface)
                 throw new ArgumentException("The type must represent interface.", nameof(interfaceType));
 
@@ -30,6 +33,9 @@
         /// <returns><c>true</c> if <paramref name="type"/> is <paramref name="expected"/> or derived from it; <c>false</c> otherwise.</returns>
         public static bool IsOfType(this Type type, Type expected)
         {
+            ArgumentNullException.ThrowIfNull(type);
+            ArgumentNullException.ThrowIfNull(expected);
+
             return type.Equals(expected) || expected.IsAssignableFrom(type);
         }
 
@@ -93,6 +99,9 @@
         /// <returns>A hierarcy of types.</returns>
         public static IEnumerable<Type> GetTypeHierarchy(this Type type, bool includeSelf = true)
         {
+            if (type is null)
+                yield break;
+
             if (includeSelf)
                 yield return type;
             while (type.BaseType != null)
@@ -109,6 +118,8 @@
         /// <returns><c>true</c> if <paramref name="type"/> represents concrete type; <c>false</c> otherwise.</returns>
         public static bool IsConcrete(this Type type)
         {
+            ArgumentNullException.ThrowIfNull(type);
+
             if (type.IsAbstract || type.IsInterface || type.IsGenericTypeDefinition)
                 return false;
 
@@ -124,6 +135,8 @@
         /// <returns>A type scoped key.</returns>
         public static string GetTypeScopedKey(this Type type, string key)
         {
+            ArgumentNullException.ThrowIfNull(type);
+
             return GetTypeName(type, PreferredTypeName.FullName) + TypeScopedKeySeparator + key;
         }
 
@@ -143,6 +156,8 @@
         /// <returns>A original key or <paramref name="typedKey"/>.</returns>
         public static string GetOriginalKey(this Type type, string typedKey)
         {
+            ArgumentNullException.ThrowIfNull(type);
+
             var typeName = GetTypeName(type, PreferredTypeName.FullName);
 
             if (typedKey.StartsWith(typeName))

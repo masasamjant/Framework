@@ -12,6 +12,9 @@
         /// <returns>A <paramref name="exception"/> and all its inner exceptions.</returns>
         public static IEnumerable<Exception> GetAll(this Exception exception)
         {
+            if (exception is null)
+                yield break;
+
             if (exception.InnerException == null)
                 yield return exception;
             else
@@ -41,6 +44,8 @@
         /// <returns>A <see cref="InvalidOperationException"/> created from <paramref name="aggregateException"/>.</returns>
         public static InvalidOperationException ToInvalidOperationException(this AggregateException aggregateException, string? message = null)
         {
+            ArgumentNullException.ThrowIfNull(aggregateException);
+
             var flattenException = aggregateException.Flatten();
 
             if (string.IsNullOrWhiteSpace(message))

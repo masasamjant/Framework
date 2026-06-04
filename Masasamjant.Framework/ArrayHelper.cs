@@ -13,6 +13,8 @@
         /// <returns>A items of <paramref name="array"/> from start to end as <see cref="Iteration{T}"/>.</returns>
         public static IEnumerable<Iteration<T>> IterateForward<T>(this T[] array)
         {
+            ArgumentNullException.ThrowIfNull(array);
+            
             for (int index = 0; index < array.Length; index++)
                 yield return new Iteration<T>(array[index], index);
         }
@@ -25,6 +27,8 @@
         /// <returns>A items of <paramref name="array"/> from end to start as <see cref="Iteration{T}"/>.</returns>
         public static IEnumerable<Iteration<T>> IterateBackward<T>(this T[] array)
         {
+            ArgumentNullException.ThrowIfNull(array);
+
             for (int index = array.Length - 1; index >= 0; index--)
                 yield return new Iteration<T>(array[index], index);
         }
@@ -81,6 +85,9 @@
         /// <remarks>If both arrays are empty, then they are considered as equal.</remarks>
         public static bool AreEqual<T>(T[] array1, T[] array2)
         {
+            ArgumentNullException.ThrowIfNull(array1);
+            ArgumentNullException.ThrowIfNull(array2);
+
             if (array1.Length != array2.Length)
                 return false;
 

@@ -34,6 +34,8 @@ namespace Masasamjant
         /// <exception cref="ObjectDisposedException">If instance is disposed.</exception>
         public TDisposable Add<TDisposable>(TDisposable disposable) where TDisposable : IDisposable
         {
+            ArgumentNullException.ThrowIfNull(disposable);
+
             if (disposed)
                 throw new ObjectDisposedException(GetType().FullName);
 

@@ -529,6 +529,40 @@ namespace Masasamjant
         /// <returns>A <see cref="DateTimeOffset"/> of next <see cref="DayOfWeek"/>.</returns>
         public static DateTimeOffset GetNextWeekDay(this DateTimeOffset datetime, DayOfWeek weekDay) => GetWeekDay(datetime, weekDay, false);
 
+        /// <summary>
+        /// Create new <see cref="AccurateDateTimeOffset"/> from specified <see cref="DateTimeOffset"/> using specified accuracy.
+        /// </summary>
+        /// <param name="value">The original <see cref="DateTimeOffset"/>.</param>
+        /// <param name="accuracy">The desired <see cref="DateTimeAccuracy"/>.</param>
+        /// <returns>A new <see cref="AccurateDateTimeOffset"/>.</returns>
+        /// <exception cref="ArgumentException">If value of <paramref name="accuracy"/> is not defined.</exception>
+        /// <exception cref="NotSupportedException">If value of <paramref name="accuracy"/> is not supported.</exception>
+        public static AccurateDateTimeOffset AccurateBy(this DateTimeOffset value, DateTimeAccuracy accuracy)
+        {
+            if (!Enum.IsDefined(accuracy))
+                throw new ArgumentException("The value is not defined.", nameof(accuracy));
+
+            switch (accuracy)
+            {
+                case DateTimeAccuracy.Year:
+                    return new AccurateDateTimeOffset(new DateTimeOffset(value.Year, 1, 1, 0, 0, 0, value.Offset), accuracy);
+                case DateTimeAccuracy.Month:
+                    return new AccurateDateTimeOffset(new DateTimeOffset(value.Year, value.Month, 1, 0, 0, 0, value.Offset), accuracy);
+                case DateTimeAccuracy.Day:
+                    return new AccurateDateTimeOffset(new DateTimeOffset(value.Year, value.Month, value.Day, 0, 0, 0, value.Offset), accuracy);
+                case DateTimeAccuracy.Hour:
+                    return new AccurateDateTimeOffset(new DateTimeOffset(value.Year, value.Month, value.Day, value.Hour, 0, 0, value.Offset), accuracy);
+                case DateTimeAccuracy.Minute:
+                    return new AccurateDateTimeOffset(new DateTimeOffset(value.Year, value.Month, value.Day, value.Hour, value.Minute, 0, value.Offset), accuracy);
+                case DateTimeAccuracy.Second:
+                    return new AccurateDateTimeOffset(new DateTimeOffset(value.Year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Offset), accuracy);
+                case DateTimeAccuracy.Millisecond:
+                    return new AccurateDateTimeOffset(new DateTimeOffset(value.Year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Offset), accuracy);
+                default:
+                    throw new NotSupportedException($"The '{accuracy}' accuracy is not supported.");
+            }
+        }
+
         private static DateTimeOffset GetToday()
         {
             return DateTime.Today;

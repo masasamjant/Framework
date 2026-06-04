@@ -44,6 +44,8 @@
         /// <exception cref="ObjectDisposedException">If <see cref="ISupportIsDisposed.IsDisposed"/> of <paramref name="disposable"/> is <c>true</c>.</exception>
         public static void CheckIsDisposed(this ISupportIsDisposed disposable)
         {
+            ArgumentNullException.ThrowIfNull(disposable);
+
             if (disposable.IsDisposed)
                 throw new ObjectDisposedException(disposable.GetType().FullName);
         }

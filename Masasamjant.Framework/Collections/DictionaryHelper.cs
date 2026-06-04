@@ -18,6 +18,9 @@ namespace Masasamjant.Collections
         /// <returns><c>true</c> if <paramref name="left"/> and <paramref name="right"/> are considered as equal meaning they have same key/value pairs; <c>false</c> otherwise.</returns>
         public static bool AreEqual<TKey, TValue>(IDictionary<TKey, TValue> left, IDictionary<TKey, TValue> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             if (ReferenceEquals(left, right))
                 return true;
 
@@ -66,6 +69,8 @@ namespace Masasamjant.Collections
         /// <returns>A <see cref="IDictionary{TKey, TValue}"/>.</returns>
         public static IDictionary<TKey, TValue> AsDictionary<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> source)
         {
+            ArgumentNullException.ThrowIfNull(source);
+
             if (source is IDictionary<TKey, TValue> dictionary)
                 return dictionary;
             else
@@ -84,6 +89,9 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="dictionary"/> is in read-only state.</exception>
         public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TKey, TValue> valueProvider) where TKey : notnull
         {
+            ArgumentNullException.ThrowIfNull(dictionary);
+            ArgumentNullException.ThrowIfNull(valueProvider);
+
             CollectionHelper.CheckNotReadOnly(dictionary, nameof(dictionary));
 
             if (dictionary.TryGetValue(key, out var value))

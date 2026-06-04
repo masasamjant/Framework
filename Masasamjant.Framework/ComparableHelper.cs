@@ -16,6 +16,9 @@ namespace Masasamjant
         /// <returns>A minimum value between <paramref name="left"/> and <paramref name="right"/>.</returns>
         public static T Min<T>(T left, T right) where T : IComparable<T>
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return left.CompareTo(right) <= 0 ? left : right;
         }
 
@@ -28,6 +31,9 @@ namespace Masasamjant
         /// <returns>A maximum value between <paramref name="left"/> and <paramref name="right"/>.</returns>
         public static T Max<T>(T left, T right) where T : IComparable<T>
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return left.CompareTo(right) >= 0 ? left : right;
         }
 
@@ -40,6 +46,7 @@ namespace Masasamjant
         /// <returns><c>true</c> if <paramref name="value"/> is greater than <paramref name="compare"/>; <c>false</c> otherwise.</returns>
         public static bool IsGreaterThan<T>(this T value, T compare) where T : IComparable<T>
         {
+            ArgumentNullException.ThrowIfNull(value);
             return value.CompareTo(compare) > 0;
         }
 
@@ -51,6 +58,7 @@ namespace Masasamjant
         /// <returns><c>true</c> if value of <paramref name="comparable"/> is greater than <paramref name="compare"/>; <c>false</c> otherwise.</returns>
         public static bool IsGreaterThan(this IComparable comparable, object? compare)
         {
+            ArgumentNullException.ThrowIfNull(comparable);
             return comparable.CompareTo(compare) > 0;
         }
 
@@ -63,6 +71,7 @@ namespace Masasamjant
         /// <returns><c>true</c> if <paramref name="value"/> is greater than or equal to <paramref name="compare"/>; <c>false</c> otherwise.</returns>
         public static bool IsGreaterThanOrEqual<T>(this T value, T compare) where T : IComparable<T>
         {
+            ArgumentNullException.ThrowIfNull(value);
             return value.CompareTo(compare) >= 0;
         }
 
@@ -74,6 +83,7 @@ namespace Masasamjant
         /// <returns><c>true</c> if value of <paramref name="comparable"/> is greater than or equal to <paramref name="compare"/>; <c>false</c> otherwise.</returns>
         public static bool IsGreaterThanOrEqual(this IComparable comparable, object? compare)
         {
+            ArgumentNullException.ThrowIfNull(comparable);
             return comparable.CompareTo(compare) >= 0;
         }
 
@@ -86,6 +96,7 @@ namespace Masasamjant
         /// <returns><c>true</c> if <paramref name="value"/> is less than <paramref name="compare"/>; <c>false</c> otherwise.</returns>
         public static bool IsLessThan<T>(this T value, T compare) where T : IComparable<T>
         {
+            ArgumentNullException.ThrowIfNull(value);
             return value.CompareTo(compare) < 0;
         }
 
@@ -97,6 +108,7 @@ namespace Masasamjant
         /// <returns><c>true</c> if value of <paramref name="comparable"/> is less than <paramref name="compare"/>; <c>false</c> otherwise.</returns>
         public static bool IsLessThan(this IComparable comparable, object? compare)
         {
+            ArgumentNullException.ThrowIfNull(comparable);
             return comparable.CompareTo(compare) < 0;
         }
 
@@ -109,6 +121,7 @@ namespace Masasamjant
         /// <returns><c>true</c> if <paramref name="value"/> is less than or equal to <paramref name="compare"/>; <c>false</c> otherwise.</returns>
         public static bool IsLessThanOrEqual<T>(this T value, T compare) where T : IComparable<T>
         {
+            ArgumentNullException.ThrowIfNull(value);
             return value.CompareTo(compare) <= 0;
         }
 
@@ -120,6 +133,7 @@ namespace Masasamjant
         /// <returns><c>true</c> if value of <paramref name="comparable"/> is less than or equal to <paramref name="compare"/>; <c>false</c> otherwise.</returns>
         public static bool IsLessThanOrEqual(this IComparable comparable, object? compare)
         {
+            ArgumentNullException.ThrowIfNull(comparable);
             return comparable.CompareTo(compare) <= 0;
         }
 
@@ -132,6 +146,7 @@ namespace Masasamjant
         /// <returns><c>true</c> if <paramref name="value"/> is equal to <paramref name="compare"/>; <c>false</c> otherwise.</returns>
         public static bool IsEqual<T>(this T value, T compare) where T : IComparable<T>
         {
+            ArgumentNullException.ThrowIfNull(value);
             return value.CompareTo(compare) == 0;
         }
 
@@ -143,6 +158,7 @@ namespace Masasamjant
         /// <returns><c>true</c> if value of <paramref name="comparable"/> is equal to <paramref name="compare"/>; <c>false</c> otherwise.</returns>
         public static bool IsEqual(this IComparable comparable, object? compare)
         {
+            ArgumentNullException.ThrowIfNull(comparable);
             return comparable.CompareTo(compare) == 0;
         }
 
@@ -155,6 +171,7 @@ namespace Masasamjant
         /// <returns><c>true</c> if <paramref name="value"/> is not equal to <paramref name="compare"/>; <c>false</c> otherwise.</returns>
         public static bool IsNotEqual<T>(this T value, T compare) where T : IComparable<T>
         {
+            ArgumentNullException.ThrowIfNull(value);
             return value.CompareTo(compare) != 0;
         }
 
@@ -166,6 +183,7 @@ namespace Masasamjant
         /// <returns><c>true</c> if value of <paramref name="comparable"/> is not equal to <paramref name="compare"/>; <c>false</c> otherwise.</returns>
         public static bool IsNotEqual(this IComparable comparable, object? compare)
         {
+            ArgumentNullException.ThrowIfNull(comparable);
             return comparable.CompareTo(compare) != 0;
         }
 

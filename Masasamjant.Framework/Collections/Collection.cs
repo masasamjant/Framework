@@ -34,6 +34,8 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="items"/> is in read-only state.</exception>
         protected Collection(ICollection<T> items)
         {
+            ArgumentNullException.ThrowIfNull(items);
+
             if (items.IsReadOnly)
                 throw new ArgumentException("The items collection is read-only.", nameof(items));
             

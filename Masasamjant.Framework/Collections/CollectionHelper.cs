@@ -1,7 +1,4 @@
-﻿using System.ComponentModel;
-using System.Linq;
-
-namespace Masasamjant.Collections
+﻿namespace Masasamjant.Collections
 {
     /// <summary>
     /// Provides helper methods to work with collections.
@@ -68,6 +65,8 @@ namespace Masasamjant.Collections
         /// <exception cref="DuplicateKeyException{TKey}">If <paramref name="duplicateBehavior"/> is <see cref="DuplicateBehavior.Error"/> and duplicate key is found.</exception>
         public static ICollection<T> Combine<T>(IEnumerable<ICollection<T>> collections, DuplicateBehavior duplicateBehavior = DuplicateBehavior.Ignore, int maxItemCount = int.MaxValue)
         {
+            ArgumentNullException.ThrowIfNull(collections);
+
             if (!Enum.IsDefined(duplicateBehavior))
                 throw new ArgumentException("The value is not defined.", nameof(duplicateBehavior));
 
@@ -113,6 +112,8 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="destination"/> is in read-only state.</exception>
         public static void Merge<T>(this ICollection<T> destination, IEnumerable<ICollection<T>> collections)
         {
+            ArgumentNullException.ThrowIfNull(destination);
+            ArgumentNullException.ThrowIfNull(collections);
             CheckNotReadOnly(destination, nameof(destination));
             RemoveOrphants(destination, collections);
             AddMissing(destination, collections);
@@ -127,6 +128,9 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="destination"/> is in read-only state.</exception>
         public static void RemoveOrphants<T>(this ICollection<T> destination, ICollection<T> compare)
         {
+            ArgumentNullException.ThrowIfNull(destination);
+            ArgumentNullException.ThrowIfNull(compare);
+
             CheckNotReadOnly(destination, nameof(destination));
 
             if (ReferenceEquals(destination, compare))
@@ -148,6 +152,9 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="destination"/> is in read-only state.</exception>
         public static void RemoveOrphants<T>(this ICollection<T> destination, IEnumerable<ICollection<T>> collections)
         {
+            ArgumentNullException.ThrowIfNull(destination);
+            ArgumentNullException.ThrowIfNull(collections);
+
             CheckNotReadOnly(destination, nameof(destination));
 
             foreach (var item in CopyEnumerable.CreateCopyEnumerable(destination))
@@ -180,6 +187,9 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="collection"/> is in read-only state.</exception>
         public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> items)
         {
+            ArgumentNullException.ThrowIfNull(collection);
+            ArgumentNullException.ThrowIfNull(items);
+
             CheckNotReadOnly(collection, nameof(collection));
 
             if (collection is List<T> list)
@@ -200,6 +210,9 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="collection"/> is in read-only state.</exception>
         public static void AddMissing<T>(this ICollection<T> collection, IEnumerable<T> items)
         {
+            ArgumentNullException.ThrowIfNull(collection);
+            ArgumentNullException.ThrowIfNull(items);
+
             CheckNotReadOnly(collection, nameof(collection));
 
             foreach (var item in items)
@@ -218,6 +231,9 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="destination"/> is in read-only state.</exception>
         public static void AddMissing<T>(ICollection<T> destination, IEnumerable<ICollection<T>> collections)
         {
+            ArgumentNullException.ThrowIfNull(destination);
+            ArgumentNullException.ThrowIfNull(collections);
+
             CheckNotReadOnly(destination, nameof(destination));
 
             foreach (var collection in collections)
@@ -243,6 +259,9 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="collection"/> is in read-only state.</exception>
         public static void Fill<T1, T2>(this ICollection<T1> collection, IEnumerable<T2> items) where T2 : T1
         {
+            ArgumentNullException.ThrowIfNull(collection);
+            ArgumentNullException.ThrowIfNull(items);
+
             CheckNotReadOnly(collection, nameof(collection));
 
             foreach (var item in items)
@@ -258,6 +277,9 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="collection"/> is in read-only state.</exception>
         public static void RemoveRange<T>(this ICollection<T> collection, IEnumerable<T> items)
         {
+            ArgumentNullException.ThrowIfNull(collection);
+            ArgumentNullException.ThrowIfNull(items);
+
             CheckNotReadOnly(collection, nameof(collection));
 
             foreach (var item in items)
@@ -273,6 +295,9 @@ namespace Masasamjant.Collections
         /// <returns><c>true</c> if <paramref name="collection"/> contains all items in <paramref name="items"/>; <c>false</c> otherwise.</returns>
         public static bool ContainsRange<T>(this ICollection<T> collection, IEnumerable<T> items)
         {
+            ArgumentNullException.ThrowIfNull(collection);
+            ArgumentNullException.ThrowIfNull(items);
+
             if (ReferenceEquals(collection, items))
                 return true;
 
@@ -298,6 +323,8 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentOutOfRangeException">If <paramref name="splitCount"/> is less than 0.</exception>
         public static IEnumerable<ICollection<T>> SplitByCount<T>(this ICollection<T> collection, int splitCount)
         {
+            ArgumentNullException.ThrowIfNull(collection);
+
             if (splitCount < 0)
                 throw new ArgumentOutOfRangeException(nameof(splitCount), splitCount, "The value must be greater than or equal to 0.");
 
@@ -342,6 +369,8 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="collection"/> is in read-only state.</exception>
         public static void Keep<T>(this ICollection<T> collection, Func<T, bool> keepPredicate)
         {
+            ArgumentNullException.ThrowIfNull(collection);
+
             CheckNotReadOnly(collection, nameof(collection));
 
             foreach (var item in CopyEnumerable.CreateCopyEnumerable(collection))
@@ -369,6 +398,8 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="collection"/> is in read-only state.</exception>
         public static void Remove<T>(this ICollection<T> collection, Func<T, bool> removePredicate)
         {
+            ArgumentNullException.ThrowIfNull(collection);
+
             CheckNotReadOnly(collection, nameof(collection));
 
             foreach (var item in CopyEnumerable.CreateCopyEnumerable(collection))

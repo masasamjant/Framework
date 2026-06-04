@@ -28,9 +28,8 @@ namespace Masasamjant
         public DayOfWeekCollection(IEnumerable<DayOfWeek> weekDays)
             : this()
         {
-            if (weekDays == null)
-                throw new ArgumentNullException(nameof(weekDays));
-            
+            ArgumentNullException.ThrowIfNull(weekDays);
+
             foreach (var day in weekDays)
             {
                 if (!Enum.IsDefined(day))

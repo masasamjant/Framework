@@ -40,6 +40,9 @@ namespace Masasamjant
         /// <returns>A string value with replacements.</returns>
         public static string Replace(this string value, CharacterMap map)
         {
+            ArgumentNullException.ThrowIfNull(value);
+            ArgumentNullException.ThrowIfNull(map);
+
             if (map.Count == 0 || value.Length == 0)
                 return value;
 
@@ -277,6 +280,8 @@ namespace Masasamjant
         /// <returns>A <paramref name="value"/> trimmed from start so that is starts with one of the <paramref name="starts"/> or empty string.</returns>
         public static string TrimUntilStartsWith(this string? value, char[] starts)
         {
+            ArgumentNullException.ThrowIfNull(starts);
+
             if (starts.Length == 0)
                 throw new ArgumentException("At least one character must be specified.", nameof(starts));
 
@@ -313,6 +318,8 @@ namespace Masasamjant
         /// <exception cref="ArgumentException">If <paramref name="ends"/> is empty.</exception>
         public static string TrimUntilEndsWith(this string? value, char[] ends)
         {
+            ArgumentNullException.ThrowIfNull(ends);
+
             if (ends.Length == 0)
                 throw new ArgumentException("At least one character must be specified.", nameof(ends));
 
@@ -340,9 +347,12 @@ namespace Masasamjant
         /// <returns>A dictionary of indexes and characters from <paramref name="value"/> that are in <paramref name="invalid"/>.</returns>
         public static IReadOnlyDictionary<int, char> GetInvalidCharacters(string value, char[] invalid)
         {
+            ArgumentNullException.ThrowIfNull(value);
+            ArgumentNullException.ThrowIfNull(invalid);
+
             var result = new Dictionary<int, char>();
 
-            if (value.Length == 0 || invalid.Length == 0)
+            if (value.Length == 0 || invalid == null || invalid.Length == 0)
                 return result.AsReadOnly();
 
             for (int index = 0; index < value.Length; index++)
@@ -420,12 +430,12 @@ namespace Masasamjant
         /// <returns>A truncated string or original value if it is not longer than <paramref name="length"/>.</returns>
         /// <exception cref="ArgumentOutOfRangeException">If <paramref name="length"/> is less than 0.</exception>
         /// <exception cref="ArgumentException">If <paramref name="postfix"/> is set and its length is more than <paramref name="length"/>.</exception>
-        public static string Truncate(this string value, int length, string? postfix = null)
+        public static string Truncate(this string? value, int length, string? postfix = null)
         {
             if (length < 0)
                 throw new ArgumentOutOfRangeException(nameof(length), length, "The value must be greater than or equal to 0.");
 
-            if (value.Length == 0 || length == 0)
+            if (value == null || value.Length == 0 || length == 0)
                 return string.Empty;
 
             if (value.Length <= length)
@@ -519,9 +529,9 @@ namespace Masasamjant
         /// <param name="value">The string value.</param>
         /// <param name="encoding">The <see cref="Encoding"/> to use or <c>null</c> to use <see cref="Encoding.Unicode"/>.</param>
         /// <returns>A byte array of <paramref name="value"/>.</returns>
-        public static byte[] GetByteArray(this string value, Encoding? encoding = null)
+        public static byte[] GetByteArray(this string? value, Encoding? encoding = null)
         {
-            if (value.Length == 0)
+            if (value == null || value.Length == 0)
                 return [];
 
             if (encoding == null)
@@ -599,9 +609,9 @@ namespace Masasamjant
         /// </summary>
         /// <param name="value">The string value.</param>
         /// <returns><c>true</c> if each character of <paramref name="value"/> are unicode letter or ASCII digit; <c>false</c> if not or if empty.</returns>
-        public static bool ContainsOnlyLettersAndNumbers(string value)
+        public static bool ContainsOnlyLettersAndNumbers(string? value)
         {
-            if (value.Length == 0)
+            if (value == null || value.Length == 0)
                 return false;
 
             foreach (char c in value)

@@ -20,6 +20,8 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="source"/> is <see cref="CopyEnumerable{T}"/>.</exception>
         public CopyEnumerator(IEnumerable<T> source)
         {
+            ArgumentNullException.ThrowIfNull(source);
+
             if (source is CopyEnumerable<T>)
                 throw new ArgumentException("The source cannot be copy enumerable.", nameof(source));
 

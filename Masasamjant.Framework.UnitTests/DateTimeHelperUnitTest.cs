@@ -778,5 +778,25 @@ namespace Masasamjant
             var actual = DateTimeHelper.Farest(value, others, TimeSpan.FromDays(12)).ToArray();
             CollectionAssert.AreEqual(expected, actual);
         }
+
+        [TestMethod]
+        public void Test_AccurateBy_Throws_When_Undefined_Accuracy()
+        {
+            var datetime = new DateTime(2024, 7, 9);
+            Assert.ThrowsException<ArgumentException>(() => DateTimeHelper.AccurateBy(datetime, (DateTimeAccuracy)99));
+        }
+
+        [TestMethod]
+        public void Test_AccurateBy()
+        {
+            var datetime = new DateTime(2024, 7, 9, 12, 30, 23, 14);
+            Assert.AreEqual(new AccurateDateTime(new DateTime(2024, 1, 1, 0, 0, 0, 0, datetime.Kind), DateTimeAccuracy.Year), DateTimeHelper.AccurateBy(datetime, DateTimeAccuracy.Year));
+            Assert.AreEqual(new AccurateDateTime(new DateTime(2024, 7, 1, 0, 0, 0, 0, datetime.Kind), DateTimeAccuracy.Month), DateTimeHelper.AccurateBy(datetime, DateTimeAccuracy.Month));
+            Assert.AreEqual(new AccurateDateTime(new DateTime(2024, 7, 9, 0, 0, 0, 0, datetime.Kind), DateTimeAccuracy.Day), DateTimeHelper.AccurateBy(datetime, DateTimeAccuracy.Day));
+            Assert.AreEqual(new AccurateDateTime(new DateTime(2024, 7, 9, 12, 0, 0, 0, datetime.Kind), DateTimeAccuracy.Hour), DateTimeHelper.AccurateBy(datetime, DateTimeAccuracy.Hour));
+            Assert.AreEqual(new AccurateDateTime(new DateTime(2024, 7, 9, 12, 30, 0, 0, datetime.Kind), DateTimeAccuracy.Minute), DateTimeHelper.AccurateBy(datetime, DateTimeAccuracy.Minute));
+            Assert.AreEqual(new AccurateDateTime(new DateTime(2024, 7, 9, 12, 30, 23, 0, datetime.Kind), DateTimeAccuracy.Second), DateTimeHelper.AccurateBy(datetime, DateTimeAccuracy.Second));
+            Assert.AreEqual(new AccurateDateTime(new DateTime(2024, 7, 9, 12, 30, 23, 14, datetime.Kind), DateTimeAccuracy.Millisecond), DateTimeHelper.AccurateBy(datetime, DateTimeAccuracy.Millisecond));
+        }
     }
 }
