@@ -24,6 +24,8 @@
         /// <exception cref="InvalidOperationException">If cannot create memory stream from <paramref name="stream"/>.</exception>
         public static MemoryStream ToMemoryStream(this Stream stream)
         {
+            ArgumentNullException.ThrowIfNull(stream);
+
             if (stream is MemoryStream ms)
                 return ms;
             else
@@ -58,6 +60,8 @@
         /// <exception cref="InvalidOperationException">If cannot create memory stream from <paramref name="stream"/>.</exception>
         public static async Task<MemoryStream> ToMemoryStreamAsync(this Stream stream)
         {
+            ArgumentNullException.ThrowIfNull(stream);
+
             if (stream is MemoryStream ms)
                 return ms;
             else
@@ -90,6 +94,8 @@
         /// <returns>A byte array of data from <paramref name="stream"/>.</returns>
         public static byte[] ToBytes(this Stream stream)
         {
+            ArgumentNullException.ThrowIfNull(stream);
+
             if (stream is MemoryStream ms)
                 return ms.ToArray();
 
@@ -104,6 +110,8 @@
         /// <returns>A byte array of data from <paramref name="stream"/>.</returns>
         public static async Task<byte[]> ToBytesAsync(this Stream stream)
         {
+            ArgumentNullException.ThrowIfNull(stream);
+
             if (stream is MemoryStream ms)
                 return ms.ToArray();
 

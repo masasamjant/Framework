@@ -24,7 +24,7 @@
         /// <returns>A task that, when completed, contains hashed data.</returns>
         public async Task<byte[]> HashDataAsync(byte[] data)
         {
-            if (data.Length == 0)
+            if (data is null || data.Length == 0)
                 return [];
 
             var source = new MemoryStream(data);

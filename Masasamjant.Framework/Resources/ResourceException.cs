@@ -34,8 +34,8 @@
         public ResourceException(string resourceKey, Type resourceType, string message, Exception? innerException)
             : base(message, innerException)
         {
-            ResourceKey = resourceKey;
-            ResourceType = resourceType;
+            ResourceKey = resourceKey ?? throw new ArgumentNullException(nameof(resourceKey));
+            ResourceType = resourceType ?? throw new ArgumentNullException(nameof(resourceType));
         }
 
         /// <summary>

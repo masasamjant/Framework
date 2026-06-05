@@ -19,6 +19,8 @@
         /// <exception cref="ArgumentException">If <paramref name="source"/> do not support reading.</exception>
         public ReadOnlyStream(Stream source)
         {
+            ArgumentNullException.ThrowIfNull(source);
+
             if (!source.CanRead)
                 throw new ArgumentException("The source stream must be readable.", nameof(source));
 

@@ -30,6 +30,7 @@ namespace Masasamjant.Resources
         /// <returns>A resource string or <c>null</c>.</returns>
         public static string? GetResourceString(this Type type)
         {
+            ArgumentNullException.ThrowIfNull(type);
             var resourceStringAttribute = type.GetCustomAttribute<ResourceStringAttribute>(false);
             return resourceStringAttribute?.ResourceValue;
         }
@@ -41,6 +42,7 @@ namespace Masasamjant.Resources
         /// <returns>A resource string or name of the type.</returns>
         public static string GetResourceStringOrName(this Type type)
         {
+            ArgumentNullException.ThrowIfNull(type);
             var resourceStringAttribute = type.GetCustomAttribute<ResourceStringAttribute>(false);
             return resourceStringAttribute?.ResourceValue ?? type.Name;
         }
@@ -52,6 +54,7 @@ namespace Masasamjant.Resources
         /// <returns>A resource string or <c>null</c>.</returns>
         public static string? GetResourceString(this PropertyInfo property)
         {
+            ArgumentNullException.ThrowIfNull(property);
             var resourceStringAttribute = property.GetCustomAttribute<ResourceStringAttribute>(false);
             return resourceStringAttribute?.ResourceValue;
         }
@@ -63,6 +66,7 @@ namespace Masasamjant.Resources
         /// <returns>A resource string or <c>null</c>.</returns>
         public static string? GetResourceString(this FieldInfo field)
         {
+            ArgumentNullException.ThrowIfNull(field);
             var resourceStringAttribute = field.GetCustomAttribute<ResourceStringAttribute>(false);
             return resourceStringAttribute?.ResourceValue;
         }

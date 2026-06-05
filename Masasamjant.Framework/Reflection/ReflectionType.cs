@@ -18,6 +18,8 @@ namespace Masasamjant.Reflection
         /// <exception cref="ArgumentException">If <paramref name="type"/> is or inherits <see cref="ReflectionType"/>.</exception>
         protected ReflectionType(Type type)
         {
+            ArgumentNullException.ThrowIfNull(type);
+
             if (type is ReflectionType || (type.BaseType != null && type.BaseType.Equals(typeof(ReflectionType))))
                 throw new ArgumentException("The type cannot be 'ReflectionType'.", nameof(type));
 

@@ -18,6 +18,8 @@ namespace Masasamjant.Resources
         /// <exception cref="ArgumentNullException">If <paramref name="resourceKey"/> is empty or contains only whitespace characters.</exception>
         public ResourceStringAttribute(string resourceKey, Type resourceType)
         {
+            ArgumentNullException.ThrowIfNull(resourceType);
+
             if (string.IsNullOrWhiteSpace(resourceKey))
                 throw new ArgumentNullException(nameof(resourceKey), "The resource key cannot be empty or only whitespace characters.");
 

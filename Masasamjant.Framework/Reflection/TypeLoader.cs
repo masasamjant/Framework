@@ -16,6 +16,7 @@ namespace Masasamjant.Reflection
         /// <exception cref="ArgumentException">If <paramref name="typeName"/> is empty or only white-space.</exception>
         public virtual TypeLoadResult TryLoadType(Assembly assembly, string typeName)
         {
+            ArgumentNullException.ThrowIfNull(assembly);
             ValidateTypeName(typeName);
 
             try
@@ -42,6 +43,7 @@ namespace Masasamjant.Reflection
         /// <exception cref="ArgumentException">If <paramref name="typeName"/> is empty or only white-space.</exception>
         public virtual TypeLoadResult TryLoadType(IAssemblyFile assemblyFile, string typeName)
         {
+            ArgumentNullException.ThrowIfNull(assemblyFile);
             ValidateTypeName(typeName);
 
             var assemblyLoadResult = assemblyFile.TryLoad();
@@ -61,6 +63,7 @@ namespace Masasamjant.Reflection
         /// <exception cref="ArgumentException">If <paramref name="typeName"/> is empty or only white-space.</exception>
         public virtual TypeLoadResult TryLoadType(AppDomain domain, string typeName)
         {
+            ArgumentNullException.ThrowIfNull(domain);
             ValidateTypeName(typeName);
 
             try

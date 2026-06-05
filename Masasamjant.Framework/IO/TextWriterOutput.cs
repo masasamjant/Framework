@@ -13,7 +13,7 @@
         /// <param name="writer">The <see cref="TextWriter"/> to write.</param>
         public TextWriterOutput(TextWriter writer)
         {
-            this.writer = writer;
+            this.writer = writer ?? throw new ArgumentNullException(nameof(writer));
         }
 
         /// <summary>

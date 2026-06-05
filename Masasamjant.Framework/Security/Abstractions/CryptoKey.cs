@@ -27,6 +27,8 @@ namespace Masasamjant.Security.Abstractions
         /// <remarks>If value of <paramref name="iterations"/> is less than 1000, then minimum iterations value of 1000 is used.</remarks>
         protected CryptoKey(string password, Salt salt, int iterations, HashAlgorithmName hashAlgorithmName)
         {
+            ArgumentNullException.ThrowIfNull(salt);
+
             if (string.IsNullOrWhiteSpace(password))
                 throw new ArgumentNullException(nameof(password), "The password is empty or only whitespace.");
 

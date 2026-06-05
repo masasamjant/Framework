@@ -129,6 +129,8 @@ namespace Masasamjant.Diagnostics
         /// <exception cref="InvalidOperationException">If writing to <paramref name="output"/> fails.</exception>
         public void Write(IOutput output, string message)
         {
+            ArgumentNullException.ThrowIfNull(output);
+
             if (!CanRecord && !IsInitialized)
                 return;
 
@@ -153,6 +155,9 @@ namespace Masasamjant.Diagnostics
 
         private void AddRecord(string message, bool reset)
         {
+            if (message == null)
+                message = string.Empty;
+
             var elapsedTime = UseMilliseconds ? stopwatch.ElapsedMilliseconds : stopwatch.ElapsedTicks;
 
             if (Behavior == StopwatchRunBehavior.CalculateWriteTime)

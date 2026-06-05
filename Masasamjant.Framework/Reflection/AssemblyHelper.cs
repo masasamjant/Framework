@@ -14,6 +14,7 @@ namespace Masasamjant.Reflection
         /// <returns>A path to directory of <paramref name="assembly"/>.</returns>
         public static string? GetAssemblyDirectory(this Assembly assembly)
         {
+            ArgumentNullException.ThrowIfNull(assembly);
             return Path.GetDirectoryName(assembly.Location);
         }
     }

@@ -18,6 +18,9 @@ namespace Masasamjant.Linq
         /// <returns>A paging <see cref="IQueryable{T}"/>.</returns>
         public static IQueryable<T> Page<T>(this IQueryable<T> baseQuery, PageInfo page, bool calculateTotalCount = false)
         {
+            ArgumentNullException.ThrowIfNull(baseQuery);
+            ArgumentNullException.ThrowIfNull(page);
+
             var query = baseQuery;
 
             if (calculateTotalCount)
@@ -39,6 +42,9 @@ namespace Masasamjant.Linq
         /// <exception cref="InvalidOperationException">If <see cref="SortDescriptor"/> has name of public instance property that does not exist at <typeparamref name="T"/>.</exception>
         public static IQueryable<T> Sort<T>(this IQueryable<T> baseQuery, IEnumerable<SortDescriptor> descriptors)
         {
+            ArgumentNullException.ThrowIfNull(baseQuery);
+            ArgumentNullException.ThrowIfNull(descriptors);
+
             var first = true;
             var query = baseQuery;
 
@@ -145,35 +151,40 @@ namespace Masasamjant.Linq
 
         private static IOrderedQueryable<T> OrderByMethod<T>(IQueryable<T> baseQuery, SortMethod method, string propertyName)
         {
-            var property = typeof(T).GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty);
-
-            if (property == null)
-                throw new InvalidOperationException($"{typeof(T).FullName} does not have public instance property of {propertyName}.");
-
-            IOrderedQueryable<T> query;
+            ArgumentNullException.ThrowIfNull(baseQuery);
+            var property = GetOrderProperty(typeof(T), propertyName);
             var parameterExpression = Expression.Parameter(typeof(T), string.Empty);
             var propertyExpression = Expression.Property(parameterExpression, property);
             var lambdaExpression = Expression.Lambda<Func<T, object?>>(Expression.Convert(propertyExpression, typeof(object)), parameterExpression);
+            var orderedQuery = GetOrderedQuery(baseQuery, method, lambdaExpression);
+            return orderedQuery;
+        }
 
+        private static PropertyInfo GetOrderProperty(Type type, string propertyName)
+        {
+            var property = type.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty);
+
+            if (property == null)
+                throw new InvalidOperationException($"{type.FullName} does not have public instance property of {propertyName}.");
+
+            return property;
+        }
+
+        private static IOrderedQueryable<T> GetOrderedQuery<T>(IQueryable<T> baseQuery, SortMethod method, Expression<Func<T, object?>> lambdaExpression)
+        {
             switch (method)
             {
                 case SortMethod.OrderBy:
-                    query = baseQuery.OrderBy(lambdaExpression);
-                    break;
+                    return baseQuery.OrderBy(lambdaExpression);
                 case SortMethod.ThenBy:
-                    query = ((IOrderedQueryable<T>)baseQuery).ThenBy(lambdaExpression);
-                    break;
+                    return ((IOrderedQueryable<T>)baseQuery).ThenBy(lambdaExpression);
                 case SortMethod.OrderByDescending:
-                    query = baseQuery.OrderByDescending(lambdaExpression);
-                    break;
+                    return baseQuery.OrderByDescending(lambdaExpression);
                 case SortMethod.ThenByDescending:
-                    query = ((IOrderedQueryable<T>)baseQuery).ThenByDescending(lambdaExpression);
-                    break;
+                    return ((IOrderedQueryable<T>)baseQuery).ThenByDescending(lambdaExpression);
                 default:
                     throw new NotSupportedException($"Sort method '{method}' is not supported.");
             }
-
-            return query;
         }
     }
 }

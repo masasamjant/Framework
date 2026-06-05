@@ -14,6 +14,8 @@
         /// <exception cref="ArgumentOutOfRangeException">If value of <paramref name="length"/> is less than 1.</exception>
         public static int GetSpecialCharacterCount(this IPasswordProperties properties, int length)
         {
+            ArgumentNullException.ThrowIfNull(properties);
+
             if (length < 1)
                 throw new ArgumentOutOfRangeException(nameof(length), length, "The length must be greater than 0.");
 

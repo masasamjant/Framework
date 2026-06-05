@@ -13,7 +13,7 @@
         /// <param name="hashProvider">The <see cref="IHashProvider"/>.</param>
         protected StringHashProvider(IHashProvider hashProvider)
         {
-            this.hashProvider = hashProvider;
+            this.hashProvider = hashProvider ?? throw new ArgumentNullException(nameof(hashProvider));
         }
 
         /// <summary>

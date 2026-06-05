@@ -23,7 +23,11 @@ namespace Masasamjant.Security.Claims
         /// <param name="type">The type of claim to get.</param>
         /// <returns>A claims with specified type.</returns>
         public static IEnumerable<Claim> GetClaims(this ClaimsPrincipal principal, string type)
-            => principal.Claims.Where(claim => claim.Type == type);
+        { 
+            ArgumentNullException.ThrowIfNull(principal);
+            ArgumentNullException.ThrowIfNull(type);
+            return principal.Claims.Where(claim => claim.Type == type);
+        }
 
         /// <summary>
         /// Gets all claims issued by specified issuer.
@@ -32,6 +36,10 @@ namespace Masasamjant.Security.Claims
         /// <param name="issuer">The issuer.</param>
         /// <returns>A claims issued by specied issuer.</returns>
         public static IEnumerable<Claim> GetIssuerClaims(this ClaimsPrincipal principal, string issuer)
-            => principal.Claims.Where(claim => claim.Issuer == issuer);
+        { 
+            ArgumentNullException.ThrowIfNull(principal);
+            ArgumentNullException.ThrowIfNull(issuer);
+            return principal.Claims.Where(claim => claim.Issuer == issuer);
+        }
     }
 }

@@ -31,6 +31,8 @@ namespace Masasamjant.Linq
         /// <param name="condition">The condition to add.</param>
         public override void Add(PredicateBuilderCondition condition)
         {
+            ArgumentNullException.ThrowIfNull(condition);
+
             if (!Contains(condition))
                 base.Add(condition);
         }
@@ -42,6 +44,8 @@ namespace Masasamjant.Linq
         /// <param name="conditions">The conditions to add.</param>
         public void AddRange(IEnumerable<PredicateBuilderCondition> conditions)
         {
+            ArgumentNullException.ThrowIfNull(conditions);
+
             foreach (var condition in conditions)
                 Add(condition);
         }
@@ -53,6 +57,9 @@ namespace Masasamjant.Linq
         /// <returns><c>true</c> if contains <paramref name="condition"/>; <c>false</c> otherwise.</returns>
         public override bool Contains(PredicateBuilderCondition condition)
         {
+            if (condition is null)
+                return false;
+
             return base.Contains(condition);
         }
 
@@ -63,6 +70,9 @@ namespace Masasamjant.Linq
         /// <returns><c>true</c> if <paramref name="condition"/> removed; <c>false</c> otherwise.</returns>
         public override bool Remove(PredicateBuilderCondition condition)
         {
+            if (condition is null)
+                return false;
+
             return base.Remove(condition);
         }
     }

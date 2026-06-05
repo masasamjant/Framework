@@ -19,6 +19,8 @@
         /// <exception cref="ArgumentException">If <paramref name="source"/> do not support writing.</exception>
         public WriteOnlyStream(Stream source)
         {
+            ArgumentNullException.ThrowIfNull(source);
+
             if (!source.CanWrite)
                 throw new ArgumentException("The source stream must be writable.", nameof(source));
 
