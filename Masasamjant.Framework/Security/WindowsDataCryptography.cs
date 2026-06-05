@@ -41,6 +41,8 @@ namespace Masasamjant.Security
         /// <returns>A decrypted data.</returns>
         public byte[] DecryptData(byte[] cipherData, byte[]? entropy = null)
         {
+            if (cipherData is null || cipherData.Length == 0)
+                return [];
             return ProtectedData.Unprotect(cipherData, entropy, Scope);
         }
 
@@ -70,6 +72,8 @@ namespace Masasamjant.Security
         /// <returns>An encrypted data.</returns>
         public byte[] EncryptData(byte[] clearData, byte[]? entropy = null)
         {
+            if (clearData is null || clearData.Length == 0)
+                return [];
             return ProtectedData.Protect(clearData, entropy, Scope);
         }
 

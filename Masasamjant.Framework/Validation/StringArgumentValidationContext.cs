@@ -8,15 +8,21 @@
         /// <summary>
         /// Initializes new instance of the <see cref="StringArgumentValidationContext"/> class.
         /// </summary>
-        /// <param name="allowEmpty"></param>
-        /// <param name="allowWhiteSpace"></param>
-        /// <param name="maxLength"></param>
-        /// <param name="minLength"></param>
-        /// <param name="emptyAsNull"></param>
-        /// <param name="checkNoLeadingWhiteSpace"></param>
-        /// <param name="checkNoTrailingWhiteSpace"></param>
-        public StringArgumentValidationContext(bool allowEmpty = false, bool allowWhiteSpace = false, int? maxLength = null, int? minLength = null,
-            bool emptyAsNull = true, bool checkNoLeadingWhiteSpace = false, bool checkNoTrailingWhiteSpace = false)
+        /// <param name="allowEmpty"><c>true</c> to allow empty string; <c>false</c> otherwise. Default is <c>false</c>.</param>
+        /// <param name="allowWhiteSpace"><c>true</c> to allow white-space string; <c>false</c> otherwise. Default is <c>false</c>.</param>
+        /// <param name="maxLength">The maximum length of the string. Default is <c>null</c>, meaning no maximum length.</param>
+        /// <param name="minLength">The minimum length of the string. Default is <c>null</c>, meaning no minimum length.</param>
+        /// <param name="emptyAsNull"><c>true</c> to treat empty string as <c>null</c>; <c>false</c> otherwise. Default is <c>true</c>.</param>
+        /// <param name="checkNoLeadingWhiteSpace"><c>true</c> to check that string has no leading white-space; <c>false</c> otherwise. Default is <c>false</c>.</param>
+        /// <param name="checkNoTrailingWhiteSpace"><c>true</c> to check that string has no trailing white-space; <c>false</c> otherwise. Default is <c>false</c>.</param>
+        public StringArgumentValidationContext(
+            bool allowEmpty = false, 
+            bool allowWhiteSpace = false, 
+            int? maxLength = null, 
+            int? minLength = null,
+            bool emptyAsNull = true, 
+            bool checkNoLeadingWhiteSpace = false, 
+            bool checkNoTrailingWhiteSpace = false)
         {
             AllowEmpty = allowEmpty;
             AllowWhiteSpace = allowWhiteSpace;

@@ -16,6 +16,8 @@ namespace Masasamjant.Security
         /// <exception cref="InvalidOperationException">If import fails.</exception>
         public sealed override async Task<AesCryptoKey> ImportAsync(Stream stream)
         {
+            ArgumentNullException.ThrowIfNull(stream);
+
             ValidateCanRead(stream);
 
             try

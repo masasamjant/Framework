@@ -26,6 +26,8 @@ namespace Masasamjant.Security
             if (string.IsNullOrWhiteSpace(value))
                 throw new ArgumentNullException(nameof(value), "The value is empty or only whitespace.");
 
+            ArgumentNullException.ThrowIfNull(hashProvider);
+
             Value = hashProvider.CreateHash(value);
         }
 

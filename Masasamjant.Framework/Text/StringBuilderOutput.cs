@@ -15,7 +15,7 @@ namespace Masasamjant.Text
         /// <param name="builder">The <see cref="StringBuilder"/> to write.</param>
         public StringBuilderOutput(StringBuilder builder)
         {
-            this.builder = builder;
+            this.builder = builder ?? throw new ArgumentNullException(nameof(builder));
         }
 
         /// <summary>

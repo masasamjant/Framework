@@ -47,7 +47,7 @@ namespace Masasamjant.Security
         /// <exception cref="InvalidOperationException">If data decryption fails.</exception>
         public async Task<byte[]> DecryptDataAsync(byte[] cipherData, AesCryptoKey key, CancellationToken cancellationToken = default)
         {
-            if (cipherData.Length == 0)
+            if (cipherData is null || cipherData.Length == 0)
                 return [];
 
             try
@@ -134,7 +134,7 @@ namespace Masasamjant.Security
         /// <exception cref="InvalidOperationException">If data encryption fails.</exception>
         public async Task<byte[]> EncryptDataAsync(byte[] clearData, AesCryptoKey key, CancellationToken cancellationToken = default)
         {
-            if (clearData.Length == 0)
+            if (clearData is null || clearData.Length == 0)
                 return [];
 
             try

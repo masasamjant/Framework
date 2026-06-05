@@ -18,6 +18,9 @@ namespace Masasamjant.Security
         /// <exception cref="InvalidOperationException">If export fails.</exception>
         public sealed override async Task ExportAsync(AesCryptoKey key, Stream stream)
         {
+            ArgumentNullException.ThrowIfNull(key);
+            ArgumentNullException.ThrowIfNull(stream);
+
             ValidateCanWrite(stream);
             
             try

@@ -25,7 +25,7 @@ namespace Masasamjant.Text
         public ThreadStringBuilderCache(IThreadProvider threadProvider)
         {
             IsPreviousContentCleared = false;
-            this.threadProvider = threadProvider;
+            this.threadProvider = threadProvider ?? throw new ArgumentNullException(nameof(threadProvider));
         }
 
         /// <summary>
@@ -90,6 +90,7 @@ namespace Masasamjant.Text
         /// <param name="builder">The <see cref="StringBuilder"/> instance to cache.</param>
         public void SetBuilder(StringBuilder builder)
         {
+            ArgumentNullException.ThrowIfNull(builder);
             builders.AddOrUpdate(GetCurrentManagedThreadId(), builder, (k, v) => builder);
         }
 
