@@ -25,7 +25,7 @@ namespace Masasamjant.Xml
         /// <param name="serializer">The <see cref="DataContractSerializer"/>.</param>
         public XmlDataContractSerializer(DataContractSerializer serializer)
         {
-            this.serializer = serializer;
+            this.serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
         }
 
         /// <summary>
@@ -36,6 +36,8 @@ namespace Masasamjant.Xml
         /// <exception cref="XmlDeserializationException">If exception occurs when deserializing <paramref name="document"/>.</exception>
         public override object? Deserialize(XmlDocument document)
         {
+            ArgumentNullException.ThrowIfNull(document);
+
             try
             {
                 object? obj;
@@ -59,6 +61,8 @@ namespace Masasamjant.Xml
         /// <exception cref="XmlSerializationException">If exception occurs when serializing <paramref name="instance"/>.</exception>
         public override string Serialize(object instance)
         {
+            ArgumentNullException.ThrowIfNull(instance);
+
             try
             {
                 var builder = new StringBuilder();

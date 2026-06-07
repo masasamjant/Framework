@@ -16,6 +16,7 @@ namespace Masasamjant.Xml
         /// <exception cref="XmlDeserializationException">If exception occurs when deserializing <paramref name="document"/>.</exception>
         public T? Deserialize<T>(XmlDocument document)
         {
+            ArgumentNullException.ThrowIfNull(document);
             var obj = Deserialize(document);
             return obj is T result ? result : default;
         }
@@ -29,6 +30,7 @@ namespace Masasamjant.Xml
         /// <exception cref="XmlDeserializationException">If exception occurs when deserializing <paramref name="xml"/>.</exception>
         public T? Deserialize<T>(string xml)
         {
+            ArgumentNullException.ThrowIfNull(xml);
             var obj = Deserialize(xml);
             return obj is T result ? result : default;
         }
@@ -41,6 +43,7 @@ namespace Masasamjant.Xml
         /// <exception cref="XmlDeserializationException">If exception occurs when deserializing <paramref name="xml"/>.</exception>
         public object? Deserialize(string xml)
         {
+            ArgumentNullException.ThrowIfNull(xml);
             try
             {
                 var document = new XmlDocument();
