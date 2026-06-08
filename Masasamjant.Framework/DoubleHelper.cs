@@ -39,5 +39,17 @@
 
             return double.IsInfinity(value) ? replacement : value;
         }
+
+        /// <summary>
+        /// Determines whether two double values are equal up to a specified number of decimal places.
+        /// </summary>
+        /// <param name="first">The first value.</param>
+        /// <param name="second">The second value.</param>
+        /// <param name="digits">The number of decimal places to consider.</param>
+        /// <returns><c>true</c> if the values are equal up to the specified number of decimal places; otherwise, <c>false</c>.</returns>
+        public static bool AreEqual(double first, double second, int digits)
+        {
+            return Math.Round(first, digits) == Math.Round(second, digits);
+        }
     }
 }
