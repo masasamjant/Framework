@@ -50,7 +50,7 @@ namespace Masasamjant.Collections
         /// <summary>
         /// Gets the items.
         /// </summary>
-        public int Count => Items.Count;
+        public virtual int Count => Items.Count;
 
         /// <summary>
         /// Gets the <see cref="ICollection{T}"/> to access items.
@@ -93,7 +93,7 @@ namespace Masasamjant.Collections
         /// </summary>
         /// <param name="array">The array to copy items.</param>
         /// <param name="arrayIndex">The starting index.</param>
-        public void CopyTo(T[] array, int arrayIndex)
+        public virtual void CopyTo(T[] array, int arrayIndex)
         {
             Items.CopyTo(array, arrayIndex);
         }

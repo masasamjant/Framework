@@ -409,6 +409,92 @@
             }
         }
 
+        /// <summary>
+        /// Extract items from source collection that satisfy specified predicate and add them to target collection. 
+        /// This means that items that satisfy the predicate are removed from source collection and added to target collection.
+        /// </summary>
+        /// <typeparam name="T">The type of the item.</typeparam>
+        /// <param name="source">The source collection.</param>
+        /// <param name="target">The target collection.</param>
+        /// <param name="extractPredicate">The predicate to extract items.</param>
+        /// <exception cref="ArgumentNullException">If any of parameters is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">If <paramref name="source"/> or <paramref name="target"/> is in read-only state, or if they are the same collection.</exception>
+        public static void Extract<T>(this ICollection<T> source, ICollection<T> target, Predicate<T> extractPredicate)
+        {
+            ArgumentNullException.ThrowIfNull(extractPredicate);
+
+            Extract(source, target, new Func<T, bool>(item => extractPredicate(item)));
+        }
+
+        /// <summary>
+        /// Extract items from source collection that satisfy specified predicate and add them to target collection. 
+        /// This means that items that satisfy the predicate are removed from source collection and added to target collection.
+        /// </summary>
+        /// <typeparam name="T">The type of the item.</typeparam>
+        /// <param name="source">The source collection.</param>
+        /// <param name="target">The target collection.</param>
+        /// <param name="extractPredicate">The predicate to extract items.</param>
+        /// <exception cref="ArgumentNullException">If any of parameters is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">If <paramref name="source"/> or <paramref name="target"/> is in read-only state, or if they are the same collection.</exception>
+        public static void Extract<T>(this ICollection<T> source, ICollection<T> destination, Func<T, bool> extractPredicate)
+        {
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(destination);
+            ArgumentNullException.ThrowIfNull(extractPredicate);
+
+            if (ReferenceEquals(source, destination))
+                throw new ArgumentException("Destination collection cannot be the same as source collection.", nameof(destination));
+
+            CheckNotReadOnly(source, nameof(source));
+            CheckNotReadOnly(destination, nameof(destination));
+
+            if (source.Count == 0)
+                return;
+
+            var extracted = new List<T>(source.Count);
+
+            foreach (var item in source.Where(extractPredicate))
+                extracted.Add(item);
+
+            foreach (var item in extracted)
+            {
+                source.Remove(item);
+                destination.Add(item);
+            }
+        }
+
+        /// <summary>
+        /// Extract items from source collection that satisfy specified predicate and return them as a new collection.
+        /// </summary>
+        /// <typeparam name="T">The type of the item.</typeparam>
+        /// <param name="source">The source collection.</param>
+        /// <param name="extractPredicate">The predicate to extract items.</param>
+        /// <returns>A new collection containing the extracted items.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="source"/> or <paramref name="extractPredicate"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">If <paramref name="source"/> is in read-only state.</exception>
+        public static ICollection<T> Extract<T>(this ICollection<T> source, Predicate<T> extractPredicate)
+        {
+            var destination = new List<T>();
+            Extract(source, destination, extractPredicate);
+            return destination;
+        }
+
+        /// <summary>
+        /// Extract items from source collection that satisfy specified predicate and return them as a new collection.
+        /// </summary>
+        /// <typeparam name="T">The type of the item.</typeparam>
+        /// <param name="source">The source collection.</param>
+        /// <param name="extractPredicate">The predicate to extract items.</param>
+        /// <returns>A new collection containing the extracted items.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="source"/> or <paramref name="extractPredicate"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">If <paramref name="source"/> is in read-only state.</exception>
+        public static ICollection<T> Extract<T>(this ICollection<T> source, Func<T, bool> extractPredicate)
+        {
+            var destination = new List<T>();
+            Extract(source, destination, extractPredicate);
+            return destination;
+        }
+
         internal static void CheckNotReadOnly<T>(ICollection<T> collection, string paramName)
         {
             if (collection.IsReadOnly)

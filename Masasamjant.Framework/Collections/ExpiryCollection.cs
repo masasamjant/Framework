@@ -29,6 +29,11 @@
         public TimeSpan ItemLifetime { get; }
 
         /// <summary>
+        /// Gets the total number of items, non-expired and expired, in the collection.
+        /// </summary>
+        public override int Count => base.Count;
+
+        /// <summary>
         /// Add item to the collection. If an unexpired item already exists, an exception is thrown. 
         /// If an expired item exists, it will be replaced with the new item. Use <see cref="Replace(T)"/> method to update an existing item 
         /// regardless of its expiration status.
@@ -182,6 +187,9 @@
         {
             CheckReadOnly();
 
+            if (Count == 0)
+                return;
+
             for (int index = items.Count - 1; index >= 0; index--)
             {
                 if (items[index].IsExpired(ItemLifetime))
@@ -189,6 +197,20 @@
                     items.RemoveAt(index);
                 }
             }
+        }
+
+        /// <summary>
+        /// Copy the non-expired items of the collection to an array, starting at a particular array index.
+        /// </summary>
+        /// <param name="array">The array to copy items to.</param>
+        /// <param name="arrayIndex">The starting index in the array.</param>
+        public override void CopyTo(T[] array, int arrayIndex)
+        {
+            if (Count == 0)
+                return;
+
+            var items = this.ToList();
+            items.CopyTo(array, arrayIndex);
         }
 
         private ExpiryItem<T>? GetCurrentItem(T item)

@@ -60,6 +60,11 @@ namespace Masasamjant.Collections
         }
 
         /// <summary>
+        /// Gets the total number of items, non-expired and expired, in the collection.
+        /// </summary>
+        public override int Count => base.Count;
+
+        /// <summary>
         /// Gets or sets the value associated with the specified key. 
         /// If the key does not exist or the item has expired, a <see cref="KeyNotFoundException"/> is thrown when getting the value.
         /// </summary>
@@ -249,6 +254,9 @@ namespace Masasamjant.Collections
         {
             CheckReadOnly();
 
+            if (Count == 0)
+                return;
+
             var expiredKeys = items.Where(kv => kv.Value.IsExpired(ItemLifetime)).Select(kv => kv.Key).ToList();
 
             foreach (var key in expiredKeys)
@@ -302,6 +310,20 @@ namespace Masasamjant.Collections
                 if (!kv.Value.IsExpired(ItemLifetime))
                     yield return new KeyValuePair<TKey, TValue>(kv.Key, kv.Value.Item);
             }
+        }
+
+        /// <summary>
+        /// Copy the non-expired items of the dictionary to an array, starting at a particular array index.
+        /// </summary>
+        /// <param name="array">The array to copy items to.</param>
+        /// <param name="arrayIndex">The starting index in the array.</param>
+        public override void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
+        {
+            if (Count == 0)
+                return;
+
+            var items = this.ToList();
+            items.CopyTo(array, arrayIndex);
         }
 
         private ExpiryItem<TValue>? GetCurrentItem(TKey key)

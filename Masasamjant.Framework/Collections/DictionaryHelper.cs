@@ -655,7 +655,100 @@ namespace Masasamjant.Collections
             return dictionary;
         }
 
-        private static void AddDuplicate<TKey, TValue>(Dictionary<TKey, TValue> dictionary, TKey key, TValue value, DuplicateBehavior duplicateBehavior, string duplicateErrorMessage) where TKey : notnull
+        /// <summary>
+        /// Extract items from specified <see cref="IDictionary{TKey, TValue}"/> to destination <see cref="IDictionary{TKey, TValue}"/> where key match specified predicate.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <param name="source">The source dictionary to extract items.</param>
+        /// <param name="destination">The destination directory to add extracted items.</param>
+        /// <param name="extractPredicate">The predicate to match item that is extracted.</param>
+        /// <param name="duplicateBehavior">The behavior how possible duplicate item in destination is handled.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="source"/>, <paramref name="destination"/> or <paramref name="extractPredicate"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">
+        /// If value of <paramref name="duplicateBehavior"/> is not defined.
+        /// -or-
+        /// If <paramref name="source"/> or <paramref name="destination"/> is read-only.
+        /// -or-
+        /// If <paramref name="source"/> and <paramref name="destination"/> are same dictionary.
+        /// </exception>
+        /// <exception cref="NotSupportedException">If <paramref name="duplicateBehavior"/> is <see cref="DuplicateBehavior.Insert"/>.</exception>
+        public static void Extract<TKey, TValue>(this IDictionary<TKey, TValue> source, IDictionary<TKey, TValue> destination, Func<TKey, bool> extractPredicate, DuplicateBehavior duplicateBehavior = DuplicateBehavior.Ignore) where TKey : notnull
+        {
+            if (!Enum.IsDefined(duplicateBehavior))
+                throw new ArgumentException("The value is not defined.", nameof(duplicateBehavior));
+
+            if (duplicateBehavior == DuplicateBehavior.Insert)
+                throw new NotSupportedException("The dictionary does not allow inserting duplicate keys.");
+
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(destination);
+            ArgumentNullException.ThrowIfNull(extractPredicate);
+
+            if (ReferenceEquals(source, destination))
+                throw new ArgumentException("Destination dictionary cannot be same as source dictionary.", nameof(destination));
+
+            CollectionHelper.CheckNotReadOnly(source, nameof(source));
+            CollectionHelper.CheckNotReadOnly(destination, nameof(destination));
+
+            if (source.Count == 0)
+                return;
+
+            var extracted = new Dictionary<TKey, TValue>();
+
+            foreach (var keyValue in source.Where(kv => extractPredicate(kv.Key)))
+                extracted.Add(keyValue.Key, keyValue.Value);
+
+            foreach (var keyValue in extracted)
+            {
+                source.Remove(keyValue.Key);
+                
+                if (destination.ContainsKey(keyValue.Key))
+                    AddDuplicate(destination, keyValue.Key, keyValue.Value, duplicateBehavior, "The destination dictionary contains item with same key as extracted item.");
+                else
+                    destination[keyValue.Key] = keyValue.Value; 
+            }
+        }
+
+        /// <summary>
+        /// Extract items from specified <see cref="IDictionary{TKey, TValue}"/> to destination <see cref="IDictionary{TKey, TValue}"/> where key match specified predicate.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <param name="source">The source dictionary to extract items.</param>
+        /// <param name="destination">The destination directory to add extracted items.</param>
+        /// <param name="extractPredicate">The predicate to match item that is extracted.</param>
+        /// <param name="duplicateBehavior">The behavior how possible duplicate item in destination is handled.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="source"/>, <paramref name="destination"/> or <paramref name="extractPredicate"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">
+        /// If value of <paramref name="duplicateBehavior"/> is not defined.
+        /// -or-
+        /// If <paramref name="source"/> or <paramref name="destination"/> is read-only.
+        /// -or-
+        /// If <paramref name="source"/> and <paramref name="destination"/> are same dictionary.
+        /// </exception>
+        /// <exception cref="NotSupportedException">If <paramref name="duplicateBehavior"/> is <see cref="DuplicateBehavior.Insert"/>.</exception>
+        public static void Extract<TKey, TValue>(this IDictionary<TKey, TValue> source, IDictionary<TKey, TValue> destination, Predicate<TKey> extractPredicate, DuplicateBehavior duplicateBehavior = DuplicateBehavior.Ignore) where TKey : notnull
+        {
+            ArgumentNullException.ThrowIfNull(extractPredicate);
+            Extract(source, destination, new Func<TKey, bool>(k => extractPredicate(k)), duplicateBehavior);
+        }
+
+        public static IDictionary<TKey, TValue> Extract<TKey, TValue>(this IDictionary<TKey, TValue> source, Func<TKey, bool> extractPredicate, DuplicateBehavior duplicateBehavior = DuplicateBehavior.Ignore) where TKey : notnull
+        {
+            var destination = new Dictionary<TKey, TValue>();
+            Extract(source, destination, extractPredicate, duplicateBehavior);
+            return destination;
+        }
+
+        public static IDictionary<TKey, TValue> Extract<TKey, TValue>(this IDictionary<TKey, TValue> source, Predicate<TKey> extractPredicate, DuplicateBehavior duplicateBehavior = DuplicateBehavior.Ignore) where TKey : notnull
+        {
+            var destination = new Dictionary<TKey, TValue>();
+            Extract(source, destination, extractPredicate, duplicateBehavior);
+            return destination;
+        }
+
+        private static void AddDuplicate<TKey, TValue>(IDictionary<TKey, TValue> dictionary, TKey key, TValue value, DuplicateBehavior duplicateBehavior, string duplicateErrorMessage) where TKey : notnull
         {
             switch (duplicateBehavior)
             {
