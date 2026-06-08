@@ -72,7 +72,7 @@ namespace Masasamjant.Collections
         /// Clears the collection.
         /// </summary>
         /// <exception cref="InvalidOperationException">If <see cref="IsReadOnly"/> is <c>true</c>.</exception>
-        public void Clear()
+        public virtual void Clear()
         {
             CheckReadOnly();
             Items.Clear();
@@ -122,7 +122,7 @@ namespace Masasamjant.Collections
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns>A enumerator that iterates through the collection.</returns>
-        public IEnumerator<T> GetEnumerator()
+        public virtual IEnumerator<T> GetEnumerator()
         {
             foreach (var item in Items)
                 yield return item;  

@@ -30,6 +30,23 @@
         }
 
         /// <summary>
+        /// Gets all exception messages of specified root exception.
+        /// </summary>
+        /// <param name="exception">The initial exception.</param>
+        /// <returns>An <see cref="IEnumerable{String}"/> containing all exception messages.</returns>
+        public static IEnumerable<string> GetMessages(this Exception exception)
+            => GetAll(exception).Select(e => e.Message);
+
+        /// <summary>
+        /// Gets all exception messages of specified root exception and concatenates them with specified separator.
+        /// </summary>
+        /// <param name="exception">The initial exception.</param>
+        /// <param name="separator">The separator to use between messages.</param>
+        /// <returns>A concatenated string of all exception messages.</returns>
+        public static string GetMessages(this Exception exception, char separator = ' ')
+            => string.Join(separator, GetMessages(exception));
+
+        /// <summary>
         /// Gets first, the inner most, exception of specified root exception.
         /// </summary>
         /// <param name="exception">The initial exception.</param>
