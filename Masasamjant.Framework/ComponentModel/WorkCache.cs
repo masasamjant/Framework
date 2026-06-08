@@ -33,7 +33,7 @@ namespace Masasamjant.ComponentModel
         public TOutput Perform(TInput input, object? key = null)
         {
             ArgumentNullException.ThrowIfNull(input);
-            
+
             object itemKey = key != null ? key : input;
 
             if (cache.TryGetValue(itemKey, out TOutput? value))
@@ -46,6 +46,14 @@ namespace Masasamjant.ComponentModel
                 cache.AddOrUpdate(itemKey, value, (currentKey, currentValue) => value);
                 return value;
             }
+        }
+
+        /// <summary>
+        /// Clears the cache, removing all cached results.
+        /// </summary>
+        public void ClearCache()
+        {
+            cache.Clear();
         }
     }
 }
