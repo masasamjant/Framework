@@ -116,6 +116,22 @@ namespace Masasamjant.Collections
             => GetOrAdd(dictionary, key, k => add);
 
         /// <summary>
+        /// Gets value from <see cref="IDictionary{TKey, TValue}"/> or default value if key not exist.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <param name="dictionary">The <see cref="IDictionary{TKey, TValue}"/>.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="defaultValue">The default value to return if key not exist.</param>
+        /// <returns>A value get from <paramref name="dictionary"/> or <paramref name="defaultValue"/>.</returns>
+        public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue) where TKey : notnull
+        {
+            ArgumentNullException.ThrowIfNull(dictionary);
+
+            return dictionary.TryGetValue(key, out var value) ? value : defaultValue;
+        }
+
+        /// <summary>
         /// Combine two <see cref="IDictionary{TKey, TValue}"/> to single <see cref="IDictionary{TKey, TValue}"/> using specified <see cref="DuplicateBehavior"/> for duplicate keys.
         /// </summary>
         /// <typeparam name="TKey">The type of the key.</typeparam>
