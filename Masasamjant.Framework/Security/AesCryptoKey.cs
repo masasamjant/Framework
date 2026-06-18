@@ -26,8 +26,8 @@ namespace Masasamjant.Security
             : base(password, salt, iterations.GetValueOrDefault(DefaultIterations), hashAlgorithmName.GetValueOrDefault(DefaultHashAlgorithmName))
         { }
 
-        internal AesCryptoKey(byte[] key, byte[] iv)
-            : base(key, iv) 
+        internal AesCryptoKey(byte[] key)
+            : base(key) 
         { }
 
         /// <summary>
@@ -43,6 +43,23 @@ namespace Masasamjant.Security
             using (Aes aes = Aes.Create())
             {
                 byte[] key = CryptographyHelper.GetPseudoRandomBytes(password, salt, iterations, hashAlgorithmName, KeyLength);
+                aes.GenerateIV();
+                byte[] iv = aes.IV;
+                return (key, iv);
+            }
+        }
+
+        /// <summary>
+        /// Creates key and initialization vector bytes for AES algorithm
+        /// </summary>
+        /// <param name="data">The data to generate key and initialization vector.</param>
+        /// <returns>A tuple of key and initialization vector bytes for AES algorithm.</returns>
+        protected override (byte[] Key, byte[] IV) GenerateKey(byte[] data)
+        {
+            using (Aes aes = Aes.Create())
+            {
+                byte[] key = new byte[KeyLength];
+                Array.Copy(data, 0, key, 0, KeyLength);
                 aes.GenerateIV();
                 byte[] iv = aes.IV;
                 return (key, iv);

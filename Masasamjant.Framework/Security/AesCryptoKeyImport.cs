@@ -22,8 +22,8 @@ namespace Masasamjant.Security
 
             try
             {
-                byte[] value = await ReadImportDataAsync(stream);
-                return CreateCryptoKeyFromImportData(value);
+                byte[] data = await ReadImportDataAsync(stream);
+                return CreateCryptoKeyFromImportData(data);
             }
             catch (Exception exception)
             {
@@ -41,7 +41,7 @@ namespace Masasamjant.Security
         /// </summary>
         /// <param name="stream">The stream containing exported data.</param>
         /// <returns>A task representing the asynchronous operation, with a byte array containing the imported data.</returns>
-        protected virtual async Task<byte[]> ReadImportDataAsync(Stream stream)
+        private static async Task<byte[]> ReadImportDataAsync(Stream stream)
         {
             var bytes = new List<byte>();
             byte[] buffer = new byte[AesCryptoKey.KeyLength + AesCryptoKey.IVLength];
@@ -59,9 +59,7 @@ namespace Masasamjant.Security
         /// <returns>A <see cref="AesCryptoKey"/>.</returns>
         protected virtual AesCryptoKey CreateCryptoKeyFromImportData(byte[] data)
         {
-            byte[] key = data.Take(AesCryptoKey.KeyLength).ToArray();
-            byte[] iv = data.Skip(AesCryptoKey.KeyLength).Take(AesCryptoKey.IVLength).ToArray();
-            return new AesCryptoKey(key, iv);
+            return new AesCryptoKey(data);
         }
     }
 }

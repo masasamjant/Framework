@@ -24,7 +24,7 @@ namespace Masasamjant.Security
             PlatformHelper.EnsureIsWindows();
             ArgumentNullException.ThrowIfNull(key);
             var cryptography = new WindowsDataCryptography(scope);
-            var data = ArrayHelper.Combine(key.Key, key.IV);
+            var data = key.Key;
             return cryptography.EncryptData(data);
         }
 
@@ -42,10 +42,8 @@ namespace Masasamjant.Security
             PlatformHelper.EnsureIsWindows();
             ArgumentNullException.ThrowIfNull(data);
             var cryptography = new WindowsDataCryptography(scope);
-            data = cryptography.DecryptData(data);
-            var key = data.Take(AesCryptoKey.KeyLength).ToArray();
-            var iv = data.Skip(AesCryptoKey.KeyLength).Take(AesCryptoKey.IVLength).ToArray();
-            return new AesCryptoKey(key, iv);
+            var key = cryptography.DecryptData(data);
+            return new AesCryptoKey(key);
         }
     }
 }

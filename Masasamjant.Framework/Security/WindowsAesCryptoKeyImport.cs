@@ -18,11 +18,6 @@ namespace Masasamjant.Security
             PlatformHelper.EnsureIsWindows();
         }
 
-        protected override async Task<byte[]> ReadImportDataAsync(Stream stream)
-        {
-            return await base.ReadImportDataAsync(stream);
-        }
-
         protected override AesCryptoKey CreateCryptoKeyFromImportData(byte[] data)
         {
             return WindowsAesCryptoKeyProtector.Unprotect(data, DataProtectionScope.LocalMachine);

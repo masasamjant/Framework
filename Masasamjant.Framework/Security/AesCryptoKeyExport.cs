@@ -43,7 +43,7 @@ namespace Masasamjant.Security
         /// <returns>A export data.</returns>
         protected virtual byte[] GetExportData(AesCryptoKey key)
         {
-            return ArrayHelper.Combine(key.Key, key.IV);
+            return key.Key;
         }
     }
 }

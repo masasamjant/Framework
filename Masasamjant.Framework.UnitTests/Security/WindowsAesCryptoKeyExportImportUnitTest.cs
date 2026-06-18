@@ -19,7 +19,7 @@ namespace Masasamjant.Security
                 stream.Position = 0L;
                 var key2 = await import.ImportAsync(stream);
                 CollectionAssert.AreEqual(key.Key, key2.Key);
-                CollectionAssert.AreEqual(key.IV, key2.IV);
+                CollectionAssert.AreNotEqual(key.IV, key2.IV);
             }
         }
     }

@@ -40,12 +40,12 @@ namespace Masasamjant.Security.Abstractions
         /// <summary>
         /// Initializes new instance of the <see cref="CryptoKey"/> class.
         /// </summary>
-        /// <param name="key">The key bytes.</param>
-        /// <param name="iv">The initialization vector bytes.</param>
-        protected CryptoKey(byte[] key, byte[] iv)
+        /// <param name="data">The data to generate key and initialization vector.</param>
+        protected CryptoKey(byte[] data)
         {
-            this.key = (byte[])key.Clone();
-            this.iv = (byte[])iv.Clone();
+            var (key, iv) = GenerateKey(data);
+            this.key = key;
+            this.iv = iv;
         }
 
         /// <summary>
@@ -103,5 +103,12 @@ namespace Masasamjant.Security.Abstractions
         /// <param name="hashAlgorithmName">The hash algorithm name.</param>
         /// <returns>A tuple of key and initialization vector bytes.</returns>
         protected abstract (byte[] Key, byte[] IV) GenerateKey(string password, Salt salt, int iterations, HashAlgorithmName hashAlgorithmName);
+
+        /// <summary>
+        /// Derived classes must override to create key and initialization vector bytes.
+        /// </summary>
+        /// <param name="data">The data to generate key and initialization vector.</param>
+        /// <returns>A tuple of key and initialization vector bytes.</returns>
+        protected abstract (byte[] Key, byte[] IV) GenerateKey(byte[] data);
     }
 }

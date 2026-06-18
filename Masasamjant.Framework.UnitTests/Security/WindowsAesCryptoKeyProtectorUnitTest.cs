@@ -14,7 +14,7 @@ namespace Masasamjant.Security
             byte[] data = WindowsAesCryptoKeyProtector.Protect(key, DataProtectionScope.CurrentUser);
             var other = WindowsAesCryptoKeyProtector.Unprotect(data, DataProtectionScope.CurrentUser);
             CollectionAssert.AreEqual(key.Key, other.Key);
-            CollectionAssert.AreEqual(key.IV, other.IV);
+            CollectionAssert.AreNotEqual(key.IV, other.IV);
         }
 
         private static AesCryptoKey CreateCryptoKey()
