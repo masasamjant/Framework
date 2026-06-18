@@ -710,21 +710,22 @@
                 throw new ArgumentException("Item positions, a keys in dictionary, must be greater than or equal to 1.", nameof(pushItems));
 
             var positions = pushItems.Keys.OrderByDescending(k => k).ToList();
-            var position = stack.Count + pushItems.Count;
-            var queue = new Queue<T>(position);
+            var position = 0;
+            var list = new List<T>(stack.Count + pushItems.Count);
 
             while (stack.TryPop(out var item))
             {
+                position++;
+
                 while (pushItems.ContainsKey(position))
                 {
                     positions.Remove(position);
                     var pushItem = pushItems[position];
-                    queue.Enqueue(pushItem);
-                    position--;
+                    list.Add(pushItem);
+                    position++;
                 }
 
-                queue.Enqueue(item);
-                position--;
+                list.Add(item);
             }
 
             // Fill remaining items.
@@ -733,13 +734,13 @@
                 foreach (var pos in positions)
                 {
                     var pushItem = pushItems[pos];
-                    queue.Enqueue(pushItem);
+                    list.Add(pushItem);
                 }
             }
 
             // Transfer items back to stack.
-            while (queue.TryDequeue(out var item))
-                stack.Push(item);
+            list.Reverse();
+            stack.PushRange(list);
         }
 
         private static Dictionary<int, T> GetPositionItems<T>(Stack<T> stack, Func<T, int> positionProvider)

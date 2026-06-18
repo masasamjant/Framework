@@ -262,5 +262,30 @@ namespace Masasamjant.Collections
             Assert.AreEqual(5, stack.Count);
             CollectionAssert.AreEqual(new[] { 5, 4, 3, 2, 1 }, stack.ToArray());
         }
+
+        [TestMethod]
+        public void Test_Restack_With_items_To_Push()
+        {
+            var pushItems = new Dictionary<int, int>()
+            {
+                {3, 3 },
+                {4, 4 }
+            };
+
+            var stack = new Stack<int>();
+
+            StackHelper.Restack(stack, pushItems);
+            Assert.AreEqual(2, stack.Count);
+            CollectionAssert.AreEqual(new[] { 3, 4 }, stack.ToArray());
+
+            stack = new Stack<int>();
+            stack.Push(5);
+            stack.Push(2);
+            stack.Push(1);
+
+            StackHelper.Restack(stack, pushItems);
+            Assert.AreEqual(5, stack.Count);
+            CollectionAssert.AreEqual(new[] { 1, 2, 3, 4, 5 }, stack.ToArray());
+        }
     }
 }
