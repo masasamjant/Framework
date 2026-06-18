@@ -123,5 +123,144 @@ namespace Masasamjant.Collections
             var actual = stack.ToArray();
             CollectionAssert.AreEqual(expected, actual);
         }
+
+        [TestMethod]
+        public void Test_Clone()
+        {
+            var stack = new Stack<int>();
+            stack.Push(1);
+            stack.Push(2);
+            stack.Push(3);
+            var clone = stack.Clone();
+            CollectionAssert.AreEqual(stack.ToArray(), clone.ToArray());
+        }
+
+        [TestMethod]
+        public void Test_Restack()
+        {
+            var stack = new Stack<int>();
+            stack.Push(2);
+            stack.Push(3);
+            stack.Push(4);
+            CollectionAssert.AreEqual(new[] { 4, 3, 2 }, stack.ToArray());
+            var pushBefore = new[] { 1 }; // push before current items so will be at the bottom of stack.
+            var pushAfter = new[] { 5 };  // push after current items so will be at the top of stack.
+            StackHelper.Restack(stack, pushBefore, pushAfter);
+            var expected = new[] { 5, 4, 3, 2, 1 };
+            CollectionAssert.AreEqual(expected, stack.ToArray());
+        }
+
+        [TestMethod]
+        public void Test_TransferTo_Stack()
+        {
+            var stack = new Stack<int>();
+            stack.Push(2);
+            stack.Push(3);
+            stack.Push(4);
+            CollectionAssert.AreEqual(new[] { 4, 3, 2 }, stack.ToArray());
+            var destination = new Stack<int>();
+            destination.Push(5);
+            StackHelper.TransferTo(stack, destination);
+            CollectionAssert.AreEqual(new[] { 4, 3, 2, 5 }, destination.ToArray());
+        }
+
+        [TestMethod]
+        public void Test_TransferTo_Stack_With_Predicate()
+        {
+            var stack = new Stack<int>();
+            stack.Push(2);
+            stack.Push(3);
+            stack.Push(4);
+            var destination = new Stack<int>();
+            destination.Push(5);
+            Func<int, bool> transferPredicate = item => item == 3;
+            StackHelper.TransferTo(stack, destination, transferPredicate);
+            CollectionAssert.AreEqual(new[] { 4, 2 }, stack.ToArray());
+            CollectionAssert.AreEqual(new[] { 3, 5 }, destination.ToArray());
+        }
+
+        [TestMethod]
+        public void Test_TransferTo_Collection()
+        {
+            var stack = new Stack<int>();
+            stack.Push(2);
+            stack.Push(3);
+            stack.Push(4);
+            var destination = new List<int>();
+            StackHelper.TransferTo(stack, destination);
+            Assert.AreEqual(0, stack.Count);
+            CollectionAssert.AreEqual(new[] { 4, 3, 2 }, destination.ToArray());
+        }
+
+        [TestMethod]
+        public void Test_TransferTo_Collection_With_Predicate()
+        {
+            var stack = new Stack<int>();
+            stack.Push(2);
+            stack.Push(3);
+            stack.Push(4);
+            var destination = new List<int>();
+            Func<int, bool> transferPredicate = item => item == 3;
+            StackHelper.TransferTo(stack, destination, transferPredicate);
+            CollectionAssert.AreEqual(new[] { 4, 2 }, stack.ToArray());
+            CollectionAssert.AreEqual(new[] { 3 }, destination.ToArray());
+        }
+
+        [TestMethod]
+        public void Test_TransferTo_Queue()
+        {
+            var stack = new Stack<int>();
+            stack.Push(2);
+            stack.Push(3);
+            stack.Push(4);
+            var destination = new Queue<int>();
+            StackHelper.TransferTo(stack, destination);
+            Assert.AreEqual(0, stack.Count);
+            CollectionAssert.AreEqual(new[] { 4, 3, 2 }, destination.ToArray());
+        }
+
+        [TestMethod]
+        public void Test_TransferTo_Queue_With_Predicate()
+        {
+            var stack = new Stack<int>();
+            stack.Push(2);
+            stack.Push(3);
+            stack.Push(4);
+            var destination = new Queue<int>();
+            destination.Enqueue(5);
+            Func<int, bool> transferPredicate = item => item == 3;
+            StackHelper.TransferTo(stack, destination, transferPredicate);
+            CollectionAssert.AreEqual(new[] { 4, 2 }, stack.ToArray());
+            CollectionAssert.AreEqual(new[] { 5, 3 }, destination.ToArray());
+        }
+
+        [TestMethod]
+        public void Test_Create()
+        {
+            var items = new Dictionary<int, int>()
+            {
+                { 1, 1 }, { 2, 2 }, { 3, 3 }    
+            };
+
+            var stack = StackHelper.Create(items);
+            CollectionAssert.AreEqual(new[] { 1, 2, 3 }, stack.ToArray());
+        }
+
+        [TestMethod]
+        public void Test_Restack_Add_Items_To_Before_And_After()
+        {
+            var stack = new Stack<int>();
+            stack.Push(2);
+            stack.Push(3);
+            stack.Push(4);
+
+            var pushBefore = new[] { 1 };
+            var pushAfter = new[] { 5 };
+
+            StackHelper.Restack(stack, pushBefore, pushAfter);
+
+            Assert.AreEqual(5, stack.Count);
+            CollectionAssert.AreEqual(new[] { 5, 4, 3, 2, 1 }, stack.ToArray());
+        }
     }
 }

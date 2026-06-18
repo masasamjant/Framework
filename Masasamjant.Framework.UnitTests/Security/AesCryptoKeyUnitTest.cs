@@ -24,7 +24,7 @@ namespace Masasamjant.Security
 
             var cryptoKey2 = new AesCryptoKey("Testing", salt, iterations: CryptoKey.MinIterations);
             CollectionAssert.AreEqual(cryptoKey.Key, cryptoKey2.Key);
-            CollectionAssert.AreEqual(cryptoKey.IV, cryptoKey2.IV);
+            CollectionAssert.AreNotEqual(cryptoKey.IV, cryptoKey2.IV);
         }
 
         [TestMethod]

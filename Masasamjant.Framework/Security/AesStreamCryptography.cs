@@ -79,6 +79,8 @@ namespace Masasamjant.Security
                 using (var aes = Aes.Create())
                 using (var encryptor = aes.CreateEncryptor(key.Key, key.IV))
                 {
+                    await destinationStream.WriteAsync(key.IV, 0, key.IV.Length, cancellationToken);
+
                     CryptoStream? cs = null;
 
                     try
@@ -158,28 +160,34 @@ namespace Masasamjant.Security
             try
             {
                 using (var aes = Aes.Create())
-                using (var decryptor = aes.CreateDecryptor(key.Key, key.IV))
                 {
-                    CryptoStream? cs = null;
+                    byte[] iv = new byte[AesCryptoKey.IVLength];
 
-                    try
+                    await sourceStream.ReadExactlyAsync(iv, cancellationToken);
+
+                    using (var decryptor = aes.CreateDecryptor(key.Key, iv))
                     {
-                        var bufferSize = IOHelper.GetBufferSize(sourceStream);
-                        cs = new CryptoStream(sourceStream, decryptor, CryptoStreamMode.Read);
-                        var buffer = new byte[bufferSize];
-                        var read = 0;
+                        CryptoStream? cs = null;
 
-                        while ((read = await cs.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
+                        try
                         {
-                            await destinationStream.WriteAsync(buffer, 0, read, cancellationToken);
-                        }
+                            var bufferSize = IOHelper.GetBufferSize(sourceStream);
+                            cs = new CryptoStream(sourceStream, decryptor, CryptoStreamMode.Read);
+                            var buffer = new byte[bufferSize];
+                            var read = 0;
 
-                        await destinationStream.FlushAsync(cancellationToken);
-                    }
-                    finally
-                    {
-                        if (cs != null)
-                            await cs.DisposeAsync();
+                            while ((read = await cs.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
+                            {
+                                await destinationStream.WriteAsync(buffer, 0, read, cancellationToken);
+                            }
+
+                            await destinationStream.FlushAsync(cancellationToken);
+                        }
+                        finally
+                        {
+                            if (cs != null)
+                                await cs.DisposeAsync();
+                        }
                     }
                 }
             }

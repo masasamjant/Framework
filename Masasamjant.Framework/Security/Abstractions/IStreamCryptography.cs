@@ -75,7 +75,7 @@
         /// If <paramref name="destinationStream"/> is not writable.
         /// </exception>
         /// <exception cref="InvalidOperationException">If stream encryption fails.</exception>
-        Task EncryptAsync(Stream sourceStream, Stream destinationStream, AesCryptoKey key, CancellationToken cancellationToken = default);
+        Task EncryptAsync(Stream sourceStream, Stream destinationStream, TCryptoKey key, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Decrypt data from specified source stream to specified destination stream.
@@ -95,6 +95,6 @@
         /// If <paramref name="destinationStream"/> is not writable.
         /// </exception>
         /// <exception cref="InvalidOperationException">If stream encryption fails.</exception>
-        Task DecryptAsync(Stream sourceStream, Stream destinationStream, AesCryptoKey key, CancellationToken cancellationToken = default);
+        Task DecryptAsync(Stream sourceStream, Stream destinationStream, TCryptoKey key, CancellationToken cancellationToken = default);
     }
 }

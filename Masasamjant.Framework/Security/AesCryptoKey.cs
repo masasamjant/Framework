@@ -40,15 +40,14 @@ namespace Masasamjant.Security
         /// <returns>A tuple of key and initialization vector bytes for AES algorithm.</returns>
         protected override (byte[] Key, byte[] IV) GenerateKey(string password, Salt salt, int iterations, HashAlgorithmName hashAlgorithmName)
         {
-            byte[] data = CryptographyHelper.GetPseudoRandomBytes(password, salt, iterations, hashAlgorithmName, KeyLength + IVLength);
-            var key = GetKeyBytes(data);
-            var iv = GetIVBytes(data);
-            return (key, iv);
+            using (Aes aes = Aes.Create())
+            {
+                byte[] key = CryptographyHelper.GetPseudoRandomBytes(password, salt, iterations, hashAlgorithmName, KeyLength);
+                aes.GenerateIV();
+                byte[] iv = aes.IV;
+                return (key, iv);
+            }
         }
-
-        private static byte[] GetKeyBytes(byte[] data) => data.Take(KeyLength).ToArray();
-
-        private static byte[] GetIVBytes(byte[] data) => data.Skip(KeyLength).Take(IVLength).ToArray();
 
         /// <summary>
         /// Export <see cref="AesCryptoKey"/> to specified file.

@@ -309,9 +309,13 @@ namespace Masasamjant.Security
 
             if (propertyValue is string propertyValueText && setMethods.TryGetValue(encryptStringGetProperty.Name, out var setMethod))
             {
-                var propertyValueTextResult = encryption
-                    ? await Cryptography.EncryptStringAsync(propertyValueText, key, Encoding, cancellationToken)
-                    : await Cryptography.DecryptStringAsync(propertyValueText, key, Encoding, cancellationToken);
+                string propertyValueTextResult;
+                if (propertyValueText.Length == 0)
+                    propertyValueTextResult = string.Empty;
+                else
+                    propertyValueTextResult = encryption
+                        ? await Cryptography.EncryptStringAsync(propertyValueText, key, Encoding, cancellationToken)
+                        : await Cryptography.DecryptStringAsync(propertyValueText, key, Encoding, cancellationToken);
 
                 setMethod.Invoke(instance, [propertyValueTextResult]);
             }

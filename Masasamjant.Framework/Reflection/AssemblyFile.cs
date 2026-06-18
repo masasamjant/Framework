@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Runtime.Loader;
 
@@ -201,6 +202,14 @@ namespace Masasamjant.Reflection
                 { 
                     return new AssemblyLoadResult(new InvalidOperationException($"Failed to lad assembly from {assemblyFile.FullAssemblyPath}.", exception));
                 }
+            }
+
+            /// <summary>
+            /// Clear the cache.
+            /// </summary>
+            public static void Clear()
+            {
+                cache.Clear();
             }
         }
     }

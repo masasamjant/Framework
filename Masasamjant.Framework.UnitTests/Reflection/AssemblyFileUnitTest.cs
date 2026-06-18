@@ -86,6 +86,7 @@ namespace Masasamjant.Reflection
             Assert.IsFalse(invoked);
             Assert.IsTrue(result.IsLoaded);
             Assert.IsNotNull(result.Assembly);
+            AssemblyFile.AssemblyCache.Clear();
         }
 
         [TestMethod]
