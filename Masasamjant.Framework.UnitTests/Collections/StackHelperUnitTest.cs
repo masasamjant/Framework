@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
+using System.ComponentModel.DataAnnotations;
 
 namespace Masasamjant.Collections
 {
@@ -286,6 +287,36 @@ namespace Masasamjant.Collections
             StackHelper.Restack(stack, pushItems);
             Assert.AreEqual(5, stack.Count);
             CollectionAssert.AreEqual(new[] { 1, 2, 3, 4, 5 }, stack.ToArray());
+        }
+
+        [TestMethod]
+        public void Test_Restack_With_Position_Provider()
+        {
+            var stack = new Stack<int>();
+            stack.Push(5);
+            stack.Push(4);
+            stack.Push(3);
+            stack.Push(2);
+            stack.Push(1);
+            
+            CollectionAssert.AreEqual(new[] { 1, 2, 3, 4, 5 }, stack.ToArray());
+
+            var positionProvider = new Func<int, int>(value => {
+                switch (value) 
+                {
+                    case 5: return 1;
+                    case 4: return 2;
+                    case 3: return 3;
+                    case 2: return 4;
+                    case 1: return 5;
+                    default:
+                        return value;
+                }
+            });
+
+            StackHelper.Restack(stack, positionProvider);
+
+            CollectionAssert.AreEqual(new[] { 5, 4, 3, 2, 1 }, stack.ToArray());
         }
     }
 }

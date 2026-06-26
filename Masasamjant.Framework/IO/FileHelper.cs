@@ -429,7 +429,16 @@ namespace Masasamjant.IO
             CopyDirectories(childDirectories, destinationDirectory);
         }
 
-        internal static void ValidateFilePaths(string sourceFile, string destinationFile)
+        /// <summary>
+        /// Validates that the specified file paths are not null, or empty, or consist only of white-space characters and 
+        /// that destination file path is not same as source file path and that source file exist.
+        /// </summary>
+        /// <param name="sourceFile">The source file path.</param>
+        /// <param name="destinationFile">The destination file path.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="sourceFile"/> or <paramref name="destinationFile"/> is <c>null</c>, empty or only whitespace.</exception>
+        /// <exception cref="ArgumentException">If <paramref name="destinationFile"/> is the same as <paramref name="sourceFile"/>.</exception>
+        /// <exception cref="FileNotFoundException">If <paramref name="sourceFile"/> does not exist.</exception>
+        public static void ValidateFilePaths(string sourceFile, string destinationFile)
         {
             if (string.IsNullOrWhiteSpace(sourceFile))
                 throw new ArgumentNullException(nameof(sourceFile), "The source file path is empty or only whitespace.");

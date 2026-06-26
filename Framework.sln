@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masasamjant.Framework.Windo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masasamjant.PasswordGeneratorApp", "Masasamjant.PasswordGeneratorApp\Masasamjant.PasswordGeneratorApp.csproj", "{40113E62-B96A-4A7B-94B9-90C3EB7D48EC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masasamjant.Framework.Web", "Masasamjant.Framework.Web\Masasamjant.Framework.Web.csproj", "{CCDAA4E2-5E6F-44D2-A581-D5D0C4E60601}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{40113E62-B96A-4A7B-94B9-90C3EB7D48EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40113E62-B96A-4A7B-94B9-90C3EB7D48EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40113E62-B96A-4A7B-94B9-90C3EB7D48EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCDAA4E2-5E6F-44D2-A581-D5D0C4E60601}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCDAA4E2-5E6F-44D2-A581-D5D0C4E60601}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCDAA4E2-5E6F-44D2-A581-D5D0C4E60601}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCDAA4E2-5E6F-44D2-A581-D5D0C4E60601}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -91,6 +97,7 @@ Global
 		{7E66A3B9-3AA7-4B30-BE4C-AEEDF22722EE} = {B6357D9B-1DE8-481D-A6BC-67DC406B37B0}
 		{A3E70D8C-69CB-4965-92FE-1602B6D97FFD} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{40113E62-B96A-4A7B-94B9-90C3EB7D48EC} = {556519A6-69C8-4F5B-A18B-3F11B3939A43}
+		{CCDAA4E2-5E6F-44D2-A581-D5D0C4E60601} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {599C52B5-160A-4AF9-9951-040D3F362F9E}
