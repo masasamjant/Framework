@@ -1,4 +1,6 @@
-﻿namespace Masasamjant.Web
+﻿using System.Reflection.Metadata.Ecma335;
+
+namespace Masasamjant.Web
 {
     /// <summary>
     /// Represents <see cref="ISessionStorage"/> associated with HTTP session.
@@ -56,6 +58,15 @@
         {
             ArgumentNullException.ThrowIfNull(key);
             session.SetString(key, value);
+        }
+
+        /// <summary>
+        /// Create a session identifier for the current session.
+        /// </summary>
+        /// <returns>The session identifier.</returns>
+        protected override string CreateSessionIdentifier()
+        {
+            return session.Id;
         }
     }
 }
