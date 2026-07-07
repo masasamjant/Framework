@@ -5,6 +5,9 @@ namespace Masasamjant.Windows.Forms
     /// <summary>
     /// Represents a combo box control that is bound to an enumeration type.
     /// </summary>
+    [DefaultEvent(nameof(SelectedIndexChanged))]
+    [DefaultProperty(nameof(Items))]
+    [DefaultBindingProperty(nameof(Text))]
     public class EnumComboBox : ComboBox
     {
         private Type? enumType;
