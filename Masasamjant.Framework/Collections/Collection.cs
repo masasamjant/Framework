@@ -69,6 +69,17 @@ namespace Masasamjant.Collections
         }
 
         /// <summary>
+        /// Adds the items to the collection.
+        /// </summary>
+        /// <param name="items">The items to add.</param>
+        /// <exception cref="InvalidOperationException">If <see cref="IsReadOnly"/> is <c>true</c>.</exception>
+        public virtual void AddRange(IEnumerable<T> items)
+        {
+            CheckReadOnly();
+            Items.AddRange(items);
+        }
+
+        /// <summary>
         /// Clears the collection.
         /// </summary>
         /// <exception cref="InvalidOperationException">If <see cref="IsReadOnly"/> is <c>true</c>.</exception>
