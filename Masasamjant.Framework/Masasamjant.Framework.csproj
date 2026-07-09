@@ -80,6 +80,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>TimeComponentResource.resx</DependentUpon>
     </Compile>
+    <Compile Update="Resources\Strings\ValidationResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ValidationResource.resx</DependentUpon>
+    </Compile>
     <Compile Update="Security\Passwords\Resources\PasswordInvalidityReasonResource.Designer.cs">
       <DependentUpon>PasswordInvalidityReasonResource.resx</DependentUpon>
       <DesignTime>True</DesignTime>
@@ -119,6 +124,10 @@
     <EmbeddedResource Update="Resources\Strings\TimeComponentResource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>TimeComponentResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Strings\ValidationResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ValidationResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Security\Passwords\Resources\PasswordInvalidityReasonResource.resx">
       <LastGenOutput>PasswordInvalidityReasonResource.Designer.cs</LastGenOutput>

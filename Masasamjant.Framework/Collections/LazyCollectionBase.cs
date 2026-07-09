@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace Masasamjant.Collections.Abstractions
+namespace Masasamjant.Collections
 {
     /// <summary>
     /// Represents abstract base class for collections that are initialized lazily.

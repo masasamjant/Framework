@@ -42,7 +42,7 @@ namespace Masasamjant.Linq
         /// that are not already in collection.
         /// </summary>
         /// <param name="conditions">The conditions to add.</param>
-        public void AddRange(IEnumerable<PredicateBuilderCondition> conditions)
+        public override void AddRange(IEnumerable<PredicateBuilderCondition> conditions)
         {
             ArgumentNullException.ThrowIfNull(conditions);
 

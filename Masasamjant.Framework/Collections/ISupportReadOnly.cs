@@ -1,4 +1,4 @@
-﻿namespace Masasamjant.Collections.Abstractions
+﻿namespace Masasamjant.Collections
 {
     /// <summary>
     /// Represents collection that support read-only state.

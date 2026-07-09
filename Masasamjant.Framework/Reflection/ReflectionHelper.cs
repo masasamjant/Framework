@@ -364,6 +364,35 @@ namespace Masasamjant.Reflection
             return methods.AsEnumerable();
         }
 
+        /// <summary>
+        /// Gets properties that have <see cref="PropertyGroupAttribute"/> with specified group name.
+        /// </summary>
+        /// <param name="type">The type to search for properties.</param>
+        /// <param name="binding">The binding flags to use when searching for properties.</param>
+        /// <param name="groupName">The name of the group to filter properties by.</param>
+        /// <returns>A read-only collection of properties that belong to the specified group.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="type"/> or <paramref name="groupName"/> is <c>null</c>.</exception>
+        public static IReadOnlyCollection<PropertyInfo> GetPropertiesInGroup(this Type type, BindingFlags binding, string groupName)
+        {
+            ArgumentNullException.ThrowIfNull(type);
+            ArgumentNullException.ThrowIfNull(groupName);
+
+            var properties = type.GetProperties(binding).ToList();
+            var result = new List<PropertyInfo>(properties.Count);
+            
+            if (properties.Count == 0)
+                return result.AsReadOnly();
+
+            foreach (var property in properties)
+            {
+                var attribute = property.GetCustomAttribute<PropertyGroupAttribute>(false);
+                if (attribute != null && attribute.Name == groupName)
+                    result.Add(property);
+            }
+
+            return result.AsReadOnly();
+        }
+
         private static PropertyInfo? GetPropertyRecursive(object instance, IEnumerable<string> propertyNames, BindingFlags bindingFlags)
         {
             var declaringType = instance.GetType();

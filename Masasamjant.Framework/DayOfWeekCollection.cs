@@ -1,4 +1,4 @@
-﻿using Masasamjant.Collections.Abstractions;
+﻿using Masasamjant.Collections;
 using System.Collections;
 
 namespace Masasamjant

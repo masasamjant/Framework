@@ -1,6 +1,4 @@
-﻿using Masasamjant.Collections.Abstractions;
-
-namespace Masasamjant.Collections
+﻿namespace Masasamjant.Collections
 {
     /// <summary>
     /// Represents a list that is initialized lazily.

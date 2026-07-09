@@ -1,5 +1,4 @@
-﻿using Masasamjant.Collections.Abstractions;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace Masasamjant.Collections
 {
