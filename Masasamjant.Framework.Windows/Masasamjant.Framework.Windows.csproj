@@ -22,6 +22,42 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Icons\computer.png" />
+    <None Remove="Resources\Icons\drive.png" />
+    <None Remove="Resources\Icons\drive_cd.png" />
+    <None Remove="Resources\Icons\drive_cd_empty.png" />
+    <None Remove="Resources\Icons\drive_network.png" />
+    <None Remove="Resources\Icons\file.png" />
+    <None Remove="Resources\Icons\file_archive.png" />
+    <None Remove="Resources\Icons\file_excel.png" />
+    <None Remove="Resources\Icons\file_image.png" />
+    <None Remove="Resources\Icons\file_music.png" />
+    <None Remove="Resources\Icons\file_powerpoint.png" />
+    <None Remove="Resources\Icons\file_setting.png" />
+    <None Remove="Resources\Icons\file_text.png" />
+    <None Remove="Resources\Icons\file_word.png" />
+    <None Remove="Resources\Icons\folder.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Icons\computer.png" />
+    <EmbeddedResource Include="Resources\Icons\drive.png" />
+    <EmbeddedResource Include="Resources\Icons\drive_cd.png" />
+    <EmbeddedResource Include="Resources\Icons\drive_cd_empty.png" />
+    <EmbeddedResource Include="Resources\Icons\drive_network.png" />
+    <EmbeddedResource Include="Resources\Icons\file.png" />
+    <EmbeddedResource Include="Resources\Icons\file_archive.png" />
+    <EmbeddedResource Include="Resources\Icons\file_excel.png" />
+    <EmbeddedResource Include="Resources\Icons\file_image.png" />
+    <EmbeddedResource Include="Resources\Icons\file_music.png" />
+    <EmbeddedResource Include="Resources\Icons\file_powerpoint.png" />
+    <EmbeddedResource Include="Resources\Icons\file_setting.png" />
+    <EmbeddedResource Include="Resources\Icons\file_text.png" />
+    <EmbeddedResource Include="Resources\Icons\file_word.png" />
+    <EmbeddedResource Include="Resources\Icons\folder.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\LICENSE.txt">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
@@ -34,6 +70,21 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Masasamjant.Framework\Masasamjant.Framework.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\BitmapIconResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>BitmapIconResource.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\BitmapIconResource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>BitmapIconResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   
 </Project>

@@ -1,6 +1,6 @@
-﻿namespace Masasamjant.Windows.Forms
+﻿namespace Masasamjant.FormsDemoApp.Controls
 {
-    partial class EnumSelectorControl
+    partial class FileTreeDemo
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,30 +28,40 @@
         /// </summary>
         private void InitializeComponent()
         {
-            groupControls = new GroupBox();
+            groupBoxProperties = new GroupBox();
+            fileSystemTree = new Masasamjant.Windows.Forms.FileSystemTree();
             SuspendLayout();
             // 
-            // groupControls
+            // groupBoxProperties
             // 
-            groupControls.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            groupControls.Dock = DockStyle.Fill;
-            groupControls.Location = new Point(0, 0);
-            groupControls.Name = "groupControls";
-            groupControls.Size = new Size(150, 150);
-            groupControls.TabIndex = 0;
-            groupControls.TabStop = false;
+            groupBoxProperties.Location = new Point(30, 31);
+            groupBoxProperties.Name = "groupBoxProperties";
+            groupBoxProperties.Size = new Size(761, 100);
+            groupBoxProperties.TabIndex = 0;
+            groupBoxProperties.TabStop = false;
+            groupBoxProperties.Text = "Properties";
             // 
-            // EnumSelectorControl
+            // fileSystemTree
+            // 
+            fileSystemTree.Location = new Point(30, 148);
+            fileSystemTree.Name = "fileSystemTree";
+            fileSystemTree.Size = new Size(315, 377);
+            fileSystemTree.TabIndex = 1;
+            // 
+            // FileTreeDemo
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            Controls.Add(groupControls);
-            Name = "EnumSelectorControl";
+            Controls.Add(fileSystemTree);
+            Controls.Add(groupBoxProperties);
+            Name = "FileTreeDemo";
+            Size = new Size(838, 673);
             ResumeLayout(false);
         }
 
         #endregion
 
-        private GroupBox groupControls;
+        private GroupBox groupBoxProperties;
+        private Windows.Forms.FileSystemTree fileSystemTree;
     }
 }
