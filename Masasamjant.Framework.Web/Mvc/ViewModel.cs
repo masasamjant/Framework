@@ -1,13 +1,42 @@
-﻿using System.ComponentModel;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Masasamjant.Web.Mvc
 {
     /// <summary>
-    /// Represents abstract view model.
+    /// Represents abstract view model that implements <see cref="ISupportCssClass"/>, <see cref="ISupportDisabledCssClass"/>, <see cref="ISupportDisplayOrder"/>, <see cref="ISupportHtmlAttributes"/> and <see cref="ISupportEnabledState"/>.
     /// </summary>
-    public abstract class ViewModel
+    public abstract class ViewModel : ISupportCssClass, ISupportDisabledCssClass, ISupportDisplayOrder, ISupportHtmlAttributes, ISupportEnabledState
     {
+        /// <summary>
+        /// Gets or sets name(s) of CSS classes applied to root element. 
+        /// </summary>
+        /// <remarks>Default value is empty string.</remarks>
+        public string CssClass { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets name(s) of CSS classes applied to root element when it is disabled.
+        /// </summary>
+        /// <remarks>Default value is empty string.</remarks>
+        public string DisabledCssClass { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the display order of the view model.
+        /// </summary>
+        /// <remarks>Default value is 0.</remarks>
+        public int DisplayOrder { get; set; } = 0;
+
+        /// <summary>
+        /// Gets the HTML attributes dictionary.
+        /// </summary>
+        public IDictionary<string, object?> HtmlAttributes { get; } = new Dictionary<string, object?>();
+
+        /// <summary>
+        /// Gets or sets whether or not the view model is in enabled state. 
+        /// If <c>false</c>, then HTML elements bound to this view model should be disabled, hidden or inactive, depending on the design.
+        /// </summary>
+        /// <remarks>Default value is <c>true</c>.</remarks>
+        public bool IsEnabled { get; set; } = true;
+
         /// <summary>
         /// Gets types in specified assembly that inherits from <see cref="ViewModel"/> class.
         /// </summary>

@@ -256,6 +256,59 @@ namespace Masasamjant.Web
             }
         }
 
+        /// <summary>
+        /// Save string representation of instance of <typeparamref name="T"/> to session using specified key.
+        /// </summary>
+        /// <typeparam name="T">The type of the instance to save.</typeparam>
+        /// <param name="session">The session storage instance.</param>
+        /// <param name="instance">The instance to save.</param>
+        /// <param name="key">The key of the value to set.</param>
+        /// <exception cref="ArgumentNullException">If any of the parameters is <c>null</c>.</exception>
+        public static void SaveToSession<T>(this ISessionStorage session, T instance, string key) where T : ISessionSerializable
+        {
+            ArgumentNullException.ThrowIfNull(session);
+            ArgumentNullException.ThrowIfNull(instance);
+            ArgumentNullException.ThrowIfNull(key);
+
+            var value = instance.ToSessionString();
+            session.SetString(key, value);
+        }
+
+        /// <summary>
+        /// Load instance of <typeparamref name="T"/> from session using specified key.
+        /// </summary>
+        /// <typeparam name="T">The type of the instance to load.</typeparam>
+        /// <param name="session">The session storage instance.</param>
+        /// <param name="key">The key of the value to get.</param>
+        /// <returns>The instance of <typeparamref name="T"/> loaded from the session, or <c>null</c> if the key does not exist.</returns>
+        /// <exception cref="ArgumentNullException">If any of the parameters is <c>null</c>.</exception>
+        public static T? LoadFromSession<T>(this ISessionStorage session, string key) where T : ISessionSerializable, new()
+            => LoadFromSession(session, () => new T(), key);
+
+        /// <summary>
+        /// Load instance of <typeparamref name="T"/> from session using specified key.
+        /// </summary>
+        /// <typeparam name="T">The type of the instance to load.</typeparam>
+        /// <param name="session">The session storage instance.</param>
+        /// <param name="createNew">A function to create a new instance if the key does not exist in the session.</param>
+        /// <param name="key">The key of the value to get.</param>
+        /// <returns>The instance of <typeparamref name="T"/> loaded from the session, or <c>null</c> if the key does not exist.</returns>
+        /// <exception cref="ArgumentNullException">If any of the parameters is <c>null</c>.</exception>
+        public static T? LoadFromSession<T>(this ISessionStorage session, Func<T> createNew, string key) where T : ISessionSerializable
+        {
+            ArgumentNullException.ThrowIfNull(session);
+            ArgumentNullException.ThrowIfNull(createNew);
+            ArgumentNullException.ThrowIfNull(key);
+
+            var value = session.GetString(key);
+            if (value == null)
+                return default;
+            var model = createNew();
+            model.ReadSessionString(value);
+            return model;
+        }
+
+
         private static void ValidateSessionAndKey(ISessionStorage session, string key)
         {
             ArgumentNullException.ThrowIfNull(session);
