@@ -3,10 +3,21 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Masasamjant.Web.Mvc.Navigation
 {
-    public class NavigationContentBuilder : INavigationContentBuilder
+    /// <summary>
+    /// Represents a builder for generating navigation content.
+    /// </summary>
+    public sealed class NavigationContentBuilder : INavigationContentBuilder
     {
+        /// <summary>
+        /// Build navigation content using specified <see cref="NavigationContext"/> class.
+        /// </summary>
+        /// <param name="context">The navigation context.</param>
+        /// <returns>The generated HTML content.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="context"/> is <c>null</c>.</exception>
         public IHtmlContent BuildNavigation(NavigationContext context)
         {
+            ArgumentNullException.ThrowIfNull(context);
+
             var rootBuilder = new TagBuilder(context.Elements.NavigationContainerElement);
             var navigationContainerElementCssClass = context.Elements.NavigationContainerElementCssClass;
 
