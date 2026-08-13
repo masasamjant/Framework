@@ -7,7 +7,19 @@
     <Nullable>enable</Nullable>
     <AssemblyName>Masasamjant.Framework.Web</AssemblyName>
     <RootNamespace>Masasamjant.Web</RootNamespace>
-    <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>    
+    <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Web Application Development Framework</Title>
+    <Company></Company>
+    <Description>General purpose framework for developing web applications</Description>
+    <Copyright>2025 - Matti Jantti</Copyright>
+    <IncludeSymbols>True</IncludeSymbols>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/masasamjant/Framework</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/masasamjant/Framework</RepositoryUrl>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <Version>1.0.0</Version>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>    
   </PropertyGroup>
 
   <ItemGroup>
