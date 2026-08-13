@@ -23,11 +23,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Masasamjant.Http" Version="2.1.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Masasamjant.Framework\Masasamjant.Framework.csproj" />
+    <PackageReference Include="Masasamjant.Framework" Version="3.0.0" />
+    <PackageReference Include="Masasamjant.Http" Version="2.1.4" />
   </ItemGroup>
 
 </Project>
