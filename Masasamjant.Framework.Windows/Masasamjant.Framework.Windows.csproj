@@ -8,6 +8,8 @@
     <AssemblyName>Masasamjant.Framework.Windows</AssemblyName>
     <RootNamespace>Masasamjant.Windows</RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsPackable>true</IsPackable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Title>Masasamjant Framework Windows</Title>
     <Company></Company>
     <Description>Framework for building Windows desktop applications.</Description>
