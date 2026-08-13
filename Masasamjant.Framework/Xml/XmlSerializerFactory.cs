@@ -28,6 +28,8 @@
         /// <returns>A <see cref="IXmlSerializer"/>.</returns>
         public IXmlSerializer CreateSerializer(Type type)
         {
+            ArgumentNullException.ThrowIfNull(type);
+
             if (serialization == XmlSerialization.Contract)
                 return new XmlDataContractSerializer(type);
             else

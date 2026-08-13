@@ -16,6 +16,9 @@
         /// <exception cref="ArgumentException">If <paramref name="destination"/> is in read-only state.</exception>
         public static void Merge<T>(this IList<T> destination, IList<T> source)
         {
+            ArgumentNullException.ThrowIfNull(destination);
+            ArgumentNullException.ThrowIfNull(source);
+
             if (source.Count == 0 || ReferenceEquals(destination, source))
                 return;
 
@@ -33,6 +36,8 @@
         /// <exception cref="ArgumentException">If <paramref name="destination"/> is in read-only state.</exception>
         public static void Merge<T>(this IList<T> destination, IEnumerable<IList<T>> sources)
         {
+            ArgumentNullException.ThrowIfNull(destination);
+            ArgumentNullException.ThrowIfNull(sources);
             CollectionHelper.CheckNotReadOnly(destination, nameof(destination));
     
             RemoveOrphants(destination, sources);
@@ -49,6 +54,8 @@
         /// <exception cref="ArgumentException">If <paramref name="destination"/> is in read-only state.</exception>
         public static void RemoveOrphants<T>(this IList<T> destination, IList<T> compare)
         {
+            ArgumentNullException.ThrowIfNull(destination);
+            ArgumentNullException.ThrowIfNull(compare);
             CollectionHelper.CheckNotReadOnly(destination, nameof(destination));
 
             if (ReferenceEquals(destination, compare))
@@ -70,6 +77,8 @@
         /// <exception cref="ArgumentException">If <paramref name="destination"/> is in read-only state.</exception>
         public static void RemoveOrphants<T>(this IList<T> destination, IEnumerable<IList<T>> lists)
         {
+            ArgumentNullException.ThrowIfNull(destination);
+            ArgumentNullException.ThrowIfNull(lists);
             CollectionHelper.CheckNotReadOnly(destination, nameof(destination));
 
             // First remove those items not in any source.
@@ -105,6 +114,8 @@
         /// <returns>A <paramref name="list"/> splitted to to separate lists or empty.</returns>
         public static IEnumerable<IList<T>> SplitByIndex<T>(this IList<T> list, int splitIndex)
         {
+            ArgumentNullException.ThrowIfNull(list);
+
             if (list.Count == 0)
                 return [];
 
@@ -139,6 +150,8 @@
         /// <returns>A <see cref="Iteration{T}"/>.</returns>
         public static IEnumerable<Iteration<T>> IterateForward<T>(this IList<T> list)
         {
+            ArgumentNullException.ThrowIfNull(list);
+
             for (int index = 0; index < list.Count; index++)
                 yield return new Iteration<T>(list[index], index);
         }
@@ -151,6 +164,8 @@
         /// <returns>A <see cref="Iteration{T}"/>.</returns>
         public static IEnumerable<Iteration<T>> IterateBackward<T>(this IList<T> list)
         {
+            ArgumentNullException.ThrowIfNull(list);
+
             for (int index = list.Count - 1; index >= 0; index--)
                 yield return new Iteration<T>(list[index], index);
         }
@@ -173,6 +188,8 @@
         /// <exception cref="ArgumentException">If <paramref name="list"/> is in read-only state.</exception>
         public static void Keep<T>(this IList<T> list, Func<T, bool> keepPredicate)
         {
+            ArgumentNullException.ThrowIfNull(list);
+            ArgumentNullException.ThrowIfNull(keepPredicate);
             CollectionHelper.CheckNotReadOnly(list, nameof(list));
 
             for (int index = list.Count - 1; index >= 0; index--)
@@ -200,6 +217,8 @@
         /// <exception cref="ArgumentException">If <paramref name="list"/> is in read-only state.</exception>
         public static void Remove<T>(this IList<T> list, Func<T, bool> removePredicate)
         {
+            ArgumentNullException.ThrowIfNull(list);
+            ArgumentNullException.ThrowIfNull(removePredicate);
             CollectionHelper.CheckNotReadOnly(list, nameof(list));
 
             for (int index = list.Count - 1; index >= 0; index--)
@@ -224,6 +243,7 @@
         /// <exception cref="DuplicateItemException">If list contains <paramref name="item"/> and <paramref name="duplicateBehavior"/> is <see cref="DuplicateBehavior.Error"/>.</exception>
         public static void AddDuplicate<T>(this IList<T> list, T item, DuplicateBehavior duplicateBehavior = DuplicateBehavior.Ignore)
         {
+            ArgumentNullException.ThrowIfNull(list);
             CollectionHelper.CheckNotReadOnly(list, nameof(list));
 
             if (!Enum.IsDefined(duplicateBehavior))

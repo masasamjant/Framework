@@ -1,4 +1,6 @@
-﻿namespace Masasamjant
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Masasamjant
 {
     /// <summary>
     /// Represents context of disposables that should be disposed when context is disposed.
@@ -17,6 +19,7 @@
             this.disposed = false;
         }
 
+        [ExcludeFromCodeCoverage]
         ~DisposableContext()
         {
             Dispose(false);
@@ -31,6 +34,8 @@
         /// <exception cref="ObjectDisposedException">If instance is disposed.</exception>
         public TDisposable Add<TDisposable>(TDisposable disposable) where TDisposable : IDisposable
         {
+            ArgumentNullException.ThrowIfNull(disposable);
+
             if (disposed)
                 throw new ObjectDisposedException(GetType().FullName);
 

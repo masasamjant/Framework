@@ -1,4 +1,6 @@
-﻿namespace Masasamjant.Reflection
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Masasamjant.Reflection
 {
     /// <summary>
     /// Represents result of type loading.
@@ -12,7 +14,7 @@
         /// <param name="type">The loaded type.</param>
         public TypeLoadResult(Type type)
         {
-            Type = type;
+            Type = type ?? throw new ArgumentNullException(nameof(type));
             Exception = null;
         }
 
@@ -48,6 +50,7 @@
         /// Gets whether or not type was loaded. 
         /// Meaning <see cref="Type"/> is not <c>null</c>.
         /// </summary>
+        [MemberNotNullWhen(true, nameof(Type))]
         public bool IsLoaded
         {
             get { return Type != null; }
@@ -57,6 +60,7 @@
         /// Gets whether or not loading faulted. 
         /// Meanning <see cref="Exception"/> is not <c>null</c>.
         /// </summary>
+        [MemberNotNullWhen(true, nameof(Exception))]
         public bool IsFaulted
         {
             get { return Exception != null; }

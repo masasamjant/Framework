@@ -56,6 +56,47 @@ namespace Masasamjant
         }
 
         [TestMethod]
+        public void Test_GetCommonSeparator()
+        {
+            var values = new List<string>()
+            {
+                "ABC",
+                ",56",
+                "HR"
+            };
+            var separator = CharHelper.GetCommonSeparator(values);
+            Assert.IsTrue(separator.HasValue);
+            Assert.IsTrue(CharHelper.CommonSeparators.Contains(separator.Value));
+            Assert.IsFalse(values.All(x => x.Contains(separator.Value)));
+
+            values.Add(new string(CharHelper.CommonSeparators));
+            separator = CharHelper.GetCommonSeparator(values);
+            Assert.IsFalse(separator.HasValue);
+        }
+
+        [TestMethod]
+        public void Test_TryGetCommonSeparator()
+        {
+            char? separator;
+            var values = new List<string>()
+            {
+                "ABC",
+                ",56",
+                "HR"
+            };
+            var result = CharHelper.TryGetCommonSeparator(values, out separator);
+            Assert.IsTrue(result);
+            Assert.IsTrue(separator.HasValue);
+            Assert.IsTrue(CharHelper.CommonSeparators.Contains(separator.Value));
+            Assert.IsFalse(values.All(x => x.Contains(separator.Value)));
+
+            values.Add(new string(CharHelper.CommonSeparators));
+            result = CharHelper.TryGetCommonSeparator(values, out separator);
+            Assert.IsFalse(result);
+            Assert.IsFalse(separator.HasValue);
+        }
+
+        [TestMethod]
         public void Test_GetSeparator()
         {
             var values = new List<string>()

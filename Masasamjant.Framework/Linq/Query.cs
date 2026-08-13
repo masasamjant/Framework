@@ -14,7 +14,7 @@ namespace Masasamjant.Linq
         /// <param name="criteria">The criteria expression.</param>
         public Query(Expression<Func<T, bool>> criteria)
         {
-            Criteria = criteria;
+            Criteria = criteria ?? throw new ArgumentNullException(nameof(criteria));
         }
 
         /// <summary>
@@ -24,6 +24,7 @@ namespace Masasamjant.Linq
         /// <param name="predicateBuilder">The <see cref="IPredicateBuilder{T}"/>.</param>
         public Query(IPredicateBuilder<T> predicateBuilder)
         {
+            ArgumentNullException.ThrowIfNull(predicateBuilder);
             Criteria = predicateBuilder.Build();
         }
 

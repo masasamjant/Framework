@@ -12,7 +12,7 @@ namespace Masasamjant.Xml
         /// </summary>
         /// <param name="xml">The XML markup attempt to deserialize.</param>
         /// <param name="message">The exception message.</param>
-        public XmlDeserializationException(string xml, string message)
+        public XmlDeserializationException(string? xml, string message)
             : this(xml, message, null)
         { }
 
@@ -22,7 +22,7 @@ namespace Masasamjant.Xml
         /// <param name="xml">The XML markup attempt to deserialize.</param>
         /// <param name="message">The exception message.</param>
         /// <param name="innerException">The inner exception or <c>null</c>.</param>
-        public XmlDeserializationException(string xml, string message, Exception? innerException)
+        public XmlDeserializationException(string? xml, string message, Exception? innerException)
             : base(message, innerException)
         {
             Xml = xml;
@@ -33,7 +33,7 @@ namespace Masasamjant.Xml
         /// </summary>
         /// <param name="document">The XML document attempt to deserialize.</param>
         /// <param name="message">The exception message.</param>
-        public XmlDeserializationException(XmlDocument document, string message)
+        public XmlDeserializationException(XmlDocument? document, string message)
             : this(document, message, null)
         { }
 
@@ -43,7 +43,7 @@ namespace Masasamjant.Xml
         /// <param name="document">The XML document attempt to deserialize.</param>
         /// <param name="message">The exception message.</param>
         /// <param name="innerException">The inner exception or <c>null</c>.</param>
-        public XmlDeserializationException(XmlDocument document, string message, Exception? innerException)
+        public XmlDeserializationException(XmlDocument? document, string message, Exception? innerException)
             : base(message, innerException)
         {
             Document = document;

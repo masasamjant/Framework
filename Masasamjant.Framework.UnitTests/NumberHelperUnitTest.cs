@@ -53,8 +53,11 @@
             Assert.AreEqual(new int?(-25), NumberHelper.ParseInt32("-25"));
             Assert.AreEqual(new int?(25), NumberHelper.ParseInt32("> 25"));
             Assert.AreEqual(new int?(-25), NumberHelper.ParseInt32("> -25"));
+            Assert.AreEqual(new int?(-25), NumberHelper.ParseInt32("> -> -25"));
+            Assert.AreEqual(new int?(-25), NumberHelper.ParseInt32("> ->>25"));
             Assert.AreEqual(new int?(-25), NumberHelper.ParseInt32("> --25"));
             Assert.AreEqual(new int?(-255), NumberHelper.ParseInt32("> -25-5"));
+            Assert.IsNull(NumberHelper.ParseInt32("Foo"));
         }
 
         [TestMethod]
@@ -66,8 +69,11 @@
             Assert.AreEqual(new long?(-25), NumberHelper.ParseInt64("-25"));
             Assert.AreEqual(new long?(25), NumberHelper.ParseInt64("> 25"));
             Assert.AreEqual(new long?(-25), NumberHelper.ParseInt64("> -25"));
+            Assert.AreEqual(new long?(-25), NumberHelper.ParseInt64("> -> -25"));
+            Assert.AreEqual(new long?(-25), NumberHelper.ParseInt64("> ->>25"));
             Assert.AreEqual(new long?(-25), NumberHelper.ParseInt64("> --25"));
             Assert.AreEqual(new long?(-255), NumberHelper.ParseInt64("> -25-5"));
+            Assert.IsNull(NumberHelper.ParseInt64("Foo"));
         }
     }
 }

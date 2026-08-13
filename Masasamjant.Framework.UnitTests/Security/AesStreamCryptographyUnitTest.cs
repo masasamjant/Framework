@@ -41,6 +41,8 @@ namespace Masasamjant.Security
             sourceStream = new MemoryStream(cipherData);
             destinationStream = new MemoryStream();
 
+            cryptoKey = new AesCryptoKey(password, salt);
+
             cryptography = new AesStreamCryptography(iterations: 1000);
             await cryptography.DecryptAsync(sourceStream, destinationStream, cryptoKey);
             clearData2 = destinationStream.ToArray();

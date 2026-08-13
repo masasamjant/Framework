@@ -11,6 +11,8 @@
             Assert.IsFalse(disposable.IsDispose);
             context.Dispose();
             Assert.IsTrue(disposable.IsDispose);
+            context.Dispose();
+            Assert.IsTrue(disposable.IsDispose);
             Assert.ThrowsException<ObjectDisposedException>(() => context.Add(disposable));
         }
 

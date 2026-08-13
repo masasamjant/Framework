@@ -3,9 +3,10 @@
 namespace Masasamjant.Security
 {
     /// <summary>
-    /// Represents service that will export <see cref="AesCryptoKey"/> to stream.
+    /// Represents service that will export <see cref="AesCryptoKey"/> to stream in raw bytes.
     /// </summary>
-    public sealed class AesCryptoKeyExport : CryptoKeyExport<AesCryptoKey>
+    /// <remarks>It is responsibility of caller to secure data exported to stream.</remarks>
+    public class AesCryptoKeyExport : CryptoKeyExport<AesCryptoKey>
     {
         /// <summary>
         /// Exports specified <see cref="AesCryptoKey"/> to specified stream.
@@ -13,19 +14,20 @@ namespace Masasamjant.Security
         /// <param name="key">The crypto key.</param>
         /// <param name="stream">The stream to export key.</param>
         /// <returns>A task representing export.</returns>
-        /// <remarks>It is responsibility of caller to secure data exported to stream.</remarks>
         /// <exception cref="ArgumentException">If <paramref name="stream"/> is not writable.</exception>
         /// <exception cref="InvalidOperationException">If export fails.</exception>
-        public override async Task ExportAsync(AesCryptoKey key, Stream stream)
+        public sealed override async Task ExportAsync(AesCryptoKey key, Stream stream)
         {
+            ArgumentNullException.ThrowIfNull(key);
+            ArgumentNullException.ThrowIfNull(stream);
+
             ValidateCanWrite(stream);
             
             try
             {
-                var value = GetExportValue(key);
-                var writer = new StreamWriter(stream);
-                await writer.WriteAsync(value);
-                await writer.FlushAsync();
+                var buffer = GetExportData(key);
+                await stream.WriteAsync(buffer, 0, buffer.Length);
+                await stream.FlushAsync();
             }
             catch (Exception exception)
             {
@@ -33,11 +35,15 @@ namespace Masasamjant.Security
             }
         }
 
-        private static string GetExportValue(AesCryptoKey key)
+        /// <summary>
+        /// Gets the export data. Default impelementation combines key and IV into single byte array. 
+        /// Derived classes can override this method to change export format for example to encrypt export data before writing to stream.
+        /// </summary>
+        /// <param name="key">The AES crypto key to export.</param>
+        /// <returns>A export data.</returns>
+        protected virtual byte[] GetExportData(AesCryptoKey key)
         {
-            string k = Convert.ToBase64String(key.Key);
-            string v = Convert.ToBase64String(key.IV);
-            return string.Concat(k, v);
+            return key.Key;
         }
     }
 }

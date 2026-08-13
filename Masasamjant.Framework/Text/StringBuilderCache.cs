@@ -72,6 +72,7 @@ namespace Masasamjant.Text
         /// <param name="builder">The <see cref="StringBuilder"/> instance to cache.</param>
         public void SetBuilder(StringBuilder builder)
         {
+            ArgumentNullException.ThrowIfNull(builder);
             currentBuilder = builder;
         }
 

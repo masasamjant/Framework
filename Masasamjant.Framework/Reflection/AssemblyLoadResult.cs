@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 
 namespace Masasamjant.Reflection
 {
@@ -13,7 +14,7 @@ namespace Masasamjant.Reflection
         /// <param name="assembly">The loaded assembly.</param>
         public AssemblyLoadResult(Assembly assembly)
         {
-            Assembly = assembly;
+            Assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
             Exception = null;
         }
 
@@ -46,6 +47,7 @@ namespace Masasamjant.Reflection
         /// <summary>
         /// Gets whether or not assembly load faulted; meaning that <see cref="Exception"/> is not <c>null</c>.
         /// </summary>
+        [MemberNotNullWhen(true, nameof(Exception))]
         public bool IsFaulted
         {
             get { return Exception != null; }
@@ -54,6 +56,7 @@ namespace Masasamjant.Reflection
         /// <summary>
         /// Gets whether or not assembly was loaded; meaning that <see cref="Assembly"/> is not <c>null</c>.
         /// </summary>
+        [MemberNotNullWhen(true, nameof(Assembly))]
         public bool IsLoaded 
         { 
             get { return Assembly != null; }

@@ -12,8 +12,10 @@
         /// <param name="predicateBuilder">The <see cref="IPredicateBuilder{T}"/>.</param>
         /// <returns>A <see cref="Func{T, bool}"/> delegate compiled from expression build by <paramref name="predicateBuilder"/>.</returns>
         public static Func<T, bool> BuildAndCompile<T>(this IPredicateBuilder<T> predicateBuilder)
-            => predicateBuilder.Build().Compile();
-
+        { 
+            ArgumentNullException.ThrowIfNull(predicateBuilder);
+            return predicateBuilder.Build().Compile();
+        }
         /// <summary>
         /// Check if predicate builder condition represents AND condition.
         /// </summary>

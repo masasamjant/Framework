@@ -13,7 +13,7 @@
         /// <summary>
         /// Default buffer size of operations.
         /// </summary>
-        public const int DefaultBufferSize = 1024;
+        public const int DefaultBufferSize = IOHelper.SmallBufferSize;
 
         /// <summary>
         /// Create <see cref="MemoryStream"/> from specified <see cref="Stream"/>. If <paramref name="stream"/> is <see cref="MemoryStream"/>,
@@ -24,6 +24,8 @@
         /// <exception cref="InvalidOperationException">If cannot create memory stream from <paramref name="stream"/>.</exception>
         public static MemoryStream ToMemoryStream(this Stream stream)
         {
+            ArgumentNullException.ThrowIfNull(stream);
+
             if (stream is MemoryStream ms)
                 return ms;
             else
@@ -58,6 +60,8 @@
         /// <exception cref="InvalidOperationException">If cannot create memory stream from <paramref name="stream"/>.</exception>
         public static async Task<MemoryStream> ToMemoryStreamAsync(this Stream stream)
         {
+            ArgumentNullException.ThrowIfNull(stream);
+
             if (stream is MemoryStream ms)
                 return ms;
             else
@@ -90,6 +94,8 @@
         /// <returns>A byte array of data from <paramref name="stream"/>.</returns>
         public static byte[] ToBytes(this Stream stream)
         {
+            ArgumentNullException.ThrowIfNull(stream);
+
             if (stream is MemoryStream ms)
                 return ms.ToArray();
 
@@ -104,6 +110,8 @@
         /// <returns>A byte array of data from <paramref name="stream"/>.</returns>
         public static async Task<byte[]> ToBytesAsync(this Stream stream)
         {
+            ArgumentNullException.ThrowIfNull(stream);
+
             if (stream is MemoryStream ms)
                 return ms.ToArray();
 
@@ -128,7 +136,7 @@
         public static void CopyStream(Stream source, Stream destination, Action<StreamCopyProgress>? progressHandler = null, int bufferSize = DefaultBufferSize)
         {
             ValidateStreamCopy(source, destination);
-            bufferSize = EnsureBufferSize(bufferSize);
+            bufferSize = EnsureBufferSize(bufferSize, source);
 
             var copied = 0L;
             var buffer = new byte[bufferSize];
@@ -161,7 +169,7 @@
         public static async Task CopyStreamAsync(Stream source, Stream destination, Func<StreamCopyProgress, Task>? progressHandler = null, int bufferSize = DefaultBufferSize, CancellationToken cancellationToken = default)
         {
             ValidateStreamCopy(source, destination);
-            bufferSize = EnsureBufferSize(bufferSize);
+            bufferSize = EnsureBufferSize(bufferSize, source);
 
             var copied = 0L;
             var buffer = new byte[bufferSize];
@@ -177,8 +185,31 @@
             }
         }
 
+        /// <summary>
+        /// Tries to get length of specified <see cref="Stream"/>. 
+        /// If cannot get length, return -1.
+        /// </summary>
+        /// <param name="stream">The stream to get length from.</param>
+        /// <returns>A length of the stream, or -1 if cannot get length.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="stream"/> is <c>null</c>.</exception>
+        public static long TryGetLength(this Stream stream)
+        {
+            ArgumentNullException.ThrowIfNull(stream);
+            try
+            {
+                return stream.Length;
+            }
+            catch
+            {
+                return -1L;
+            }
+        }
+
         private static void ValidateStreamCopy(Stream source, Stream destination)
         {
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(destination);
+
             if (ReferenceEquals(source, destination))
                 throw new ArgumentException("The destination stream cannot be same as source.", nameof(destination));
 
@@ -189,7 +220,7 @@
                 throw new ArgumentException("Cannot write to destination stream.", nameof(destination));
         }
 
-        private static int EnsureBufferSize(int bufferSize) => bufferSize <= 0 ? DefaultBufferSize : bufferSize;
+        private static int EnsureBufferSize(int bufferSize, Stream stream) => bufferSize <= 0 ? IOHelper.GetBufferSize(stream) : bufferSize;
 
         private class StreamTempPosition
         {

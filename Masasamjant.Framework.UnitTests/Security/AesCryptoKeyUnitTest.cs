@@ -24,7 +24,7 @@ namespace Masasamjant.Security
 
             var cryptoKey2 = new AesCryptoKey("Testing", salt, iterations: CryptoKey.MinIterations);
             CollectionAssert.AreEqual(cryptoKey.Key, cryptoKey2.Key);
-            CollectionAssert.AreEqual(cryptoKey.IV, cryptoKey2.IV);
+            CollectionAssert.AreNotEqual(cryptoKey.IV, cryptoKey2.IV);
         }
 
         [TestMethod]
@@ -49,7 +49,7 @@ namespace Masasamjant.Security
             Assert.IsTrue(File.Exists(tempFilePath));
             var cryptoKey2 = await AesCryptoKey.ImportAsync(tempFilePath);
             CollectionAssert.AreEqual(cryptoKey.Key, cryptoKey2.Key);
-            CollectionAssert.AreEqual(cryptoKey.IV, cryptoKey2.IV);
+            CollectionAssert.AreNotEqual(cryptoKey.IV, cryptoKey2.IV);
             File.Delete(tempFilePath);
         }
 

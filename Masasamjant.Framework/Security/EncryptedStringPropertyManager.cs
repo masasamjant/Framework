@@ -44,7 +44,7 @@ namespace Masasamjant.Security
         /// <param name="allowNonPublicSetter"><c>true</c> if allowed to use non-public setters; <c>false</c> to ignore properties with non-public setters.</param>
         public EncryptedStringPropertyManager(IDataCryptography cryptography, Encoding? encoding, bool allowNonPublicSetter)
         {
-            Cryptography = cryptography;
+            Cryptography = cryptography ?? throw new ArgumentNullException(nameof(cryptography));
             Encoding = encoding;
             AllowNonPublicSetter = allowNonPublicSetter;
         }
@@ -76,6 +76,10 @@ namespace Masasamjant.Security
         /// <remarks>Properties must be public and have type of string.</remarks>
         public async Task EncryptPropertiesAsync(object instance, string password, Salt salt, CancellationToken cancellationToken = default)
         {
+            ArgumentNullException.ThrowIfNull(instance);
+            ArgumentNullException.ThrowIfNull(password);
+            ArgumentNullException.ThrowIfNull(salt);
+
             var type = instance.GetType();
             var encryptStringProperties = GetEncryptStringProperties(type);
 
@@ -105,6 +109,10 @@ namespace Masasamjant.Security
         /// <remarks>Properties must be public and have type of string.</remarks>
         public async Task DecryptPropertiesAsync(object instance, string password, Salt salt, CancellationToken cancellationToken = default)
         {
+            ArgumentNullException.ThrowIfNull(instance);
+            ArgumentNullException.ThrowIfNull(password);
+            ArgumentNullException.ThrowIfNull(salt);
+
             var type = instance.GetType();
             var encryptStringProperties = GetEncryptStringProperties(type);
 
@@ -243,6 +251,9 @@ namespace Masasamjant.Security
         /// <remarks>Properties must be public and have type of string.</remarks>
         public async Task EncryptPropertiesAsync(object instance, TCryptoKey key, CancellationToken cancellationToken = default)
         {
+            ArgumentNullException.ThrowIfNull(instance);
+            ArgumentNullException.ThrowIfNull(key);
+
             var type = instance.GetType();
             var encryptStringProperties = GetEncryptStringProperties(type);
 
@@ -271,6 +282,9 @@ namespace Masasamjant.Security
         /// <remarks>Properties must be public and have type of string.</remarks>
         public async Task DecryptPropertiesAsync(object instance, TCryptoKey key, CancellationToken cancellationToken = default)
         {
+            ArgumentNullException.ThrowIfNull(instance);
+            ArgumentNullException.ThrowIfNull(key);
+
             var type = instance.GetType();
             var encryptStringProperties = GetEncryptStringProperties(type);
 
@@ -295,9 +309,13 @@ namespace Masasamjant.Security
 
             if (propertyValue is string propertyValueText && setMethods.TryGetValue(encryptStringGetProperty.Name, out var setMethod))
             {
-                var propertyValueTextResult = encryption
-                    ? await Cryptography.EncryptStringAsync(propertyValueText, key, Encoding, cancellationToken)
-                    : await Cryptography.DecryptStringAsync(propertyValueText, key, Encoding, cancellationToken);
+                string propertyValueTextResult;
+                if (propertyValueText.Length == 0)
+                    propertyValueTextResult = string.Empty;
+                else
+                    propertyValueTextResult = encryption
+                        ? await Cryptography.EncryptStringAsync(propertyValueText, key, Encoding, cancellationToken)
+                        : await Cryptography.DecryptStringAsync(propertyValueText, key, Encoding, cancellationToken);
 
                 setMethod.Invoke(instance, [propertyValueTextResult]);
             }

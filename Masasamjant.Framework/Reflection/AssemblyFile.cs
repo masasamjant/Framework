@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System.Collections.Concurrent;
+using System.Net.Http.Headers;
+using System.Reflection;
 using System.Runtime.Loader;
 
 namespace Masasamjant.Reflection
@@ -172,13 +174,11 @@ namespace Masasamjant.Reflection
         /// </summary>
         public static class AssemblyCache
         {
-            private static readonly Lock mutex;
-            private static readonly Dictionary<string, WeakReference<Assembly>> cache;
+            private static readonly ConcurrentDictionary<string, Assembly> cache;
 
             static AssemblyCache()
             {
-                mutex = new Lock();
-                cache = new Dictionary<string, WeakReference<Assembly>>();
+                cache = new ConcurrentDictionary<string, Assembly>();
             }
 
             /// <summary>
@@ -191,29 +191,25 @@ namespace Masasamjant.Reflection
             {
                 try
                 {
-                    lock (mutex)
+                    var assembly = cache.GetOrAdd(assemblyFile.FullAssemblyPath, (s, a) => 
                     {
-                        bool hasReference = cache.TryGetValue(assemblyFile.FullAssemblyPath, out WeakReference<Assembly>? reference);
+                        return getAssembly();
+                    }, assemblyFile);
 
-                        if (hasReference && reference != null && reference.TryGetTarget(out Assembly? assembly))
-                            return new AssemblyLoadResult(assembly);
-
-                        assembly = getAssembly();
-
-                        if (hasReference && reference != null)
-                            reference.SetTarget(assembly);
-                        else
-                            reference = new WeakReference<Assembly>(assembly);
-
-                        cache[assemblyFile.FullAssemblyPath] = reference;
-
-                        return new AssemblyLoadResult(assembly);
-                    }
+                    return new AssemblyLoadResult(assembly);
                 }
                 catch (Exception exception)
                 { 
                     return new AssemblyLoadResult(new InvalidOperationException($"Failed to lad assembly from {assemblyFile.FullAssemblyPath}.", exception));
                 }
+            }
+
+            /// <summary>
+            /// Clear the cache.
+            /// </summary>
+            public static void Clear()
+            {
+                cache.Clear();
             }
         }
     }

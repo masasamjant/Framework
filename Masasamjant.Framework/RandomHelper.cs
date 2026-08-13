@@ -38,6 +38,8 @@ namespace Masasamjant
         /// <exception cref="ArgumentOutOfRangeException">If <paramref name="length"/> is less than 0.</exception>
         public static string GetString(this Random random, int length, char[]? characters = null)
         {
+            ArgumentNullException.ThrowIfNull(random);
+
             if (length < 0)
                 throw new ArgumentOutOfRangeException(nameof(length), length, "The value must be greater than or equal to 0.");
 
@@ -69,6 +71,8 @@ namespace Masasamjant
         /// <exception cref="ArgumentOutOfRangeException">If <paramref name="length"/> is less than 0.</exception>
         public static byte[] GetBytes(this Random random, int length)
         {
+            ArgumentNullException.ThrowIfNull(random);
+
             if (length < 0)
                 throw new ArgumentOutOfRangeException(nameof(length), length, "The value must be greater than or equal to 0.");
 
@@ -90,6 +94,8 @@ namespace Masasamjant
         /// <exception cref="ArgumentException">If <paramref name="values"/> is empty.</exception>
         public static T GetValue<T>(this Random random, IEnumerable<T> values)
         {
+            ArgumentNullException.ThrowIfNull(random);
+
             var array = values.ToArray();
 
             if (array.Length == 0)

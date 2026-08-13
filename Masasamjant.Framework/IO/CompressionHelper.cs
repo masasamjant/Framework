@@ -1,5 +1,4 @@
 ﻿using System.IO.Compression;
-using System.Numerics;
 using System.Text;
 
 namespace Masasamjant.IO
@@ -20,7 +19,7 @@ namespace Masasamjant.IO
         {
             ValidateCompressionLevel(level);
 
-            if (data.Length == 0)
+            if (data == null || data.Length == 0)
                 return [];
 
             if (data.Length == 1)
@@ -70,7 +69,7 @@ namespace Masasamjant.IO
         /// <exception cref="ArgumentException">If value of <paramref name="level"/> is not defined.</exception>
         public static async Task<byte[]> CompressAsync(byte[] data, CompressionLevel level = CompressionLevel.Optimal)
         {
-            if (data.Length == 0)
+            if (data == null || data.Length == 0)
                 return [];
 
             if (data.Length == 1)
@@ -121,7 +120,7 @@ namespace Masasamjant.IO
         /// <exception cref="ArgumentException">If value of <paramref name="level"/> is not defined.</exception>
         public static byte[] Compress(string data, CompressionLevel level = CompressionLevel.Optimal, Encoding? encoding = null)
         {
-            if (data.Length == 0)
+            if (data == null || data.Length == 0)
                 return [];
 
             return Compress(data.GetByteArray(encoding), level);
@@ -137,7 +136,7 @@ namespace Masasamjant.IO
         /// <exception cref="ArgumentException">If value of <paramref name="level"/> is not defined.</exception>
         public static async Task<byte[]> CompressAsync(string data, CompressionLevel level = CompressionLevel.Optimal, Encoding? encoding = null)
         {
-            if (data.Length == 0)
+            if (data == null || data.Length == 0)
                 return [];
 
             return await CompressAsync(data.GetByteArray(encoding), level);
@@ -152,7 +151,7 @@ namespace Masasamjant.IO
         /// <exception cref="ArgumentException">If value of <paramref name="level"/> is not defined.</exception>
         public static byte[] Decompress(byte[] data)
         {
-            if (data.Length == 0)
+            if (data == null || data.Length == 0)
                 return [];
 
             using (var source = new MemoryStream(data))
@@ -195,7 +194,7 @@ namespace Masasamjant.IO
         /// <exception cref="ArgumentException">If value of <paramref name="level"/> is not defined.</exception>
         public static async Task<byte[]> DecompressAsync(byte[] data)
         {
-            if (data.Length == 0)
+            if (data == null || data.Length == 0)
                 return [];
 
             using (var source = new MemoryStream(data))
@@ -238,7 +237,7 @@ namespace Masasamjant.IO
         /// <exception cref="ArgumentException">If value of <paramref name="level"/> is not defined.</exception>
         public static string Decompress(byte[] data, Encoding? encoding = null)
         {
-            if (data.Length == 0)
+            if (data == null || data.Length == 0)
                 return string.Empty;
 
             var buffer = Decompress(data);
@@ -255,7 +254,7 @@ namespace Masasamjant.IO
         /// <exception cref="ArgumentException">If value of <paramref name="level"/> is not defined.</exception>
         public static async Task<string> DecompressAsync(byte[] data, Encoding? encoding = null)
         {
-            if (data.Length == 0)
+            if (data == null || data.Length == 0)
                 return string.Empty;
 
             var buffer = await DecompressAsync(data);
@@ -271,6 +270,9 @@ namespace Masasamjant.IO
 
         private static void ValidateStreams(Stream source, Stream destination)
         {
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(destination);
+
             if (ReferenceEquals(source, destination))
                 throw new ArgumentException("The destination stream is same as source stream.", nameof(destination));
 

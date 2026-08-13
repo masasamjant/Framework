@@ -14,9 +14,13 @@ namespace Masasamjant.Linq
         /// </summary>
         /// <param name="propertyName">The property name.</param>
         /// <param name="sortOrder">The sort order.</param>
+        /// <exception cref="ArgumentNullException">If value of <paramref name="propertyName"/> is <c>null</c>, empty or only white-space.</exception>
         /// <exception cref="ArgumentException">If value of <paramref name="sortOrder"/> is not defined.</exception>
         public SortDescriptor(string propertyName, SortOrder sortOrder)
         {
+            if (string.IsNullOrWhiteSpace(propertyName))
+                throw new ArgumentNullException(nameof(propertyName), "The value cannot be null or whitespace.");
+
             if (!Enum.IsDefined(sortOrder))
                 throw new ArgumentException("The value is not defined.", nameof(sortOrder));
 

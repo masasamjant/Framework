@@ -1,0 +1,92 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>Masasamjant.Framework.Windows</AssemblyName>
+    <RootNamespace>Masasamjant.Windows</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsPackable>true</IsPackable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Title>Masasamjant Framework Windows</Title>
+    <Company></Company>
+    <Description>Framework for building Windows desktop applications.</Description>
+    <Copyright>2026 - Matti Jantti</Copyright>
+    <IncludeSymbols>True</IncludeSymbols>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/masasamjant/Framework</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/masasamjant/Framework</RepositoryUrl>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <Version>1.0.0</Version>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Icons\computer.png" />
+    <None Remove="Resources\Icons\drive.png" />
+    <None Remove="Resources\Icons\drive_cd.png" />
+    <None Remove="Resources\Icons\drive_cd_empty.png" />
+    <None Remove="Resources\Icons\drive_network.png" />
+    <None Remove="Resources\Icons\file.png" />
+    <None Remove="Resources\Icons\file_archive.png" />
+    <None Remove="Resources\Icons\file_excel.png" />
+    <None Remove="Resources\Icons\file_image.png" />
+    <None Remove="Resources\Icons\file_music.png" />
+    <None Remove="Resources\Icons\file_powerpoint.png" />
+    <None Remove="Resources\Icons\file_setting.png" />
+    <None Remove="Resources\Icons\file_text.png" />
+    <None Remove="Resources\Icons\file_word.png" />
+    <None Remove="Resources\Icons\folder.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Icons\computer.png" />
+    <EmbeddedResource Include="Resources\Icons\drive.png" />
+    <EmbeddedResource Include="Resources\Icons\drive_cd.png" />
+    <EmbeddedResource Include="Resources\Icons\drive_cd_empty.png" />
+    <EmbeddedResource Include="Resources\Icons\drive_network.png" />
+    <EmbeddedResource Include="Resources\Icons\file.png" />
+    <EmbeddedResource Include="Resources\Icons\file_archive.png" />
+    <EmbeddedResource Include="Resources\Icons\file_excel.png" />
+    <EmbeddedResource Include="Resources\Icons\file_image.png" />
+    <EmbeddedResource Include="Resources\Icons\file_music.png" />
+    <EmbeddedResource Include="Resources\Icons\file_powerpoint.png" />
+    <EmbeddedResource Include="Resources\Icons\file_setting.png" />
+    <EmbeddedResource Include="Resources\Icons\file_text.png" />
+    <EmbeddedResource Include="Resources\Icons\file_word.png" />
+    <EmbeddedResource Include="Resources\Icons\folder.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Masasamjant.Framework" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\BitmapIconResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>BitmapIconResource.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\BitmapIconResource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>BitmapIconResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  
+</Project>

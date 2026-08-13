@@ -15,6 +15,8 @@ namespace Masasamjant.Security
         /// <exception cref="NotSupportedException">If value of <paramref name="algorithm"/> is name of not supported algorithm.</exception>
         public HexStringHashProvider CreateHexStringHashProvider(string algorithm)
         {
+            ArgumentNullException.ThrowIfNull(algorithm);
+
             return algorithm.ToUpperInvariant() switch
             {
                 HashAlgorithms.SHA1 => new HexSHA1Provider(),

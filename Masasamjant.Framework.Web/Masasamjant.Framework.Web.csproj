@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Masasamjant.Framework.Web</AssemblyName>
+    <RootNamespace>Masasamjant.Web</RootNamespace>
+    <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
+    <IsPackable>true</IsPackable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Web Application Development Framework</Title>
+    <Company></Company>
+    <Description>General purpose framework for developing web applications</Description>
+    <Copyright>2025 - Matti Jantti</Copyright>
+    <IncludeSymbols>True</IncludeSymbols>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/masasamjant/Framework</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/masasamjant/Framework</RepositoryUrl>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <Version>1.0.0</Version>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>    
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Masasamjant.Framework" Version="3.0.0" />
+    <PackageReference Include="Masasamjant.Http" Version="2.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

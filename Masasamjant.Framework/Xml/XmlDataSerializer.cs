@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -7,7 +8,7 @@ namespace Masasamjant.Xml
     /// <summary>
     /// Represents XML serializer that use <see cref="XmlSerializer"/> for serialization.
     /// </summary>
-    public sealed class XmlDataSerializer : BaseXmlSerializer, IXmlSerializer
+    public class XmlDataSerializer : BaseXmlSerializer, IXmlSerializer
     {
         private readonly XmlSerializer serializer;
 
@@ -25,7 +26,7 @@ namespace Masasamjant.Xml
         /// <param name="serializer">The <see cref="DataContractSerializer"/>.</param>
         public XmlDataSerializer(XmlSerializer serializer)
         {
-            this.serializer = serializer;
+            this.serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
         }
 
         /// <summary>
@@ -35,11 +36,13 @@ namespace Masasamjant.Xml
         /// <returns>A deserialized object or <c>null</c>.</returns>
         public override object? Deserialize(XmlDocument document)
         {
+            ArgumentNullException.ThrowIfNull(document);
+
             try
             {
                 object? obj;
 
-                using (var reader = new XmlNodeReader(document))
+                using (var reader = CreateDocumentReader(document))
                     obj = serializer.Deserialize(reader);
 
                 return obj;
@@ -58,6 +61,8 @@ namespace Masasamjant.Xml
         /// <exception cref="XmlSerializationException">If exception occurs when serializing <paramref name="instance"/>.</exception>
         public override string Serialize(object instance)
         {
+            ArgumentNullException.ThrowIfNull(instance);
+
             try
             {
                 var builder = new StringBuilder();
@@ -74,5 +79,14 @@ namespace Masasamjant.Xml
                 throw new XmlSerializationException(instance, "Error during serialization of object instance.", exception);
             }
         }
+
+        /// <summary>
+        /// Creates <see cref="XmlReader"/> instance to read specified XML document.
+        /// </summary>
+        /// <param name="document">The XML document to read.</param>
+        /// <returns>A <see cref="XmlReader"/> instance.</returns>
+        [ExcludeFromCodeCoverage]
+        protected virtual XmlReader CreateDocumentReader(XmlDocument document)
+            => new XmlNodeReader(document);
     }
 }

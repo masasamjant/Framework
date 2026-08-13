@@ -17,6 +17,8 @@ namespace Masasamjant.Reflection
         /// <returns>A <see cref="ThisType"/>.</returns>
         public static ThisType ToThisType(this Type type)
         {
+            ArgumentNullException.ThrowIfNull(type);
+
             if (type is ThisType thisType)
                 return thisType;
 
@@ -30,7 +32,7 @@ namespace Masasamjant.Reflection
         /// <returns><c>true</c> if <paramref name="type"/> is <see cref="ThisType"/>; <c>false</c> otherwise.</returns>
         public static bool IsThisType(this Type type)
         {
-            return type is ThisType;
+            return type is not null && type is ThisType;
         }
 
         /// <summary>
@@ -40,6 +42,8 @@ namespace Masasamjant.Reflection
         /// <returns>A <see cref="NullType"/>.</returns>
         public static NullType ToNullType(this Type type)
         {
+            ArgumentNullException.ThrowIfNull(type);
+
             if (type is NullType nullType)
                 return nullType;
 
@@ -53,7 +57,7 @@ namespace Masasamjant.Reflection
         /// <returns><c>true</c> if <paramref name="type"/> is <see cref="NullType"/>; <c>false</c> otherwise.</returns>
         public static bool IsNullType(this Type type)
         {
-            return type is NullType;
+            return type is not null && type is NullType;
         }
 
         /// <summary>
@@ -64,6 +68,8 @@ namespace Masasamjant.Reflection
         /// <returns>A found extension methods of <paramref name="parameterType"/>.</returns>
         public static IEnumerable<MethodInfo> GetExtensionMethods(Type parameterType, Assembly? assembly = null)
         {
+            ArgumentNullException.ThrowIfNull(parameterType);
+
             if (assembly == null)
                 assembly = parameterType.Assembly;
 
@@ -91,6 +97,8 @@ namespace Masasamjant.Reflection
         /// <remarks>If <c>this</c> type is included to <paramref name="parameterTypes"/>, then it must be the first type in array and specified using <see cref="ThisType"/>.</remarks>
         public static MethodInfo? GetExtensionMethod(Type type, string name, Assembly? assembly = null, Type[]? parameterTypes = null)
         {
+            ArgumentNullException.ThrowIfNull(type);
+
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name), "The name cannot be empty or only whitespace.");
 
@@ -183,6 +191,8 @@ namespace Masasamjant.Reflection
         /// <exception cref="ArgumentNullException">If <paramref name="propertyName"/> is empty or only whitespace.</exception>
         public static PropertyInfo? GetProperty(object instance, string propertyName, PropertySupport propertySupport)
         {
+            ArgumentNullException.ThrowIfNull(instance);
+
             ValidatePropertyName(propertyName);
 
             if (propertySupport.Equals(PropertySupport.None))
@@ -216,6 +226,8 @@ namespace Masasamjant.Reflection
         /// <exception cref="ArgumentNullException">If <paramref name="propertyName"/> is empty or only whitespace.</exception>
         public static PropertyInfo? GetProperty(object instance, string propertyName, PropertySupport propertySupport, out object? owner)
         {
+            ArgumentNullException.ThrowIfNull(instance);
+
             ValidatePropertyName(propertyName);
 
             if (propertySupport.Equals(PropertySupport.None))
@@ -305,6 +317,8 @@ namespace Masasamjant.Reflection
         /// <exception cref="TargetInvocationException">If invocation of method fails.</exception>
         public static object? InvokeMethod(object instance, string methodName, object?[]? parameters)
         {
+            ArgumentNullException.ThrowIfNull(instance);
+
             var method = GetMethod(instance.GetType(), methodName, ref parameters);
             try
             {
@@ -325,6 +339,8 @@ namespace Masasamjant.Reflection
         /// <returns>A found methods.</returns>
         public static IEnumerable<MethodInfo> GetMethods(this Type type, BindingFlags binding, bool inherited)
         { 
+            ArgumentNullException.ThrowIfNull(type);
+
             var methods = new List<MethodInfo>();
 
             // First get methods in current type.
@@ -346,6 +362,35 @@ namespace Masasamjant.Reflection
             }
 
             return methods.AsEnumerable();
+        }
+
+        /// <summary>
+        /// Gets properties that have <see cref="PropertyGroupAttribute"/> with specified group name.
+        /// </summary>
+        /// <param name="type">The type to search for properties.</param>
+        /// <param name="binding">The binding flags to use when searching for properties.</param>
+        /// <param name="groupName">The name of the group to filter properties by.</param>
+        /// <returns>A read-only collection of properties that belong to the specified group.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="type"/> or <paramref name="groupName"/> is <c>null</c>.</exception>
+        public static IReadOnlyCollection<PropertyInfo> GetPropertiesInGroup(this Type type, BindingFlags binding, string groupName)
+        {
+            ArgumentNullException.ThrowIfNull(type);
+            ArgumentNullException.ThrowIfNull(groupName);
+
+            var properties = type.GetProperties(binding).ToList();
+            var result = new List<PropertyInfo>(properties.Count);
+            
+            if (properties.Count == 0)
+                return result.AsReadOnly();
+
+            foreach (var property in properties)
+            {
+                var attribute = property.GetCustomAttribute<PropertyGroupAttribute>(false);
+                if (attribute != null && attribute.Name == groupName)
+                    result.Add(property);
+            }
+
+            return result.AsReadOnly();
         }
 
         private static PropertyInfo? GetPropertyRecursive(object instance, IEnumerable<string> propertyNames, BindingFlags bindingFlags)

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using NSubstitute;
+using System.Text;
 
 namespace Masasamjant.IO
 {
@@ -65,7 +66,7 @@ namespace Masasamjant.IO
         public void Test_ToBytes()
         {
             var tempFilePath = FileHelper.CreateTempTextFile("Testing");
-            
+
             using (var context = new DisposableContext())
             {
                 Stream stream1 = context.Add(new MemoryStream(Encoding.UTF8.GetBytes("Testing")));
@@ -102,7 +103,7 @@ namespace Masasamjant.IO
             var source = new MemoryStream(data);
             var destination = new MemoryStream();
             bool first = true;
-            Action<StreamCopyProgress> progressHandler = x => 
+            Action<StreamCopyProgress> progressHandler = x =>
             {
                 Assert.IsTrue(ReferenceEquals(source, x.Source));
                 Assert.IsTrue(ReferenceEquals(destination, x.Destination));
@@ -162,6 +163,28 @@ namespace Masasamjant.IO
                 destination = context.Add(new ReadOnlyStream(new MemoryStream()));
                 Assert.ThrowsException<ArgumentException>(() => StreamHelper.CopyStream(source, destination));
             }
+        }
+
+        [TestMethod]
+        public void Test_TryGetLength_WhenNoException_ThenReturnLength()
+        {
+            var stream = Substitute.For<Stream>();
+            stream.Length.Returns(123L);
+            Assert.AreEqual(123L, StreamHelper.TryGetLength(stream));
+        }
+
+        [TestMethod]
+        public void Test_TryGetLength_WhenException_ThenMinus1()
+        {
+            var stream = Substitute.For<Stream>();
+            stream.Length.Returns(x => throw new NotSupportedException());
+            Assert.AreEqual(-1L, StreamHelper.TryGetLength(stream));
+        }
+
+        [TestMethod]
+        public void Test_TryGetLength_WhenNull_ThenThrows()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => StreamHelper.TryGetLength(null!));
         }
     }
 }

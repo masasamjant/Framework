@@ -17,6 +17,8 @@ namespace Masasamjant.Configuration
         /// <exception cref="ConfigurationException">If configuration contains errors or section does not exist.</exception>
         public static string? GetValue(this IConfiguration configuration, string key, string sectionKey)
         {
+            ArgumentNullException.ThrowIfNull(configuration);
+
             try
             {
                 var configurationSection = configuration.GetRequiredSection(sectionKey);
@@ -38,6 +40,8 @@ namespace Masasamjant.Configuration
         /// <exception cref="ConfigurationException">If configuration contains errors, section key is invalid or section does not exist.</exception>
         public static string? GetValue(this IConfiguration configuration, string key, IEnumerable<string>? sectionKeys = null)
         {
+            ArgumentNullException.ThrowIfNull(configuration);
+
             try
             {
                 if (sectionKeys != null && sectionKeys.Any())

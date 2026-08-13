@@ -16,7 +16,7 @@
     <PackageProjectUrl>https://github.com/masasamjant/Framework</PackageProjectUrl>
     <RepositoryUrl>https://github.com/masasamjant/Framework</RepositoryUrl>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <Version>3.0.0</Version>
+    <Version>3.0.1</Version>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Masasamjant.Framework" Version="2.2.0" />
+    <PackageReference Include="Masasamjant.Framework" Version="3.0.0" />
   </ItemGroup>
 
 </Project>

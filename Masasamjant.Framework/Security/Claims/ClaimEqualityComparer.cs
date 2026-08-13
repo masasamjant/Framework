@@ -6,7 +6,7 @@ namespace Masasamjant.Security.Claims
     /// <summary>
     /// Equality comparer of <see cref="Claim"/> class.
     /// </summary>
-    public class ClaimEqualityComparer : EqualityComparer<Claim>
+    public sealed class ClaimEqualityComparer : EqualityComparer<Claim>
     {
         /// <summary>
         /// Check if claims are equal. The default impelementation check if type, value type, value, issue and original issuer
@@ -23,7 +23,7 @@ namespace Masasamjant.Security.Claims
             if (ReferenceEquals(x, y))
                 return true;
 
-            if (x is null || y is null) 
+            if (x is null || y is null)
                 return false;
 
             return x.Type == y.Type &&

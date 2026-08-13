@@ -26,5 +26,13 @@
             Assert.ThrowsException<ArgumentException>(() => DoubleHelper.ReplaceInfinity(1.0, double.PositiveInfinity));
             Assert.ThrowsException<ArgumentException>(() => DoubleHelper.ReplaceInfinity(1.0, double.NegativeInfinity));
         }
+
+        [TestMethod]
+        public void Test_AreEqual()
+        {
+            Assert.IsTrue(DoubleHelper.AreEqual(1.234567, 1.234567, 6));
+            Assert.IsTrue(DoubleHelper.AreEqual(1.234567, 1.234568, 5));
+            Assert.IsFalse(DoubleHelper.AreEqual(1.234567, 1.234568, 6));
+        }
     }
 }

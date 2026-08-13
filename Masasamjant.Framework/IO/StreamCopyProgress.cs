@@ -15,6 +15,9 @@
         /// <exception cref="ArgumentOutOfRangeException">If value of <paramref name="copiedBytes"/> is less than 0.</exception>
         public StreamCopyProgress(Stream source, Stream destination, long copiedBytes)
         {
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(destination);
+
             if (ReferenceEquals(source, destination))
                 throw new ArgumentException("The destination stream cannot be same as source stream.", nameof(destination));
 

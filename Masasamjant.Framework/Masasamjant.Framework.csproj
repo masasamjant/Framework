@@ -15,7 +15,7 @@
     <PackageProjectUrl>https://github.com/masasamjant/Framework</PackageProjectUrl>
     <RepositoryUrl>https://github.com/masasamjant/Framework</RepositoryUrl>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <Version>2.2.0</Version>
+    <Version>3.0.0</Version>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
@@ -31,9 +31,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.8" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.8" />
   </ItemGroup>
-
+  
+  <ItemGroup>
+    <InternalsVisibleTo Include="Masasamjant.Framework.UnitTests" />
+  </ItemGroup>
+  
   <ItemGroup>
     <Compile Update="Resources\Files\MimesResource.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -75,6 +80,16 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>TimeComponentResource.resx</DependentUpon>
     </Compile>
+    <Compile Update="Resources\Strings\ValidationResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ValidationResource.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Security\Passwords\Resources\PasswordInvalidityReasonResource.Designer.cs">
+      <DependentUpon>PasswordInvalidityReasonResource.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -109,6 +124,14 @@
     <EmbeddedResource Update="Resources\Strings\TimeComponentResource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>TimeComponentResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Strings\ValidationResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ValidationResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Security\Passwords\Resources\PasswordInvalidityReasonResource.resx">
+      <LastGenOutput>PasswordInvalidityReasonResource.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
   </ItemGroup>
 

@@ -27,6 +27,8 @@ namespace Masasamjant.Security.Abstractions
         /// <remarks>If value of <paramref name="iterations"/> is less than 1000, then minimum iterations value of 1000 is used.</remarks>
         protected CryptoKey(string password, Salt salt, int iterations, HashAlgorithmName hashAlgorithmName)
         {
+            ArgumentNullException.ThrowIfNull(salt);
+
             if (string.IsNullOrWhiteSpace(password))
                 throw new ArgumentNullException(nameof(password), "The password is empty or only whitespace.");
 
@@ -38,12 +40,12 @@ namespace Masasamjant.Security.Abstractions
         /// <summary>
         /// Initializes new instance of the <see cref="CryptoKey"/> class.
         /// </summary>
-        /// <param name="key">The key bytes.</param>
-        /// <param name="iv">The initialization vector bytes.</param>
-        protected CryptoKey(byte[] key, byte[] iv)
+        /// <param name="data">The data to generate key and initialization vector.</param>
+        protected CryptoKey(byte[] data)
         {
-            this.key = (byte[])key.Clone();
-            this.iv = (byte[])iv.Clone();
+            var (key, iv) = GenerateKey(data);
+            this.key = key;
+            this.iv = iv;
         }
 
         /// <summary>
@@ -101,5 +103,12 @@ namespace Masasamjant.Security.Abstractions
         /// <param name="hashAlgorithmName">The hash algorithm name.</param>
         /// <returns>A tuple of key and initialization vector bytes.</returns>
         protected abstract (byte[] Key, byte[] IV) GenerateKey(string password, Salt salt, int iterations, HashAlgorithmName hashAlgorithmName);
+
+        /// <summary>
+        /// Derived classes must override to create key and initialization vector bytes.
+        /// </summary>
+        /// <param name="data">The data to generate key and initialization vector.</param>
+        /// <returns>A tuple of key and initialization vector bytes.</returns>
+        protected abstract (byte[] Key, byte[] IV) GenerateKey(byte[] data);
     }
 }

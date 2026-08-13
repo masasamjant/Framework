@@ -9,6 +9,7 @@
         /// Initializes new instance of the <see cref="AsciiCharacterMap"/> class with specified characters.
         /// </summary>
         /// <param name="characters">The mapped ASCII characters.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="characters"/> is null.</exception>
         /// <exception cref="ArgumentException">If <paramref name="characters"/> contains invalid character mappings.</exception>
         public AsciiCharacterMap(IDictionary<char, char> characters)
             : base(characters)

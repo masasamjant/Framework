@@ -117,5 +117,185 @@
             var actual = queue.ToArray();
             CollectionAssert.AreEqual(expected, actual);
         }
+
+        [TestMethod]
+        public void Test_Transfer()
+        {
+            var source = new Queue<int>([1, 2, 3]);
+            var destination = QueueHelper.Transfer(source);
+            Assert.IsTrue(source.Count == 0);
+            CollectionAssert.AreEqual(new[] { 1, 2, 3 }, destination.ToArray());
+        }
+
+        [TestMethod]
+        public void Test_TransferTo_Queue()
+        {
+            var source = new Queue<int>([1, 2, 3]);
+            var destination = new Queue<int>();
+            QueueHelper.TransferTo(source, destination);
+            Assert.IsTrue(source.Count == 0);
+            CollectionAssert.AreEqual(new[] { 1, 2, 3 }, destination.ToArray());
+        }
+
+        [TestMethod]
+        public void Test_TransferTo_Collection()
+        {
+            var source = new Queue<int>([1, 2, 3]);
+            var destination = new List<int>();
+            QueueHelper.TransferTo(source, destination);
+            Assert.IsTrue(source.Count == 0);
+            CollectionAssert.AreEqual(new[] { 1, 2, 3 }, destination.ToArray());
+        }
+
+        [TestMethod]
+        public void Test_TransferTo_Stack()
+        {
+            var source = new Queue<int>([1, 2, 3]);
+            var destination = new Stack<int>();
+            QueueHelper.TransferTo(source, destination);
+            Assert.IsTrue(source.Count == 0);
+            CollectionAssert.AreEqual(new[] { 3, 2, 1 }, destination.ToArray());
+        }
+
+        [TestMethod]
+        public void Test_TransferTo_Selected_To_Queue()
+        {
+            var source = new Queue<int>([1, 2, 3, 4, 5]);
+            var destination = new Queue<int>();
+            Func<int, bool> predicate = item => item % 2 == 0;
+            QueueHelper.TransferTo(source, destination, predicate);
+            CollectionAssert.AreEqual(new[] { 1, 3, 5 }, source.ToArray());
+            CollectionAssert.AreEqual(new[] { 2, 4 }, destination.ToArray());
+        }
+
+        [TestMethod]
+        public void Test_TransferTo_Selected_To_Collection()
+        {
+            var source = new Queue<int>([1, 2, 3, 4, 5]);
+            var destination = new List<int>();
+            Func<int, bool> predicate = item => item % 2 == 0;
+            QueueHelper.TransferTo(source, destination, predicate);
+            CollectionAssert.AreEqual(new[] { 1, 3, 5 }, source.ToArray());
+            CollectionAssert.AreEqual(new[] { 2, 4 }, destination.ToArray());
+        }
+
+        [TestMethod]
+        public void Test_TransferTo_Selected_To_Stack()
+        {
+            var source = new Queue<int>([1, 2, 3, 4, 5]);
+            var destination = new Stack<int>();
+            Func<int, bool> predicate = item => item % 2 == 0;
+            QueueHelper.TransferTo(source, destination, predicate);
+            CollectionAssert.AreEqual(new[] { 1, 3, 5 }, source.ToArray());
+            CollectionAssert.AreEqual(new[] { 4, 2 }, destination.ToArray());
+        }
+
+        [TestMethod]
+        public void Test_Requeue_With_InsertBefore_InsertAfter()
+        {
+            var queue = new Queue<int>([2, 3, 4]);
+            var insertBefore = new int[] { 1 };
+            var insertAfter = new int[] { 5 };
+            QueueHelper.Requeue(queue, insertBefore, insertAfter);
+            CollectionAssert.AreEqual(new[] { 1, 2, 3, 4, 5 }, queue.ToArray());
+        }
+
+        [TestMethod]
+        public void Test_Create()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => QueueHelper.Create((IDictionary<int, int>)null!));
+
+            var items = new Dictionary<int, int>()
+            {
+                { 0, 1 },
+            };
+
+            Assert.ThrowsException<ArgumentException>(() => QueueHelper.Create(items));
+            items.Clear();
+            items.Add(1, 1);
+            items.Add(2, 2);
+            items.Add(3, 3);
+            var queue = QueueHelper.Create(items);
+            Assert.AreEqual(3, queue.Count);
+            CollectionAssert.AreEqual(new[] { 1, 2, 3 }, queue.ToArray());
+        }
+
+        [TestMethod]
+        public void Test_Requeue_With_Specified_Items()
+        {
+            var queue = new Queue<int>();
+            var insertItems = new Dictionary<int, int>();
+            QueueHelper.Requeue(queue, insertItems);
+            Assert.IsTrue(queue.Count == 0);
+            insertItems.Add(1, 1);
+            insertItems.Add(3, 2);
+            insertItems.Add(8, 8);
+            QueueHelper.Requeue(queue, insertItems);
+            CollectionAssert.AreEqual(new[] { 1, 2, 8 }, queue.ToArray());
+            queue.Clear();
+            queue.Enqueue(5);
+            queue.Enqueue(6);
+            QueueHelper.Requeue(queue, insertItems);
+            CollectionAssert.AreEqual(new[] { 1, 5, 2, 6, 8 }, queue.ToArray());
+        }
+
+        [TestMethod]
+        public void Test_Requeue_With_Provided_Positions()
+        {
+            var queue = new Queue<int>();
+            Func<int, int> positionProvider = item => 
+            {
+                if (item == 2)
+                    return 3;
+
+                if (item == 3)
+                    return 2;
+
+                return item;
+            };
+
+            queue.Enqueue(1);
+            queue.Enqueue(2);
+            queue.Enqueue(3);
+
+            QueueHelper.Requeue(queue, positionProvider);
+            CollectionAssert.AreEqual(new[] { 1, 3, 2 }, queue.ToArray());
+        }
+
+        [TestMethod]
+        public void Test_GetPosition() 
+        {
+            var queue = new Queue<int>([1, 2, 3]);
+            Assert.AreEqual(1, QueueHelper.GetPosition(queue, 1));
+            Assert.AreEqual(2, QueueHelper.GetPosition(queue, 2));
+            Assert.AreEqual(3, QueueHelper.GetPosition(queue, 3));
+            Assert.AreEqual(0, QueueHelper.GetPosition(queue, 4));
+        }
+
+        [TestMethod]
+        public void Test_GetPositions()
+        {
+            var queue = new Queue<int>([1, 2, 3]);
+            var positions = QueueHelper.GetPositions(queue, null);
+            Assert.IsTrue(positions[1] == 1);
+            Assert.IsTrue(positions[2] == 2);
+            Assert.IsTrue(positions[3] == 3);
+            positions = QueueHelper.GetPositions(queue, [1, 3]);
+            Assert.IsTrue(positions[1] == 1);
+            Assert.IsTrue(positions[3] == 3);
+        }
+
+        [TestMethod]
+        public void Test_EnqueueAfter()
+        {
+            var queue = new Queue<int>([1, 2, 3]);
+            var items = new int[] { 0 };
+            QueueHelper.EnqueueAfter(queue, 0, items); // 0 = insert as first item
+            CollectionAssert.AreEqual(new[] { 0, 1, 2, 3 }, queue.ToArray());
+            QueueHelper.EnqueueAfter(queue, 4, items); // 4 = total count, insert as last item
+            CollectionAssert.AreEqual(new[] { 0, 1, 2, 3, 0 }, queue.ToArray());
+            QueueHelper.EnqueueAfter(queue, 2, items); // 2 = insert after 2nd item, so this becomes 3rd item 
+            CollectionAssert.AreEqual(new[] { 0, 1, 0, 2, 3, 0 }, queue.ToArray());
+        }
     }
 }

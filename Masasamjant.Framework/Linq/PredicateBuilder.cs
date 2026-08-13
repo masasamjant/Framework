@@ -22,6 +22,8 @@ namespace Masasamjant.Linq
         /// <param name="conditions"></param>
         public PredicateBuilder(IEnumerable<PredicateBuilderCondition> conditions)
         {
+            ArgumentNullException.ThrowIfNull(conditions);
+
             Conditions = new PredicateBuilderConditionCollection(conditions);
         }
 

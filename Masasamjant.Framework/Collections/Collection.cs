@@ -1,5 +1,4 @@
-﻿using Masasamjant.Collections.Abstractions;
-using System.Collections;
+﻿using System.Collections;
 
 namespace Masasamjant.Collections
 {
@@ -34,6 +33,8 @@ namespace Masasamjant.Collections
         /// <exception cref="ArgumentException">If <paramref name="items"/> is in read-only state.</exception>
         protected Collection(ICollection<T> items)
         {
+            ArgumentNullException.ThrowIfNull(items);
+
             if (items.IsReadOnly)
                 throw new ArgumentException("The items collection is read-only.", nameof(items));
             
@@ -48,7 +49,7 @@ namespace Masasamjant.Collections
         /// <summary>
         /// Gets the items.
         /// </summary>
-        public int Count => Items.Count;
+        public virtual int Count => Items.Count;
 
         /// <summary>
         /// Gets the <see cref="ICollection{T}"/> to access items.
@@ -67,10 +68,21 @@ namespace Masasamjant.Collections
         }
 
         /// <summary>
+        /// Adds the items to the collection.
+        /// </summary>
+        /// <param name="items">The items to add.</param>
+        /// <exception cref="InvalidOperationException">If <see cref="IsReadOnly"/> is <c>true</c>.</exception>
+        public virtual void AddRange(IEnumerable<T> items)
+        {
+            CheckReadOnly();
+            Items.AddRange(items);
+        }
+
+        /// <summary>
         /// Clears the collection.
         /// </summary>
         /// <exception cref="InvalidOperationException">If <see cref="IsReadOnly"/> is <c>true</c>.</exception>
-        public void Clear()
+        public virtual void Clear()
         {
             CheckReadOnly();
             Items.Clear();
@@ -91,7 +103,7 @@ namespace Masasamjant.Collections
         /// </summary>
         /// <param name="array">The array to copy items.</param>
         /// <param name="arrayIndex">The starting index.</param>
-        public void CopyTo(T[] array, int arrayIndex)
+        public virtual void CopyTo(T[] array, int arrayIndex)
         {
             Items.CopyTo(array, arrayIndex);
         }
@@ -120,7 +132,7 @@ namespace Masasamjant.Collections
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns>A enumerator that iterates through the collection.</returns>
-        public IEnumerator<T> GetEnumerator()
+        public virtual IEnumerator<T> GetEnumerator()
         {
             foreach (var item in Items)
                 yield return item;  

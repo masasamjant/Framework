@@ -1,45 +1,35 @@
-﻿using System.Globalization;
-
-namespace Masasamjant.Diagnostics
+﻿namespace Masasamjant.Diagnostics
 {
     /// <summary>
     /// Represents component to write log messages to specified <see cref="TextWriter"/>.
     /// </summary>
     public class TextLogWriter : ILogWriter
     {
-        private const string AppendTimeMessageFormat = "[{0}] [{1}] [{2}] {3}";
-        private const string DefaultMessageFormat = "[{0}] [{1}] {2}";
-
+        private readonly ILogMessageFormatter formatter;
         private readonly TextWriter writer;
 
         /// <summary>
-        /// Initializes new instance of the <see cref="TextLogWriter"/> class.
+        /// Initializes new instance of the <see cref="TextLogWriter"/> class that use <see cref="DefaultLogMessageFormatter"/> to format messages.
         /// </summary>
         /// <param name="writer">The <see cref="TextWriter"/> to write messages.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="writer"/> is <c>null</c>.</exception>
         public TextLogWriter(TextWriter writer)
+            : this(writer, new DefaultLogMessageFormatter())
+        { }
+
+        /// <summary>
+        /// Initializes new instance of the <see cref="TextLogWriter"/> class with specified <see cref="ILogMessageFormatter"/> to format messages.
+        /// </summary>
+        /// <param name="writer">The <see cref="TextWriter"/> to write messages.</param>
+        /// <param name="formatter">The <see cref="ILogMessageFormatter"/> to format messages.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="writer"/> or <paramref name="formatter"/> is <c>null</c>.</exception>
+        public TextLogWriter(TextWriter writer, ILogMessageFormatter formatter)
         {
+            ArgumentNullException.ThrowIfNull(writer);
+            ArgumentNullException.ThrowIfNull(formatter);
             this.writer = writer;
+            this.formatter = formatter;
         }
-
-        /// <summary>
-        /// Name of error category.
-        /// </summary>
-        public const string ErrorCategory = "ERROR";
-
-        /// <summary>
-        /// Name of information category.
-        /// </summary>
-        public const string InformationCategory = "INFORMATION";
-        
-        /// <summary>
-        /// Name of warning category.
-        /// </summary>
-        public const string WarningCategory = "WARNING";
-
-        /// <summary>
-        /// Gets or sets if time is appended to message.
-        /// </summary>
-        public bool AppendTime { get; set; }
 
         /// <summary>
         /// Write error message to log.
@@ -49,7 +39,9 @@ namespace Masasamjant.Diagnostics
         /// <returns>A task representing writing.</returns>
         public Task WriteErrorAsync(string message, Type type)
         {
-            return WriteFinalMessageAsync(message, type, ErrorCategory);
+            var time = GetLocalDateTime();
+            var formattedMessage = formatter.FormatErrorMessage(message, time, type);
+            return writer.WriteLineAsync(formattedMessage);
         }
 
         /// <summary>
@@ -60,7 +52,9 @@ namespace Masasamjant.Diagnostics
         /// <returns>A task representing writing.</returns>
         public Task WriteInformationAsync(string message, Type type)
         {
-            return WriteFinalMessageAsync(message, type, InformationCategory);
+            var time = GetLocalDateTime();
+            var formattedMessage = formatter.FormatInformationMessage(message, time, type);
+            return writer.WriteLineAsync(formattedMessage);
         }
 
         /// <summary>
@@ -71,7 +65,9 @@ namespace Masasamjant.Diagnostics
         /// <returns>A task representing writing.</returns>
         public Task WriteWarningAsync(string message, Type type)
         {
-            return WriteFinalMessageAsync(message, type, WarningCategory);
+            var time = GetLocalDateTime();
+            var formattedMessage = formatter.FormatWarningMessage(message, time, type); 
+            return writer.WriteLineAsync(formattedMessage);
         }
 
         /// <summary>
@@ -80,19 +76,5 @@ namespace Masasamjant.Diagnostics
         /// <returns>A current local time.</returns>
         protected virtual DateTime GetLocalDateTime()
             => DateTime.Now;
-
-        private string GetFinalMessage(string message, bool appendTime, Type type, string category)
-        {
-            if (appendTime)
-                return string.Format(AppendTimeMessageFormat, category, GetLocalDateTime().ToString(CultureInfo.InvariantCulture), type.FullName ?? type.Name, message);
-            else
-                return string.Format(DefaultMessageFormat, category, type.FullName ?? type.Name, message);
-        }
-
-        private Task WriteFinalMessageAsync(string message, Type type, string category)
-        {
-            var finalMessage = GetFinalMessage(message, AppendTime, type, category);
-            return writer.WriteLineAsync(finalMessage);
-        }
     }
 }

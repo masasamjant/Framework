@@ -18,6 +18,8 @@
         /// </returns>
         public static T? FirstWithValue<T>(this IEnumerable<T?> values, T? defaultValue = null) where T : struct
         {
+            ArgumentNullException.ThrowIfNull(values);
+
             foreach (var value in values)
                 if (value.HasValue)
                     return value;
@@ -38,6 +40,8 @@
         /// </returns>
         public static T? LastWithValue<T>(this IEnumerable<T?> values, T? defaultValue = null) where T : struct
         {
+            ArgumentNullException.ThrowIfNull(values);
+
             T? last = null;
 
             foreach (var value in values)
@@ -55,6 +59,8 @@
         /// <returns>A items from <paramref name="values"/> that has value or empty.</returns>
         public static IEnumerable<T> WithValue<T>(this IEnumerable<T?> values) where T : struct
         {
+            ArgumentNullException.ThrowIfNull(values);
+
             foreach (var value in values)
                 if (value.HasValue) yield return value.Value;
         }
@@ -71,6 +77,8 @@
         /// </returns>
         public static bool NoValue<T>(this IEnumerable<T?> values) where T : struct
         {
+            ArgumentNullException.ThrowIfNull(values);
+
             return values.All(value => !value.HasValue);
         }
 

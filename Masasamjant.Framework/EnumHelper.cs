@@ -41,6 +41,8 @@ namespace Masasamjant
         /// <returns><c>true</c> if <paramref name="enumType"/> is enumeration with <see cref="FlagsAttribute"/>; <c>false</c> otherwise.</returns>
         public static bool IsFlagsEnum(Type enumType)
         {
+            ArgumentNullException.ThrowIfNull(enumType);
+
             return enumType.IsEnum && enumType.GetCustomAttribute<FlagsAttribute>(false) != null;
         }
 
@@ -147,6 +149,8 @@ namespace Masasamjant
         /// <returns><c>true</c> if <paramref name="type"/> represents enumeration or underlying enumeration type; <c>false</c> otherwise.</returns>
         public static bool IsEnumTypeOrUnderlyingEnumType(Type type)
         {
+            ArgumentNullException.ThrowIfNull(type);
+
             return type.IsEnum || underlyingEnumTypes.Contains(type);
         }
 
@@ -243,6 +247,8 @@ namespace Masasamjant
         /// <exception cref="InvalidCastException">If conversion fails.</exception>
         public static object ConvertToEnum(Type enumType, object value)
         {
+            ArgumentNullException.ThrowIfNull(enumType);
+
             if (!enumType.IsEnum)
                 throw new ArgumentException("The type is not enum type.", nameof(enumType));
 
@@ -263,10 +269,10 @@ namespace Masasamjant
             return result;
         }
 
-        private static object ConvertStringToEnum(Type enumType, object value)
+        private static object? ConvertStringToEnum(Type enumType, object value)
         {
             if (!Enum.TryParse(enumType, (string?)value, true, out var result))
-                throw new InvalidCastException($"The conversion from {value} to {enumType} failed.");
+                return null;
             return result;
         }
 

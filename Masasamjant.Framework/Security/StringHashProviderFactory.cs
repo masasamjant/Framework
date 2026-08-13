@@ -22,10 +22,11 @@ namespace Masasamjant.Security
         /// </summary>
         /// <param name="base64StringHashProviderFactory">The <see cref="IBase64StringHashProviderFactory"/>.</param>
         /// <param name="hexStringHashProviderFactory">The <see cref="IHexStringHashProviderFactory"/>.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="base64StringHashProviderFactory"/> or <paramref name="hexStringHashProviderFactory"/> is <c>null</c>.</exception>
         public StringHashProviderFactory(IBase64StringHashProviderFactory base64StringHashProviderFactory, IHexStringHashProviderFactory hexStringHashProviderFactory)
         {
-            this.base64StringHashProviderFactory = base64StringHashProviderFactory;
-            this.hexStringHashProviderFactory = hexStringHashProviderFactory;
+            this.base64StringHashProviderFactory = base64StringHashProviderFactory ?? throw new ArgumentNullException(nameof(base64StringHashProviderFactory));
+            this.hexStringHashProviderFactory = hexStringHashProviderFactory ?? throw new ArgumentNullException(nameof(hexStringHashProviderFactory));
         }
 
         /// <summary>

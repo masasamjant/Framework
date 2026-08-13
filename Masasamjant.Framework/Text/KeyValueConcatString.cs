@@ -22,6 +22,8 @@ namespace Masasamjant.Text
         /// </exception>
         public KeyValueConcatString(char itemSeparator, char keyValueSeparator, IDictionary<string, string> values)
         {
+            ArgumentNullException.ThrowIfNull(values);
+
             if (itemSeparator == ConcatString.NoSeparator)
                 throw new ArgumentException("The value cannot be no separator character.", nameof(itemSeparator));
 
@@ -151,6 +153,8 @@ namespace Masasamjant.Text
         /// <exception cref="FormatException">If the format of <paramref name="value"/> is not correct.</exception>
         public void ParseFrom(string value)
         {
+            ArgumentNullException.ThrowIfNull(value);
+
             if (value.Length == 0)
             {
                 ItemSeparator = ConcatString.NoSeparator;
@@ -193,6 +197,7 @@ namespace Masasamjant.Text
         /// <exception cref="FormatException">If the format of <paramref name="value"/> is not correct.</exception>
         public static KeyValueConcatString Parse(string value)
         {
+            ArgumentNullException.ThrowIfNull(value);
             var cs = new KeyValueConcatString();
             if (value.Length > 0)
                 cs.ParseFrom(value);

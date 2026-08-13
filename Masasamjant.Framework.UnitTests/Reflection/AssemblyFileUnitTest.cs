@@ -71,7 +71,8 @@ namespace Masasamjant.Reflection
         public void Test_AssemblyCache()
         {
             bool invoked = false;
-            Func<Assembly> getAssembly = () => {
+            Func<Assembly> getAssembly = () =>
+            {
                 invoked = true;
                 return Assembly.GetExecutingAssembly();
             };
@@ -85,6 +86,7 @@ namespace Masasamjant.Reflection
             Assert.IsFalse(invoked);
             Assert.IsTrue(result.IsLoaded);
             Assert.IsNotNull(result.Assembly);
+            AssemblyFile.AssemblyCache.Clear();
         }
 
         [TestMethod]

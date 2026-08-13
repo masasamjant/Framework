@@ -3,10 +3,8 @@
 namespace Masasamjant.IO
 {
     [TestClass]
-    public  class FileHelperUnitTest : UnitTest
+    public class FileHelperUnitTest : UnitTest
     {
-        private const string NotExistFile = @"C:\NOTEXISTS\NOTEXISTS.txt";
-
         [TestMethod]
         public void Test_IsEmptyFile()
         {
@@ -17,7 +15,7 @@ namespace Masasamjant.IO
             File.Delete(filePath);
             Assert.ThrowsException<ArgumentNullException>(() => FileHelper.IsEmptyFile(""));
             Assert.ThrowsException<ArgumentNullException>(() => FileHelper.IsEmptyFile("  "));
-            Assert.ThrowsException<FileNotFoundException>(() => FileHelper.IsEmptyFile(NotExistFile));
+            Assert.ThrowsException<FileNotFoundException>(() => FileHelper.IsEmptyFile(NotExistFilePath));
         }
 
         [TestMethod]
@@ -30,7 +28,7 @@ namespace Masasamjant.IO
             File.Delete(filePath);
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => FileHelper.IsEmptyFileAsync(""));
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => FileHelper.IsEmptyFileAsync("  "));
-            await Assert.ThrowsExceptionAsync<FileNotFoundException>(() => FileHelper.IsEmptyFileAsync(NotExistFile));
+            await Assert.ThrowsExceptionAsync<FileNotFoundException>(() => FileHelper.IsEmptyFileAsync(NotExistFilePath));
         }
 
         [TestMethod]
@@ -141,7 +139,7 @@ namespace Masasamjant.IO
         {
             Assert.ThrowsException<ArgumentNullException>(() => FileHelper.CopyToTempFile(""));
             Assert.ThrowsException<ArgumentNullException>(() => FileHelper.CopyToTempFile("  "));
-            Assert.ThrowsException<FileNotFoundException>(() => FileHelper.CopyToTempFile(NotExistFile));
+            Assert.ThrowsException<FileNotFoundException>(() => FileHelper.CopyToTempFile(NotExistFilePath));
             var sourceFile = FileHelper.CreateTempTextFile("Content");
             var tempFilePath = FileHelper.CopyToTempFile(sourceFile);
             Assert.IsTrue(File.Exists(tempFilePath));
@@ -198,6 +196,81 @@ namespace Masasamjant.IO
         {
             var tempFilePath = FileHelper.CreateTempFilePath();
             Assert.IsFalse(File.Exists(tempFilePath));
+        }
+
+        [TestMethod]
+        public void Test_GetFileSize()
+        {
+            Assert.AreEqual(100L, FileHelper.GetFileSize(100L, FileSizeUnit.Bytes));
+            Assert.AreEqual(10000L / 1024L, FileHelper.GetFileSize(10000L, FileSizeUnit.Kilobytes));
+            Assert.AreEqual(100000L / (1024 * 1024), FileHelper.GetFileSize(100000L, FileSizeUnit.Megabytes));
+            Assert.AreEqual(1000000000L / (1024 * 1024 * 1024), FileHelper.GetFileSize(1000000000L, FileSizeUnit.Gigabytes));
+            Assert.ThrowsException<NotSupportedException>(() => FileHelper.GetFileSize(100L, (FileSizeUnit)100));
+        }
+
+        [TestMethod]
+        public void Test_GetFileSize_WhenFileNull_ThenThrows()
+        {
+            FileInfo? file = null;
+            Assert.ThrowsException<ArgumentNullException>(() => FileHelper.GetFileSize(file!, FileSizeUnit.Bytes));
+            Assert.ThrowsException<ArgumentNullException>(() => FileHelper.GetFileSize((string?)null!, FileSizeUnit.Bytes));
+            Assert.ThrowsException<ArgumentNullException>(() => FileHelper.GetFileSize("", FileSizeUnit.Bytes));
+            Assert.ThrowsException<ArgumentNullException>(() => FileHelper.GetFileSize("   ", FileSizeUnit.Bytes));
+        }
+
+        [TestMethod]
+        public void Test_GetFileSize_WhenFileNotExists_ThenThrows()
+        {
+            var file = new FileInfo(NotExistFilePath);
+            Assert.ThrowsException<FileNotFoundException>(() => FileHelper.GetFileSize(file, FileSizeUnit.Bytes));
+        }
+
+        [TestMethod]
+        public void Test_GetFileSize_WhenUnitInvalid_ThenThrows()
+        {
+            var file = FileHelper.CreateTempTextFile("Test");
+            Assert.ThrowsException<ArgumentException>(() => FileHelper.GetFileSize(file, (FileSizeUnit)100));
+            File.Delete(file);
+        }
+
+        [TestMethod]
+        public void Test_TryDelete()
+        {
+            Assert.IsFalse(FileHelper.TryDelete(null!));
+            Assert.IsFalse(FileHelper.TryDelete(""));
+            Assert.IsFalse(FileHelper.TryDelete("   "));
+            Assert.IsFalse(FileHelper.TryDelete(NotExistFilePath));
+            var tempFile = FileHelper.CreateTempFile(null, Encoding.UTF8);
+            var attributes = File.GetAttributes(tempFile);
+            File.SetAttributes(tempFile, FileAttributes.ReadOnly);
+            Assert.IsFalse(FileHelper.TryDelete(tempFile));
+            File.SetAttributes(tempFile, attributes);
+            Assert.IsTrue(FileHelper.TryDelete(tempFile));
+        }
+
+        [TestMethod]
+        public void Test_DeleteFiles()
+        {
+            var result = FileHelper.DeleteFiles();
+            Assert.IsTrue(result.Count == 0);
+            var tempFile1 = FileHelper.CreateTempFile(null, Encoding.UTF8);
+            var tempFile2 = FileHelper.CreateTempFile(null, Encoding.UTF8);
+            var tempFile3 = FileHelper.CreateTempFile(null, Encoding.UTF8);
+            var attibutes = File.GetAttributes(tempFile2);
+            File.SetAttributes(tempFile2, FileAttributes.ReadOnly);
+            result = FileHelper.DeleteFiles(tempFile1, tempFile2, tempFile3, NotExistFilePath, "", "   ", null!);
+            Assert.IsTrue(result.Count == 2);
+            Assert.IsTrue(result.Contains(tempFile1));
+            Assert.IsTrue(result.Contains(tempFile3));
+            Assert.IsTrue(File.Exists(tempFile2));
+            Assert.IsFalse(File.Exists(tempFile1));
+            Assert.IsFalse(File.Exists(tempFile3));
+
+            File.SetAttributes(tempFile2, attibutes);
+            result = FileHelper.DeleteFiles(tempFile2);
+            Assert.IsTrue(result.Count == 1);
+            Assert.IsTrue(result.Contains(tempFile2));
+            Assert.IsFalse(File.Exists(tempFile2));
         }
     }
 }

@@ -27,8 +27,12 @@ namespace Masasamjant
         /// <param name="values">The string values.</param>
         /// <param name="separators">The possible separators.</param>
         /// <returns>A suitable separator character or <c>null</c>.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="values"/> or <paramref name="separators"/> is <c>null</c>.</exception>
         public static char? GetSeparator(IEnumerable<string> values, IEnumerable<char> separators)
         {
+            ArgumentNullException.ThrowIfNull(values);
+            ArgumentNullException.ThrowIfNull(separators);
+
             foreach (var c in separators)
             {
                 if (!values.Any(value => value.Contains(c)))
@@ -47,8 +51,12 @@ namespace Masasamjant
         /// <param name="separators">The possible separators.</param>
         /// <param name="separator">The suitable separator, if returns <c>true</c>; <c>null</c> otherwise.</param>
         /// <returns><c>true</c> if suitable separator was found; <c>false</c> otherwise.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="values"/> or <paramref name="separators"/> is <c>null</c>.</exception>
         public static bool TryGetSeparator(IEnumerable<string> values, IEnumerable<char> separators, [NotNullWhen(true)] out char? separator)
         {
+            ArgumentNullException.ThrowIfNull(values);
+            ArgumentNullException.ThrowIfNull(separators);
+
             separator = null;
 
             // No any separators.

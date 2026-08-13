@@ -27,6 +27,7 @@ namespace Masasamjant.ComponentModel
         /// <param name="hashProvider">The <see cref="IStringHashProvider"/> to compute temporary identifiers.</param>
         public TemporaryIdentifierManager(IStringHashProvider hashProvider)
         {
+            ArgumentNullException.ThrowIfNull(hashProvider);
             this.temporaryIdentifiers = new ConcurrentDictionary<string, ConcurrentDictionary<string, object[]>>();
             this.hashProvider = hashProvider;
         }
@@ -56,6 +57,8 @@ namespace Masasamjant.ComponentModel
         /// <param name="key">The scope key.</param>
         public void RemoveIdentifiers(string key)
         {
+            ValidateKey(key);
+
             if (temporaryIdentifiers.TryRemove(key, out var identifiers))
                 identifiers.Clear();
         }
@@ -71,6 +74,8 @@ namespace Masasamjant.ComponentModel
         /// <returns><c>true</c> if there was actual identifier for <paramref name="temporaryIdentifier"/>; <c>false</c> otherwise.</returns>
         public bool TryGetIdentifier<T>(string key, string temporaryIdentifier, [MaybeNullWhen(false)] out T identifier)
         {
+            ValidateKey(key);
+
             if (temporaryIdentifiers.TryGetValue(key, out var identifiersDictionary))
             {
                 if (identifiersDictionary.TryGetValue(temporaryIdentifier, out var identifiers) &&
@@ -96,6 +101,8 @@ namespace Masasamjant.ComponentModel
         /// <returns><c>true</c> if there was actual identifier for <paramref name="temporaryIdentifier"/>; <c>false</c> otherwise.</returns>
         public bool TryGetIdentifier(string key, string temporaryIdentifier, out object[] identifiers)
         {
+            ValidateKey(key);
+
             if (temporaryIdentifiers.TryGetValue(key, out var identifiersDictionary))
             {
                 if (identifiersDictionary.TryRemove(temporaryIdentifier, out var result))
@@ -111,6 +118,8 @@ namespace Masasamjant.ComponentModel
 
         private string CreateTemporaryIdentifier(string key, object[] identifiers)
         {
+            ValidateKey(key);
+
             if (identifiers.Length == 0)
                 throw new ArgumentException("There must be at least one identifier value.", nameof(identifiers));
 
@@ -119,6 +128,12 @@ namespace Masasamjant.ComponentModel
             var identifiersDictionary = temporaryIdentifiers.GetOrAdd(key, new ConcurrentDictionary<string, object[]>());
             identifiersDictionary.AddOrUpdate(temporaryIdentifier, identifiers, (k, v) => identifiers);
             return temporaryIdentifier;
+        }
+
+        private static void ValidateKey(string key)
+        {
+            if (string.IsNullOrWhiteSpace(key))
+                throw new ArgumentNullException(nameof(key), "The key is null, empty or only whitespace.");
         }
     }
 }

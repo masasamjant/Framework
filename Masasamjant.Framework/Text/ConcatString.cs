@@ -20,6 +20,8 @@
         /// </exception>
         public ConcatString(char separator, IEnumerable<string> values)
         {
+            ArgumentNullException.ThrowIfNull(values);
+
             if (separator == NoSeparator)
                 throw new ArgumentException("The value cannot be no separator character.", nameof(separator));
 
@@ -125,6 +127,8 @@
         /// <exception cref="FormatException">If the format of <paramref name="value"/> is not correct.</exception>
         public void ParseFrom(string value)
         {
+            ArgumentNullException.ThrowIfNull(value);
+
             if (value.Length == 0)
             {
                 Separator = NoSeparator;
@@ -158,6 +162,8 @@
         /// <exception cref="FormatException">If <paramref name="value"/> has invalid format.</exception>
         public static ConcatString Parse(string value)
         {
+            ArgumentNullException.ThrowIfNull(value);
+
             var cs = new ConcatString();
             if (value.Length > 0)
                 cs.ParseFrom(value);

@@ -1,4 +1,5 @@
-﻿using Masasamjant.Stubs;
+﻿using Masasamjant.Threading;
+using NSubstitute;
 using System.Text;
 
 namespace Masasamjant.Text
@@ -9,10 +10,14 @@ namespace Masasamjant.Text
         [TestMethod]
         public void Test_SetBuilder()
         {
-            var provider = new ThreadStubProvider();
-            var ta = new ThreadStub(1);
-            var tb = new ThreadStub(2);
-            provider.SetCurrentThread(ta);
+            var ta = Substitute.For<IThread>();
+            ta.ManagedThreadId.Returns(1);
+        
+            var tb = Substitute.For<IThread>();
+            tb.ManagedThreadId.Returns(2);
+
+            var provider = Substitute.For<IThreadProvider>();
+            provider.GetCurrentThread().Returns(ta);
 
             var cache = new ThreadStringBuilderCache(provider);
             var a = new StringBuilder("a");
@@ -23,7 +28,7 @@ namespace Masasamjant.Text
             var c = cache.GetBuilder();
             Assert.AreSame(a, c);
 
-            provider.SetCurrentThread(tb);
+            provider.GetCurrentThread().Returns(tb);
             Assert.ThrowsException<InvalidOperationException>(() => cache.GetBuilder());
             cache.SetBuilder(b);
             c = cache.GetBuilder();
@@ -33,10 +38,14 @@ namespace Masasamjant.Text
         [TestMethod]
         public void Test_Clear()
         {
-            var provider = new ThreadStubProvider();
-            var ta = new ThreadStub(1);
-            var tb = new ThreadStub(2);
-            provider.SetCurrentThread(ta);
+            var ta = Substitute.For<IThread>();
+            ta.ManagedThreadId.Returns(1);
+
+            var tb = Substitute.For<IThread>();
+            tb.ManagedThreadId.Returns(2);
+
+            var provider = Substitute.For<IThreadProvider>();
+            provider.GetCurrentThread().Returns(ta);
 
             var cache = new ThreadStringBuilderCache(provider);
             var a = new StringBuilder("a");
@@ -57,21 +66,21 @@ namespace Masasamjant.Text
             Assert.IsFalse(cb);
 
             cache.SetBuilder(a);
-            provider.SetCurrentThread(tb);
+            provider.GetCurrentThread().Returns(tb);
 
             cache.Clear();
             Assert.IsFalse(ca);
             Assert.IsFalse(cb);
 
             cache.SetBuilder(b);
-            provider.SetCurrentThread(ta);
+            provider.GetCurrentThread().Returns(ta);
             cache.Clear();
             Assert.IsTrue(ca);
             Assert.IsFalse(cb);
             Assert.AreEqual(string.Empty, a.ToString());
             Assert.ThrowsException<InvalidOperationException>(() => cache.GetBuilder());
 
-            provider.SetCurrentThread(tb);
+            provider.GetCurrentThread().Returns(tb);
             cache.Clear();
             Assert.IsTrue(cb);
             Assert.AreEqual(string.Empty, b.ToString());
@@ -81,10 +90,14 @@ namespace Masasamjant.Text
         [TestMethod]
         public void Test_GetBuilder()
         {
-            var provider = new ThreadStubProvider();
-            var ta = new ThreadStub(1);
-            var tb = new ThreadStub(2);
-            provider.SetCurrentThread(ta);
+            var ta = Substitute.For<IThread>();
+            ta.ManagedThreadId.Returns(1);
+
+            var tb = Substitute.For<IThread>();
+            tb.ManagedThreadId.Returns(2);
+
+            var provider = Substitute.For<IThreadProvider>();
+            provider.GetCurrentThread().Returns(ta);
 
             var cache = new ThreadStringBuilderCache(provider);
             var a = new StringBuilder("a");
@@ -106,7 +119,7 @@ namespace Masasamjant.Text
             Assert.IsFalse(ca);
             Assert.AreEqual("a", c.ToString());
 
-            provider.SetCurrentThread(tb);
+            provider.GetCurrentThread().Returns(tb);
             Assert.ThrowsException<InvalidOperationException>(() => cache.GetBuilder());
             cache.SetBuilder(b);
             c = cache.GetBuilder();
@@ -116,13 +129,13 @@ namespace Masasamjant.Text
 
             cache.IsPreviousContentCleared = true;
             
-            provider.SetCurrentThread(ta);
+            provider.GetCurrentThread().Returns(ta);
             c = cache.GetBuilder();
             Assert.AreSame(a, c);
             Assert.IsTrue(ca);
             Assert.AreEqual(string.Empty, c.ToString());
 
-            provider.SetCurrentThread(tb);
+            provider.GetCurrentThread().Returns(tb);
             c = cache.GetBuilder();
             Assert.AreSame(b, c);
             Assert.IsTrue(cb);

@@ -13,7 +13,7 @@ namespace Masasamjant.Text
         /// <param name="builder">The <see cref="StringBuilder"/> to be cleared.</param>
         public StringBuilderClearingEventArgs(StringBuilder builder)
         {
-            Builder = builder;
+            Builder = builder ?? throw new ArgumentNullException(nameof(builder));
         }
 
         /// <summary>

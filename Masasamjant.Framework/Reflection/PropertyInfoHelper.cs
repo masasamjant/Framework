@@ -17,6 +17,7 @@ namespace Masasamjant.Reflection
         /// <returns><c>true</c> if <paramref name="property"/> represents index property; <c>false</c> otherwise.</returns>
         public static bool IsIndexProperty(this PropertyInfo property)
         {
+            ArgumentNullException.ThrowIfNull(property);
             return property.GetIndexParameters().Length > 0;
         }
 
@@ -29,6 +30,8 @@ namespace Masasamjant.Reflection
         /// <returns><c>true</c> of property type of <paramref name="property"/> implements <see cref="IEnumerable"/>; <c>false</c> otherwise.</returns>
         public static bool IsEnumerable(this PropertyInfo property, bool ignoreString = false)
         {
+            ArgumentNullException.ThrowIfNull(property);
+
             if (property.PropertyType.Equals(typeof(string)) && ignoreString)
                 return false;
 
@@ -51,6 +54,7 @@ namespace Masasamjant.Reflection
         /// <returns><c>true</c> if <paramref name="property"/> has <typeparamref name="TAttribute"/> attribute; <c>false</c> otherwise.</returns>
         public static bool HasCustomAttribute<TAttribute>(this PropertyInfo property, bool inherited = false) where TAttribute : Attribute
         {
+            ArgumentNullException.ThrowIfNull(property);
             return property.GetCustomAttribute<TAttribute>(inherited) != null;
         }
 
@@ -64,6 +68,7 @@ namespace Masasamjant.Reflection
         /// <returns><c>true</c> if <paramref name="property"/> has <typeparamref name="TAttribute"/> attribute; <c>false</c> otherwise.</returns>
         public static bool HasCustomAttribute<TAttribute>(this PropertyInfo property, [NotNullWhen(true)] out TAttribute? attribute, bool inherited = false) where TAttribute : Attribute
         {
+            ArgumentNullException.ThrowIfNull(property);
             attribute = property.GetCustomAttribute<TAttribute>(inherited);
             return attribute != null;
         }
@@ -106,6 +111,7 @@ namespace Masasamjant.Reflection
 
         private static void ValidatePropertyDeclaringType<T>(PropertyInfo property)
         {
+            ArgumentNullException.ThrowIfNull(property);
             if (property.DeclaringType == null || !TypeHelper.IsOfType(property.DeclaringType, typeof(T)))
                 throw new ArgumentException($"Property is not from the declaring type of {TypeHelper.GetTypeName(typeof(T))}.", nameof(property));
         }
