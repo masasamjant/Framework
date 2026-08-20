@@ -1,0 +1,10 @@
+﻿This file contains information of testing certificates. Replace with actual values:
+Folder=C:\Certificates\Testing
+Valid=test-certificate.cer
+Expired=test-certificate-expired.cer
+Invalid=test-certificate-invalid.cer
+NotFound=test-certificate-notfound.cer
+Thumbprint=425FC8985F73689C77156155E28BEA73B192B796
+Subject=test-certificate.com
+ThumbprintExpired=33D60CA80B228BF5F29EF9665A9E86D8D7D0BE2B
+SubjectExpired=test-certificate-expired.com

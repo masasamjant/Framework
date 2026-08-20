@@ -6,6 +6,7 @@ namespace Masasamjant.Security
     /// <summary>
     /// Represents <see cref="X509CertificateProvider"/> that provides certificate from specified store either by thumbprint or subject name.
     /// </summary>
+    /// <remarks>This provider uses <see cref="X509Certificate2Collection"/> to find certificate so validity is based on the certificate's properties and chain.</remarks>
     public sealed class StoreX509CertificateProvider : X509CertificateProvider
     {
         private readonly string subjectName;
@@ -22,10 +23,14 @@ namespace Masasamjant.Security
         /// <param name="storeLocation">The store location.</param>
         /// <param name="thumbprint">The certificate thumbprint.</param>
         /// <param name="onlyValid"><c>true</c> if should provide only valid certificates; <c>false</c> otherwise.</param>
+        /// <exception cref="ArgumentNullException">If value of <paramref name="thumbprint"/> is <c>null</c>, empty or only whitespace.</exception>
         /// <exception cref="ArgumentException">If value of <paramref name="storeName"/> or <paramref name="storeLocation"/> is not defined.</exception>
         public StoreX509CertificateProvider(StoreName storeName, StoreLocation storeLocation, string thumbprint, bool onlyValid)
             : this(null, thumbprint, X509FindType.FindByThumbprint, storeName, storeLocation, onlyValid)
-        { }
+        {
+            if (string.IsNullOrWhiteSpace(thumbprint))
+                throw new ArgumentNullException(nameof(thumbprint), "The thumbprint cannot be null, empty or only whitespace.");
+        }
 
         /// <summary>
         /// Initializes new instance of the <see cref="StoreX509CertificateProvider"/> class that provides certificate by subject name.
@@ -34,10 +39,14 @@ namespace Masasamjant.Security
         /// <param name="storeName">The store name.</param>
         /// <param name="storeLocation">The store location.</param>
         /// <param name="onlyValid"><c>true</c> if should provide only valid certificates; <c>false</c> otherwise.</param>
+        /// <exception cref="ArgumentNullException">If value of <paramref name="subjectName"/> is <c>null</c>, empty or only whitespace.</exception>
         /// <exception cref="ArgumentException">If value of <paramref name="storeName"/> or <paramref name="storeLocation"/> is not defined.</exception>
         public StoreX509CertificateProvider(string subjectName, StoreName storeName, StoreLocation storeLocation, bool onlyValid)
             : this(subjectName, null, X509FindType.FindBySubjectName, storeName, storeLocation, onlyValid)
-        { }
+        {
+            if (string.IsNullOrWhiteSpace(subjectName))
+                throw new ArgumentNullException(nameof(subjectName), "The subject name cannot be null, empty or only whitespace.");
+        }
 
         private StoreX509CertificateProvider(string? subjectName, string? thumbprint, X509FindType findType, StoreName storeName, StoreLocation storeLocation, bool onlyValid)
             : base(onlyValid)

@@ -1,0 +1,17 @@
+﻿This file contains Powershell commands to create a self-signed certificate and export it to a file. 
+You can run these commands in a PowerShell terminal (Administration mode) to generate the necessary certificate files for testing purposes.
+
+NOTE! to test founding certificate using store, the test certificates must be installed to Trusted Root Certification Authorities store. 
+This can be done after executing below by going to windows certificate manager (certmgr.msc) and importing the generated certificate to Trusted Root Certification Authorities store.
+
+To generate a self-signed certificate and export it to a file valid from today until next year, follow these steps:
+
+PS C:\WINDOWS\system32> New-SelfSignedCertificate -DnsName "test-certificate.com" -CertStoreLocation "cert:\LocalMachine\My" -NotAfter (Get-Date).AddYears(1)
+PS C:\WINDOWS\system32> $cert = Get-ChildItem -Path cert:\LocalMachine\My | Where-Object { $_.Subject -like "*test-certificate.com*" } | Select-Object -First 1
+PS C:\WINDOWS\system32> Export-Certificate -Cert $cert -FilePath "C:\Certificates\Testing\test-certificate.cer"
+
+To generate a self-signed certificate and export it to a file that is already expired, follow these steps:
+
+PS C:\WINDOWS\system32> New-SelfSignedCertificate -DnsName "test-certificate-expired.com" -CertStoreLocation "cert:\LocalMachine\My" -NotBefore (Get-Date).AddDays(-10) -NotAfter (Get-Date).AddDays(-1)
+PS C:\WINDOWS\system32> $cert = Get-ChildItem -Path cert:\LocalMachine\My | Where-Object { $_.Subject -like "*test-certificate-expired.com*" } | Select-Object -First 1
+PS C:\WINDOWS\system32> Export-Certificate -Cert $cert -FilePath "C:\Certificates\Testing\test-certificate-expired.cer"
