@@ -16,12 +16,12 @@
     <PackageProjectUrl>https://github.com/masasamjant/Framework</PackageProjectUrl>
     <RepositoryUrl>https://github.com/masasamjant/Framework</RepositoryUrl>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <Version>3.0.1</Version>
+    <Version>3.0.2</Version>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Masasamjant.Framework.Modeling" Version="3.0.1" />
+    <PackageReference Include="Masasamjant.Framework.Modeling" Version="3.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.11" />
   </ItemGroup>
 
