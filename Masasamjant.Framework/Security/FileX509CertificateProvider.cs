@@ -6,6 +6,7 @@ namespace Masasamjant.Security
     /// <summary>
     /// Represents <see cref="X509CertificateProvider"/> that provides certificate from specified file.
     /// </summary>
+    /// <remarks>This provider checks only validity of the certificate expiration time and does not check other aspects of certificate validity.</remarks>
     public class FileX509CertificateProvider : X509CertificateProvider
     {
         private readonly string certificateFilePath;
@@ -19,7 +20,7 @@ namespace Masasamjant.Security
         public FileX509CertificateProvider(string certificateFilePath, bool onlyValid)
             : base(onlyValid)
         {
-            if (string.IsNullOrEmpty(certificateFilePath))
+            if (string.IsNullOrWhiteSpace(certificateFilePath))
                 throw new ArgumentNullException(nameof(certificateFilePath), "The value is empty or only whitespace.");
 
             this.certificateFilePath = certificateFilePath;
@@ -68,10 +69,10 @@ namespace Masasamjant.Security
         /// <returns><c>true</c> if <paramref name="certificate"/> is considered to be valid; <c>false</c> otherwise.</returns>
         protected virtual bool IsValid(X509Certificate2 certificate)
         {
-            DateTime today = DateTime.Today;
-            if (certificate.NotBefore > today)
+            DateTime now = DateTime.Now;
+            if (certificate.NotBefore > now)
                 return false;
-            if (certificate.NotAfter <= today)
+            if (certificate.NotAfter <= now)
                 return false;
             return true;
         }
