@@ -1,4 +1,6 @@
-﻿namespace Masasamjant.Modeling.Abstractions
+﻿using System.Security.Principal;
+
+namespace Masasamjant.Modeling.Abstractions
 {
     /// <summary>
     /// Represents a model that has deleted and deleted time properties.
@@ -22,5 +24,11 @@
         /// </summary>
         /// <param name="deletedBy">The identity, like user name or identifier, to identify user who marked model as deleted.</param>
         void Delete(string? deletedBy);
+
+        /// <summary>
+        /// Marks model as deleted.
+        /// </summary>
+        /// <param name="identity">The identity of the user who marked model as deleted.</param>
+        void Delete(IIdentity? identity);
     }
 }
