@@ -15,12 +15,12 @@ namespace Masasamjant.Modeling.Abstractions
         /// <summary>
         /// Gets the date and time when model's activation status was last changed.
         /// </summary>
-        DateTimeOffset? ActivateStatusChangedAt { get; }
+        DateTimeOffset? ActiveStatusChangedAt { get; }
 
         /// <summary>
         /// Gets the identity, like user name or identifier, to identify user who last changed model's activation status.
         /// </summary>
-        string? ActivateStatusChangedBy { get; }
+        string? ActiveStatusChangedBy { get; }
 
         /// <summary>
         /// Change model's activation status.
