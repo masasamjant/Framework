@@ -1,4 +1,5 @@
-﻿using Masasamjant.Modeling.Abstractions;
+﻿using Masasamjant.ComponentModel;
+using Masasamjant.Modeling.Abstractions;
 using Masasamjant.Repositories.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -9,7 +10,7 @@ namespace Masasamjant.Repositories.EntityFramework
     /// <summary>
     /// Represents abstract repository context using Entity Framework.
     /// </summary>
-    public abstract class EntityContext : DbContext
+    public abstract class EntityContext : DbContext, IWork
     {
         /// <summary>
         /// Initializes new instance of the <see cref="EntityRepositoryContext"/> class.
