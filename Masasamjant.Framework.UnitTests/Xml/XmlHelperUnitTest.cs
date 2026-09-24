@@ -1,5 +1,7 @@
-﻿using System.Reflection.Metadata;
+﻿using NSubstitute.Exceptions;
+using System.Reflection.Metadata;
 using System.Text;
+using System.Transactions;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -373,6 +375,122 @@ namespace Masasamjant.Xml
             doc.LoadXml("<?xml version=\"1.0\" encoding=\"utf-8\"?><root><child>child</child></root>");
             var xml = XmlHelper.ToXml(doc);
             Assert.AreEqual("<?xml version=\"1.0\" encoding=\"utf-8\"?><root><child>child</child></root>", xml);
+        }
+
+        [TestMethod]
+        public void Test_ExecuteAction_WithTransaction_Commit()
+        {
+            var document = new XmlDocument();
+            document.LoadXml("<?xml version=\"1.0\" encoding=\"utf-8\"?><root><child>child 1</child></root>");
+            
+            var transaction = new XmlDocumentTransaction(document);
+            var transactionLock = XmlDocumentTransactionManager.GetOrCreateLock(document);
+            transactionLock.Lock(transaction);
+            XmlHelper.ExecuteAction(transaction, doc => {
+                var child = doc.CreateElement("child");
+                var root = doc.SelectSingleNode("/root");
+                root?.AppendChild(child);
+            });
+
+            transactionLock.Release(transaction);
+            transaction.Dispose();
+            var children = document.SelectNodes("/root/child");
+            Assert.AreEqual(2, children?.Count);
+        }
+
+        [TestMethod]
+        public void Test_ExecuteAction_WithTransactionDocument_Commit()
+        {
+            var document = new XmlDocument();
+            document.LoadXml("<?xml version=\"1.0\" encoding=\"utf-8\"?><root><child>child 1</child></root>");
+            var transactionDocument = new TransactionalXmlDocument(document);
+            XmlHelper.ExecuteAction(transactionDocument, doc => {
+                var child = doc.CreateElement("child");
+                var root = doc.SelectSingleNode("/root");
+                root?.AppendChild(child);
+            });
+            transactionDocument.Dispose();
+            var children = document.SelectNodes("/root/child");
+            Assert.AreEqual(2, children?.Count);
+        }
+
+        [TestMethod]
+        public void Test_ExecuteAction_WithTransactionDocument_Rollback()
+        {
+            var document = new XmlDocument();
+            document.LoadXml("<?xml version=\"1.0\" encoding=\"utf-8\"?><root><child>child 1</child></root>");
+            var transactionDocument = new TransactionalXmlDocument(document);
+            
+            Assert.ThrowsException<XmlException>(() => XmlHelper.ExecuteAction(transactionDocument, doc =>
+            {
+                var child = doc.CreateElement("child");
+                var root = doc.SelectSingleNode("/root");
+                root?.AppendChild(child);
+                throw new InvalidOperationException("");
+            }));
+
+            transactionDocument.Dispose();
+            var children = document.SelectNodes("/root/child");
+            Assert.AreEqual(1, children?.Count);
+        }
+
+        [TestMethod]
+        public void Test_ExecuteAction_WithTransaction_Rollback()
+        {
+            var document = new XmlDocument();
+            document.LoadXml("<?xml version=\"1.0\" encoding=\"utf-8\"?><root><child>child 1</child></root>");
+
+            var transaction = new XmlDocumentTransaction(document);
+            var transactionLock = XmlDocumentTransactionManager.GetOrCreateLock(document);
+            transactionLock.Lock(transaction);
+
+            Assert.ThrowsException<XmlException>(() => XmlHelper.ExecuteAction(transaction, doc => {
+                var child = doc.CreateElement("child");
+                var root = doc.SelectSingleNode("/root");
+                root?.AppendChild(child);
+                throw new InvalidOperationException("");
+            }));
+
+            transactionLock.Release(transaction);
+            transaction.Dispose();
+            var children = document.SelectNodes("/root/child");
+            Assert.AreEqual(1, children?.Count);
+        }
+        
+        [TestMethod]    
+        public void Test_SelectSingleMandatoryNode()
+        {
+            var document = new XmlDocument();
+            document.LoadXml("<?xml version=\"1.0\" encoding=\"utf-8\"?><root><child>child 1</child></root>");
+            var node = XmlHelper.SelectSingleMandatoryNode(document, "/root/child");
+            Assert.IsNotNull(node);
+            Assert.ThrowsException<XmlException>(() => XmlHelper.SelectSingleMandatoryNode(document, "/root/children"));
+        }
+
+        [TestMethod]
+        public void Test_SelectMandatoryNodes()
+        {
+            var document = new XmlDocument();
+            document.LoadXml("<?xml version=\"1.0\" encoding=\"utf-8\"?><root><child>child 1</child></root>");
+            var nodes = XmlHelper.SelectMandatoryNodes(document, "/root/child");
+            Assert.AreEqual(1, nodes.Count);
+            Assert.ThrowsException<XmlException>(() => XmlHelper.SelectMandatoryNodes(document, "/root/children"));
+        }
+
+        [TestMethod]
+        public void Test_EnumerateNodes()
+        {
+            var document = new XmlDocument();
+            document.LoadXml("<?xml version=\"1.0\" encoding=\"utf-8\"?><root><child>child 1</child><child>child 2</child></root>");
+            var nodes = XmlHelper.EnumerateNodes(document, "/root/child");
+            int n = 1;
+            foreach (var node in nodes)
+            {
+                Assert.IsNotNull(node);
+                Assert.AreEqual("child", node.Name);
+                Assert.AreEqual($"child {n}", node.InnerText);
+                n++;
+            }
         }
 
         private const string Xml = @"<?xml version=""1.0"" encoding=""utf-8"" ?>

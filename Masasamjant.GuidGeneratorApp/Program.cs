@@ -1,4 +1,6 @@
-﻿namespace Masasamjant.GuidGeneratorApp
+﻿using Masasamjant.Applications;
+
+namespace Masasamjant.GuidGeneratorApp
 {
     internal class Program
     {
@@ -18,14 +20,16 @@
             bool exit;
             int count;
             string format;
-            bool upperCase;
+            bool? upperCase;
             List<Guid> values;
+
+            var arguments = ArgumentsReader.Read(args);
 
             do
             {
-                format = "";
-                count = 0;
-                upperCase = false;
+                format = arguments.TryGetValue("format", out var arg) ? arg : string.Empty; 
+                count = arguments.TryGetValue("count", out arg) && int.TryParse(arg, out var result) && result >= 0 ? result : 0;
+                upperCase = arguments.Contains("upper") ? true : null;
 
                 while (!formats.ContainsKey(format))
                     format = AskFormat();
@@ -39,23 +43,27 @@
                 generator.GenerateValues(values, count);
 
                 Console.WriteLine();
-                Console.WriteLine("Create upper case letters? (Y/N)");
-                upperCase = Console.ReadLine()?.ToLowerInvariant() == "y";
-                Console.WriteLine();
+                
+                if (!upperCase.HasValue)
+                {
+                    Console.WriteLine(MessageResource.UpperCaseMessage);
+                    upperCase = string.Equals(Console.ReadLine(), MessageResource.YesAnswer, StringComparison.OrdinalIgnoreCase);
+                    Console.WriteLine();
+                }
 
                 foreach (var value in values)
-                    Console.WriteLine(upperCase ? value.ToString(format).ToUpperInvariant() : value.ToString(format));
+                    Console.WriteLine(upperCase == true ? value.ToString(format).ToUpperInvariant() : value.ToString(format));
 
                 Console.WriteLine();
-                Console.WriteLine("Create more? (Y/N)");
-                exit = Console.ReadLine()?.ToLowerInvariant() == "n";
+                Console.WriteLine(MessageResource.MoreMessage);
+                exit = string.Equals(Console.ReadLine(), MessageResource.NoAnswer, StringComparison.OrdinalIgnoreCase);
             }
             while (!exit);
         }
 
         static string AskFormat()
         {
-            Console.WriteLine("Select GUID format?");
+            Console.WriteLine(MessageResource.FormatMessage);
             foreach (var keyValue in formats)
                 Console.WriteLine($"{keyValue.Key}={keyValue.Value}");
             return Console.ReadLine()?.ToUpperInvariant() ?? string.Empty;
@@ -63,7 +71,7 @@
 
         static int AskCount()
         {
-            Console.WriteLine("How many GUID to create?");
+            Console.WriteLine(MessageResource.CountMessage);
             var line = Console.ReadLine();
             if (!int.TryParse(line, out int count)) count = 0;
             return count;
