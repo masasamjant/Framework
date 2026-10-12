@@ -460,7 +460,7 @@ namespace Masasamjant.IO
                 TryDeleteFile(filePath);
         }
 
-        private static void TryDeleteFile(string filePath)
+        internal static void TryDeleteFile(string filePath)
         {
             try
             {
@@ -472,7 +472,7 @@ namespace Masasamjant.IO
             }
         }
 
-        private static void TryDeleteDirectory(string directoryPath)
+        internal static void TryDeleteDirectory(string directoryPath)
         {
             try
             {
