@@ -621,6 +621,32 @@ namespace Masasamjant
             return true;
         }
 
+        /// <summary>
+        /// Returns an enumerator that yields ranges of the string separated by the specified character.
+        /// </summary>
+        /// <param name="value">The string whose segments to enumerate.</param>
+        /// <param name="separator">The delimiter character that separates segments.</param>
+        /// <returns>A <see cref="CharSpanRangeEnumerator"/> that iterates ranges of the original string separated by the specified character.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="value"/> is <c>null</c>.</exception>
+        public static CharSpanRangeEnumerator SplitRanges(this string value, char separator)
+        {
+            ArgumentNullException.ThrowIfNull(value);
+            return new CharSpanRangeEnumerator(value.AsSpan(), separator);
+        }
+
+        /// <summary>
+        /// Returns an enumerator that yields segments of the string separated by the specified character.
+        /// </summary>
+        /// <param name="value">The string whose segments to enumerate.</param>
+        /// <param name="separator">The delimiter character that separates segments.</param>
+        /// <returns>A <see cref="CharSpanSegmentEnumerator"/> that iterates segments of the original string separated by the specified character.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="value"/> is <c>null</c>.</exception>
+        public static CharSpanSegmentEnumerator SplitSegments(this string value, char separator)
+        {
+            ArgumentNullException.ThrowIfNull(value);
+            return new CharSpanSegmentEnumerator(value.AsSpan(), separator);
+        }
+
         private static string Substring(string? value, int length, bool fromLeft)
         {
             if (value == null || value.Length == 0 || length <= 0)

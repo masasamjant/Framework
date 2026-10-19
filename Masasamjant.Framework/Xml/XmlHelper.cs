@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Masasamjant.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
@@ -299,6 +300,149 @@ namespace Masasamjant.Xml
             }
 
             return Encoding.UTF8;
+        }
+
+        /// <summary>
+        /// Executes the specified action within the context of the XML document transaction.
+        /// </summary>
+        /// <param name="transaction">The XML document transaction.</param>
+        /// <param name="action">The action to execute.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="transaction"/> or <paramref name="action"/> is <c>null</c>.</exception>
+        /// <exception cref="InvalidOperationException">
+        /// If the transaction has already been committed or rolled back.
+        /// -or-
+        /// If the transaction does not own the transaction lock for the document.
+        /// </exception>
+        /// <exception cref="XmlException">If an error occurs during the action. Rollbacks changes, if possible.</exception>
+        public static void ExecuteAction(this XmlDocumentTransaction transaction, Action<XmlDocument> action)
+        {
+            ArgumentNullException.ThrowIfNull(transaction);
+            ArgumentNullException.ThrowIfNull(action);
+
+            if (transaction.State != TransactionState.Uncommitted)
+                throw new InvalidOperationException("Transaction has already been committed or rolled back.");
+
+            try
+            {
+                var document = transaction.Document;
+
+                if (document != null)
+                {
+                    action(document);
+                    transaction.Commit();
+                }
+            }
+            catch (Exception exception)
+            {
+                if (TryRollback(transaction))
+                    throw new XmlException("An error occurred during the action. The changes have been rolled back. See inner exception.", exception);
+                else
+                    throw new XmlException("An error occurred during the action. See inner exception.", exception);
+            }
+        }
+
+        /// <summary>
+        /// Executes the specified action within the context of a new XML document transaction. 
+        /// The transaction is automatically committed if the action completes successfully, or rolled back if an exception occurs.
+        /// </summary>
+        /// <param name="document">The transactional XML document.</param>
+        /// <param name="action">The action to execute.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="document"/> or <paramref name="action"/> is <c>null</c>.</exception>
+        /// <exception cref="InvalidOperationException">
+        /// If the active transaction exists.
+        /// -or-
+        /// If the document is locked by another transaction.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">If the document has been disposed.</exception>
+        public static void ExecuteAction(this TransactionalXmlDocument document, Action<XmlDocument> action)
+        {
+            ArgumentNullException.ThrowIfNull(document);
+            ArgumentNullException.ThrowIfNull(action);
+
+            using (var transaction = document.BeginTransaction())
+            {
+                ExecuteAction(transaction, action);
+            }
+        }
+
+        /// <summary>
+        /// Select single mandatory child node from specified <see cref="XmlNode"/> using XPath expression.
+        /// </summary>
+        /// <param name="node">The XML node to select the child node from.</param>
+        /// <param name="xpath">The XPath expression to select the child node.</param>
+        /// <returns>The selected child node.</returns>
+        /// <exception cref="XmlException">If the node does not have a child node with the specified XPath.</exception>
+        /// <exception cref="ArgumentNullException">If <paramref name="node"/> or <paramref name="xpath"/> is <c>null</c>.</exception>
+        public static XmlNode SelectSingleMandatoryNode(this XmlNode node, string xpath)
+        {
+            ArgumentNullException.ThrowIfNull(node);
+            ArgumentNullException.ThrowIfNull(xpath);
+
+            var child = node.SelectSingleNode(xpath);
+
+            if (child == null)
+                throw new XmlException($"The node has not child node with XPath '{xpath}'.");
+
+            return child;
+        }
+
+        /// <summary>
+        /// Select mandatory child nodes from specified <see cref="XmlNode"/> using XPath expression.
+        /// </summary>
+        /// <param name="node">The XML node to select the child nodes from.</param>
+        /// <param name="xpath">The XPath expression to select the child nodes.</param>
+        /// <returns>The selected child nodes.</returns>
+        /// <exception cref="XmlException">If the node does not have any child nodes with the specified XPath.</exception>
+        /// <exception cref="ArgumentNullException">If <paramref name="node"/> or <paramref name="xpath"/> is <c>null</c>.</exception>
+        public static XmlNodeList SelectMandatoryNodes(this XmlNode node, string xpath)
+        {
+            ArgumentNullException.ThrowIfNull(node);
+            ArgumentNullException.ThrowIfNull(xpath);
+            
+            var nodes = node.SelectNodes(xpath);
+            
+            if (nodes == null || nodes.Count == 0)
+                throw new XmlException($"The node has not child nodes with XPath '{xpath}'.");
+           
+            return nodes;
+        }
+
+        /// <summary>
+        /// Enumerate child nodes from specified <see cref="XmlNode"/> using XPath expression.
+        /// </summary>
+        /// <param name="node">The XML node to select the child nodes from.</param>
+        /// <param name="xpath">The XPath expression to select the child nodes.</param>
+        /// <returns>The selected child nodes.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="node"/> or <paramref name="xpath"/> is <c>null</c>.</exception>
+        public static IEnumerable<XmlNode> EnumerateNodes(this XmlNode node, string xpath)
+        {
+            ArgumentNullException.ThrowIfNull(node);
+            ArgumentNullException.ThrowIfNull(xpath);
+
+            static IEnumerable<XmlNode> Enumerate(XmlNodeList? nodes)
+            {
+                if (nodes == null)
+                    yield break;
+    
+                foreach (XmlNode n in nodes)
+                    yield return n;
+            }
+
+            var nodes = node.SelectNodes(xpath);
+            return Enumerate(nodes);
+        }
+
+        private static bool TryRollback(XmlDocumentTransaction transaction)
+        {
+            try
+            {
+                transaction.Rollback();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         private static string CalculateXmlChecksum(XmlDocument document)

@@ -16,7 +16,7 @@
         [TestMethod]
         public void Test_Slide()
         {
-            var source = Range.GetRange(1, 10);
+            var source = RangeHelper.GetRange(1, 10);
             var size = 5;
             var view = new SlidingView<int>(source, size);
             Assert.IsTrue(view.Slide());

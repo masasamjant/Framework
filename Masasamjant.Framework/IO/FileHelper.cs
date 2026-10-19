@@ -25,10 +25,9 @@ namespace Masasamjant.IO
 
             try
             {
-                byte[] buffer = new byte[1];
-
-                using (var stream = File.OpenRead(filePath))
-                    return stream.Read(buffer, 0, buffer.Length) == 0;
+                var fileInfo = new FileInfo(filePath);
+                fileInfo.Refresh();
+                return fileInfo.Length == 0;
             }
             catch (Exception exception)
             {
@@ -44,25 +43,10 @@ namespace Masasamjant.IO
         /// <exception cref="ArgumentNullException">If value of <paramref name="filePath"/> is empty or only whitespace.</exception>
         /// <exception cref="FileNotFoundException">If file specified by <paramref name="filePath"/> not exist.</exception>
         /// <exception cref="InvalidOperationException">If checking file fails.</exception>
-        public static async Task<bool> IsEmptyFileAsync(string filePath)
+        [Obsolete("Use IsEmptyFile instead.")]
+        public static Task<bool> IsEmptyFileAsync(string filePath)
         {
-            if (string.IsNullOrWhiteSpace(filePath))
-                throw new ArgumentNullException(nameof(filePath), "The file path is empty or only whitespace.");
-
-            if (!File.Exists(filePath))
-                throw new FileNotFoundException("The file not exist.", filePath);
-
-            try
-            {
-                byte[] buffer = new byte[1];
-
-                using (var stream = File.OpenRead(filePath))
-                    return await stream.ReadAsync(buffer) == 0;
-            }
-            catch (Exception exception)
-            {
-                throw new InvalidOperationException("File read failed. See inner exception.", exception);
-            }
+            return Task.FromResult(IsEmptyFile(filePath));
         }
 
         /// <summary>
@@ -202,14 +186,7 @@ namespace Masasamjant.IO
             try
             {
                 tempFilePath = Path.GetTempFileName();
-
-                using (var sourceStream = File.OpenRead(sourceFile))
-                using (var destinationStream = File.OpenWrite(tempFilePath))
-                {
-                    sourceStream.CopyTo(destinationStream);
-                    destinationStream.Flush();
-                }
-
+                File.Copy(sourceFile, tempFilePath, true);
                 return tempFilePath;
             }
             catch (Exception exception)
@@ -241,7 +218,7 @@ namespace Masasamjant.IO
             try
             {
                 tempFilePath = Path.GetTempFileName();
-
+                
                 using (var sourceStream = File.OpenRead(sourceFile))
                 using (var destinationStream = File.OpenWrite(tempFilePath))
                 {
@@ -483,7 +460,7 @@ namespace Masasamjant.IO
                 TryDeleteFile(filePath);
         }
 
-        private static void TryDeleteFile(string filePath)
+        internal static void TryDeleteFile(string filePath)
         {
             try
             {
@@ -495,7 +472,7 @@ namespace Masasamjant.IO
             }
         }
 
-        private static void TryDeleteDirectory(string directoryPath)
+        internal static void TryDeleteDirectory(string directoryPath)
         {
             try
             {

@@ -3,12 +3,12 @@
 namespace Masasamjant
 {
     [TestClass]
-    public class RangeUnitTest : UnitTest
+    public class RangeHelperUnitTest : UnitTest
     {
         [TestMethod]
         public void Test_Range_Integer()
         {
-            var integerRange = Range.GetRange(0, 10, 2);
+            var integerRange = RangeHelper.GetRange(0, 10, 2);
             Assert.AreEqual(0, integerRange.Min);
             Assert.AreEqual(10, integerRange.Max);
             Assert.AreEqual(2, integerRange.Step);
@@ -20,7 +20,7 @@ namespace Masasamjant
         [TestMethod]
         public void Test_Range_Fractional()
         {
-            var integerRange = Range.GetRange(0.0, 0.10, 0.02);
+            var integerRange = RangeHelper.GetRange(0.0, 0.10, 0.02);
             Assert.AreEqual(0.0, integerRange.Min);
             Assert.AreEqual(0.10, integerRange.Max);
             Assert.AreEqual(0.02, integerRange.Step);
@@ -32,7 +32,7 @@ namespace Masasamjant
         [TestMethod]
         public void Test_Range_Empty()
         {
-            var integerRange = Range.GetRange(0, 0, 2);
+            var integerRange = RangeHelper.GetRange(0, 0, 2);
             Assert.AreEqual(0, integerRange.Min);
             Assert.AreEqual(0, integerRange.Max);
             Assert.AreEqual(2, integerRange.Step);
@@ -44,21 +44,21 @@ namespace Masasamjant
         [TestMethod]
         public void Test_Range_Equality()
         {
-            var range = Range.GetRange(0, 10, 2);
+            var range = RangeHelper.GetRange(0, 10, 2);
             Assert.AreEqual(range, range.Clone());
-            Assert.AreEqual(range, Range.GetRange(0, 10, 2));
-            Assert.AreNotEqual(range, Range.GetRange(0, 10, 3));
-            Assert.AreNotEqual(range, Range.GetRange(1, 10, 2));
-            Assert.AreNotEqual(range, Range.GetRange(1, 12, 2));
-            Assert.AreEqual(range.GetHashCode(), Range.GetRange(0, 10, 2).GetHashCode());
-            object? obj = Range.GetRange(0, 10, 2);
+            Assert.AreEqual(range, RangeHelper.GetRange(0, 10, 2));
+            Assert.AreNotEqual(range, RangeHelper.GetRange(0, 10, 3));
+            Assert.AreNotEqual(range, RangeHelper.GetRange(1, 10, 2));
+            Assert.AreNotEqual(range, RangeHelper.GetRange(1, 12, 2));
+            Assert.AreEqual(range.GetHashCode(), RangeHelper.GetRange(0, 10, 2).GetHashCode());
+            object? obj = RangeHelper.GetRange(0, 10, 2);
             Assert.IsTrue(range.Equals(obj));
         }
 
         [TestMethod]
         public void Test_ToString()
         {
-            var range = Range.GetRange(0, 10, 2);
+            var range = RangeHelper.GetRange(0, 10, 2);
             var expected = "0 2 4 6 8 10";
             var actual = range.ToString();
             Assert.AreEqual(expected, actual);
@@ -70,14 +70,14 @@ namespace Masasamjant
         [TestMethod]
         public void Test_GetRanges()
         {
-            AssertRange(Range.GetRange((byte)0, (byte)10, (byte)2));
-            AssertRange(Range.GetRange((short)0, (short)10, (short)2));
-            AssertRange(Range.GetRange((ushort)0, (ushort)10, (ushort)2));
-            AssertRange(Range.GetRange((uint)0, (uint)10, (uint)2));
-            AssertRange(Range.GetRange(0L, 10L, 2L));
-            AssertRange(Range.GetRange(0UL, 10UL, 2UL));
-            AssertRange(Range.GetRange(0M, 10M, 2M));
-            AssertRange(Range.GetRange(0F, 10F, 2F));
+            AssertRange(RangeHelper.GetRange((byte)0, (byte)10, (byte)2));
+            AssertRange(RangeHelper.GetRange((short)0, (short)10, (short)2));
+            AssertRange(RangeHelper.GetRange((ushort)0, (ushort)10, (ushort)2));
+            AssertRange(RangeHelper.GetRange((uint)0, (uint)10, (uint)2));
+            AssertRange(RangeHelper.GetRange(0L, 10L, 2L));
+            AssertRange(RangeHelper.GetRange(0UL, 10UL, 2UL));
+            AssertRange(RangeHelper.GetRange(0M, 10M, 2M));
+            AssertRange(RangeHelper.GetRange(0F, 10F, 2F));
         }
 
         private static void AssertRange<T>(Range<T> range) where T : IComparable<T>
@@ -90,16 +90,16 @@ namespace Masasamjant
         [TestMethod]
         public void Test_Clone()
         {
-            ICloneable clonable = Range.GetRange(1, 2, 1);
-            var range = Range.GetRange(1, 2, 1);
+            ICloneable clonable = RangeHelper.GetRange(1, 2, 1);
+            var range = RangeHelper.GetRange(1, 2, 1);
             Assert.AreEqual(range, clonable.Clone());
         }
 
         [TestMethod]
         public void Test_GetEnumerator()
         {
-            IEnumerable enumerable1 = Range.GetRange(1, 2, 1);
-            IEnumerable<int> enumerable2 = Range.GetRange(1, 2, 1);
+            IEnumerable enumerable1 = RangeHelper.GetRange(1, 2, 1);
+            IEnumerable<int> enumerable2 = RangeHelper.GetRange(1, 2, 1);
             var enumerator1 = enumerable1.GetEnumerator();
             var enumerator2 = enumerable2.GetEnumerator();
             Assert.AreEqual(enumerator1.GetType(), enumerator2.GetType());

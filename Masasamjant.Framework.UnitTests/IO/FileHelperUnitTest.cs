@@ -19,19 +19,6 @@ namespace Masasamjant.IO
         }
 
         [TestMethod]
-        public async Task Test_IsEmptyFileAsync()
-        {
-            var filePath = Path.GetTempFileName();
-            Assert.IsTrue(await FileHelper.IsEmptyFileAsync(filePath));
-            File.WriteAllText(filePath, "Test");
-            Assert.IsFalse(await FileHelper.IsEmptyFileAsync(filePath));
-            File.Delete(filePath);
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => FileHelper.IsEmptyFileAsync(""));
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => FileHelper.IsEmptyFileAsync("  "));
-            await Assert.ThrowsExceptionAsync<FileNotFoundException>(() => FileHelper.IsEmptyFileAsync(NotExistFilePath));
-        }
-
-        [TestMethod]
         public void Test_CreateTempFile()
         {
             var tempFilePath = FileHelper.CreateTempTextFile((string?)null);
@@ -88,12 +75,12 @@ namespace Masasamjant.IO
         {
             var tempFilePath = await FileHelper.CreateTempFileAsync((string?)null);
             Assert.IsTrue(File.Exists(tempFilePath));
-            Assert.IsTrue(await FileHelper.IsEmptyFileAsync(tempFilePath));
+            Assert.IsTrue(FileHelper.IsEmptyFile(tempFilePath));
             File.Delete(tempFilePath);
 
             tempFilePath = await FileHelper.CreateTempFileAsync("");
             Assert.IsTrue(File.Exists(tempFilePath));
-            Assert.IsTrue(await FileHelper.IsEmptyFileAsync(tempFilePath));
+            Assert.IsTrue(FileHelper.IsEmptyFile(tempFilePath));
             File.Delete(tempFilePath);
 
             tempFilePath = await FileHelper.CreateTempFileAsync("Text");
@@ -108,22 +95,22 @@ namespace Masasamjant.IO
 
             tempFilePath = await FileHelper.CreateTempFileAsync(null, Encoding.Unicode);
             Assert.IsTrue(File.Exists(tempFilePath));
-            Assert.IsTrue(await FileHelper.IsEmptyFileAsync(tempFilePath));
+            Assert.IsTrue(FileHelper.IsEmptyFile(tempFilePath));
             File.Delete(tempFilePath);
 
             tempFilePath = await FileHelper.CreateTempFileAsync("", Encoding.Unicode);
             Assert.IsTrue(File.Exists(tempFilePath));
-            Assert.IsTrue(await FileHelper.IsEmptyFileAsync(tempFilePath));
+            Assert.IsTrue(FileHelper.IsEmptyFile(tempFilePath));
             File.Delete(tempFilePath);
 
             tempFilePath = await FileHelper.CreateTempFileAsync([]);
             Assert.IsTrue(File.Exists(tempFilePath));
-            Assert.IsTrue(await FileHelper.IsEmptyFileAsync(tempFilePath));
+            Assert.IsTrue(FileHelper.IsEmptyFile(tempFilePath));
             File.Delete(tempFilePath);
 
             tempFilePath = await FileHelper.CreateTempFileAsync((byte[]?)null);
             Assert.IsTrue(File.Exists(tempFilePath));
-            Assert.IsTrue(await FileHelper.IsEmptyFileAsync(tempFilePath));
+            Assert.IsTrue(FileHelper.IsEmptyFile(tempFilePath));
             File.Delete(tempFilePath);
 
             byte[]? data = Encoding.UTF8.GetBytes("Test");
