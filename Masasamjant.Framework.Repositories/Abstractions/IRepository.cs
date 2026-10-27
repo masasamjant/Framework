@@ -1,5 +1,4 @@
 ﻿using Masasamjant.ComponentModel;
-using Masasamjant.Modeling.Abstractions;
 
 namespace Masasamjant.Repositories.Abstractions
 {
@@ -9,8 +8,8 @@ namespace Masasamjant.Repositories.Abstractions
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
     /// <typeparam name="TIdentifier">The type of the entity identifier.</typeparam>
     public interface IRepository<TEntity, TIdentifier> : IWork
-        where TEntity : IEntity<TIdentifier>
-        where TIdentifier : IEquatable<TIdentifier>, new()
+        where TEntity : class
+        where TIdentifier : IEquatable<TIdentifier>
     {
         /// <summary>
         /// Add specified <typeparamref name="TEntity"/> instance to repository.

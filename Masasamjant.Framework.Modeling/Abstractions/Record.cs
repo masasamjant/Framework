@@ -1,4 +1,5 @@
-﻿using System.Security.Principal;
+﻿using Masasamjant.Serialization;
+using System.Security.Principal;
 using System.Text.Json.Serialization;
 
 namespace Masasamjant.Modeling.Abstractions
@@ -6,9 +7,7 @@ namespace Masasamjant.Modeling.Abstractions
     /// <summary>
     /// Represents entity that implements <see cref="ISupportCreated"/> and <see cref="ISupportModified"/> interfaces.
     /// </summary>
-    /// <typeparam name="TIdentifier">The type of the identifier.</typeparam>
-    public abstract class Record<TIdentifier> : Entity<TIdentifier>, IRecord<TIdentifier>
-        where TIdentifier : IEquatable<TIdentifier>, new()
+    public abstract class Record : Model, IRecord, IJsonSerializable
     {
         /// <summary>
         /// Gets the identity, like user name or identifier, to identify user who created model.

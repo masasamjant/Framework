@@ -8,8 +8,8 @@ namespace Masasamjant.Repositories.Abstractions
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
     /// <typeparam name="TIdentifier">The type of the entity identifier.</typeparam>
     public abstract class Repository<TEntity, TIdentifier> : IRepository<TEntity, TIdentifier>
-        where TEntity : Entity<TIdentifier>
-        where TIdentifier : IEquatable<TIdentifier>, new()
+        where TEntity : class
+        where TIdentifier : IEquatable<TIdentifier>
     {
         /// <summary>
         /// Initializes new instance of the <see cref="Repository{TEntity, TIdentifier}"/> class.
