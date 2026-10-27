@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using Masasamjant.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Masasamjant.Modeling.Abstractions
 {
@@ -6,7 +7,8 @@ namespace Masasamjant.Modeling.Abstractions
     /// Represents abstract model that is identified by <typeparamref name="TIdentifier"/>.
     /// </summary>
     /// <typeparam name="TIdentifier">The type of the identifier.</typeparam>
-    public abstract class Entity<TIdentifier> : Model, IEntity<TIdentifier> where TIdentifier : IEquatable<TIdentifier>, new()
+    public abstract class Entity<TIdentifier> : Model, IEntity<TIdentifier>, IJsonSerializable 
+        where TIdentifier : IEquatable<TIdentifier>, new()
     {
         /// <summary>
         /// Gets the unique identifier.
