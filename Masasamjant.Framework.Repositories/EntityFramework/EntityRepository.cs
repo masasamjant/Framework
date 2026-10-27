@@ -1,5 +1,4 @@
-﻿using Masasamjant.Modeling.Abstractions;
-using Masasamjant.Repositories.Abstractions;
+﻿using Masasamjant.Repositories.Abstractions;
 
 namespace Masasamjant.Repositories.EntityFramework
 {
@@ -11,8 +10,8 @@ namespace Masasamjant.Repositories.EntityFramework
     /// <typeparam name="TIdentifier">The type of the entity identifier.</typeparam>
     public abstract class EntityRepository<TContext, TEntity, TIdentifier> : Repository<TEntity, TIdentifier>
         where TContext : EntityContext
-        where TEntity : Entity<TIdentifier>
-        where TIdentifier : IEquatable<TIdentifier>, new()
+        where TEntity : class
+        where TIdentifier : IEquatable<TIdentifier>
     {
         /// <summary>
         /// Initializes new instance of the <see cref="EntityRepository{TContext,TEntity, TIdentifier}"/> class.
@@ -30,6 +29,20 @@ namespace Masasamjant.Repositories.EntityFramework
         protected TContext Context { get; }
 
         /// <summary>
+        /// Find <typeparamref name="TEntity"/> entity with specified identifier.
+        /// </summary>
+        /// <param name="identifier">The entity identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A found <typeparamref name="TEntity"/> or <c>null</c>.</returns>
+        public override async Task<TEntity?> FindAsync(TIdentifier identifier, CancellationToken cancellationToken = default)
+        {
+            if (cancellationToken.IsCancellationRequested)
+                throw new OperationCanceledException(cancellationToken);
+
+            return await Context.FindAsync<TEntity>(identifier);
+        }
+
+        /// <summary>
         /// Save changes made to repository items.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
@@ -37,26 +50,6 @@ namespace Masasamjant.Repositories.EntityFramework
         public override Task SaveAsync(CancellationToken cancellationToken = default)
         {
             return Context.SaveAsync(cancellationToken);
-        }
-    }
-
-    /// <summary>
-    /// Represents abstract <see cref="Repository{TEntity, TIdentifier}"/> that use Entity Framework for data access.
-    /// </summary>
-    /// <typeparam name="TEntity">The type of the entity.</typeparam>
-    /// <typeparam name="TIdentifier">The type of the entity identifier.</typeparam>
-    [Obsolete("Use EntityRepository<TContext, TEntity, TIdentifier> instead.")]
-    public abstract class EntityRepository<TEntity, TIdentifier> : EntityRepository<EntityContext, TEntity, TIdentifier>
-        where TEntity : Entity<TIdentifier>
-        where TIdentifier : IEquatable<TIdentifier>, new()
-    {
-        /// <summary>
-        /// Initializes new instance of the <see cref="EntityRepository{TEntity, TIdentifier}"/> class.
-        /// </summary>
-        /// <param name="context">The entity context.</param>
-        protected EntityRepository(EntityContext context)
-            : base(context)
-        {
         }
     }
 }

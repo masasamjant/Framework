@@ -43,19 +43,6 @@ namespace Masasamjant.Modeling.Abstractions
             return DateTimeConfigurationProvider.Current.Configuration.GetDateTimeOffsetNow();
         }
 
-        private ModelValidationException HandleValidationException(ValidationException validationException)
-        {
-            var errors = new List<ModelError>();
-
-            foreach (var memberName in validationException.ValidationResult.MemberNames)
-            {
-                var errorMessage = validationException.ValidationAttribute?.FormatErrorMessage(memberName) ?? validationException.ValidationResult.ErrorMessage ?? "The property is not valid.";
-                errors.Add(new ModelError(memberName, errorMessage));
-            }
-
-            return new ModelValidationException(this, errors);
-        }
-
         /// <summary>
         /// Invoked when model instance is added to non-volatile memory like database or file.
         /// </summary>
@@ -82,6 +69,19 @@ namespace Masasamjant.Modeling.Abstractions
         protected virtual void OnRemove(IIdentity? identity)
         {
             return;
+        }
+
+        private ModelValidationException HandleValidationException(ValidationException validationException)
+        {
+            var errors = new List<ModelError>();
+
+            foreach (var memberName in validationException.ValidationResult.MemberNames)
+            {
+                var errorMessage = validationException.ValidationAttribute?.FormatErrorMessage(memberName) ?? validationException.ValidationResult.ErrorMessage ?? "The property is not valid.";
+                errors.Add(new ModelError(memberName, errorMessage));
+            }
+
+            return new ModelValidationException(this, errors);
         }
 
         void IAddHandler.OnAdd(IIdentity? identity)

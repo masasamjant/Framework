@@ -81,14 +81,14 @@ namespace Masasamjant.Modeling
         {
             ArgumentNullException.ThrowIfNull(model);
 
-            if (model.ValidFrom.HasValue && model.ValidTo.HasValue)
-                return model.ValidFrom.Value <= dateTime && dateTime <= model.ValidTo.Value;
+            if (model.ValidFrom.HasValue && model.ValidUntil.HasValue)
+                return model.ValidFrom.Value <= dateTime && dateTime <= model.ValidUntil.Value;
 
             if (model.ValidFrom.HasValue)
                 return model.ValidFrom.Value <= dateTime;
             
-            if (model.ValidTo.HasValue)
-                return dateTime <= model.ValidTo.Value;
+            if (model.ValidUntil.HasValue)
+                return dateTime <= model.ValidUntil.Value;
             
             return true;
         }
@@ -164,17 +164,6 @@ namespace Masasamjant.Modeling
             modifiedAt = model.ModifiedAt;
             modifiedBy = model.ModifiedBy;
             return modifiedAt.HasValue;
-        }
-
-        /// <summary>
-        /// Check if specified <see cref="ISupportActivation"/> model is active.
-        /// </summary>
-        /// <param name="model">The <see cref="ISupportActivation"/> model.</param>
-        /// <returns><c>true</c> if the model is active; <c>false</c> otherwise.</returns>
-        public static bool IsActive(this ISupportActivation model)
-        {
-            ArgumentNullException.ThrowIfNull(model);
-            return model.ActiveStatus == ActiveStatus.Active;
         }
     }
 }

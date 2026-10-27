@@ -3,7 +3,7 @@
 namespace Masasamjant.Modeling.Abstractions
 {
     /// <summary>
-    /// Represents model that is identified by <typeparamref name="TIdentifier"/>.
+    /// Represents abstract model that is identified by <typeparamref name="TIdentifier"/>.
     /// </summary>
     /// <typeparam name="TIdentifier">The type of the identifier.</typeparam>
     public abstract class Entity<TIdentifier> : Model, IEntity<TIdentifier> where TIdentifier : IEquatable<TIdentifier>, new()
@@ -12,7 +12,7 @@ namespace Masasamjant.Modeling.Abstractions
         /// Gets the unique identifier.
         /// </summary>
         [JsonInclude]
-        public TIdentifier Identifier { get; protected set; } = new TIdentifier();
+        public TIdentifier Identifier { get; protected set; } = new();
 
         /// <summary>
         /// Check if object instance is entity with same type and identifier.
