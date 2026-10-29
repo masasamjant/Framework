@@ -1,4 +1,7 @@
-﻿namespace Masasamjant.Configuration
+﻿using Masasamjant.Resources;
+using NSubstitute;
+
+namespace Masasamjant.Configuration
 {
     [TestClass]
     public class ConfigurationExtensionsUnitTest : UnitTest
@@ -58,6 +61,60 @@
             var expected = "Value";
             var actual = ConfigurationExtensions.GetValue(configuration, "Key", sectionKeys);
             Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void Test_GetDisplayName()
+        {
+            var properties = new List<ConfigurationProperty>();
+            var group = new ConfigurationGroup("Name", "Desc", properties);
+            var expected = "Name";
+            var actual = ConfigurationExtensions.GetDisplayName(group, null);
+            Assert.AreEqual(expected, actual);
+
+            group.NameResourceKey = "NameResource";
+            actual = ConfigurationExtensions.GetDisplayName(group, null);
+            Assert.AreEqual(expected, actual);
+
+            var resourceProvider = Substitute.For<IStringResourceProvider>();
+            resourceProvider.GetString("NameResource").Returns((string?)null);
+            resourceProvider.GetString("Name").Returns("Nom");
+
+            actual = ConfigurationExtensions.GetDisplayName(group, resourceProvider);
+            Assert.AreEqual(expected, actual);
+
+            group.NameResourceKey = "Name";
+            actual = ConfigurationExtensions.GetDisplayName(group, resourceProvider);
+            Assert.AreEqual("Nom", actual);
+
+            Assert.ThrowsException<ArgumentNullException>(() => ConfigurationExtensions.GetDisplayName(null!, resourceProvider));
+        }
+
+        [TestMethod]
+        public void Test_GetDisplayDescription()
+        {
+            var properties = new List<ConfigurationProperty>();
+            var group = new ConfigurationGroup("Name", "Desc", properties);
+            var expected = "Desc";
+            var actual = ConfigurationExtensions.GetDisplayDescription(group, null);
+            Assert.AreEqual(expected, actual);
+            
+            group.DescriptionResourceKey = "DescResource";
+            actual = ConfigurationExtensions.GetDisplayDescription(group, null);
+            Assert.AreEqual(expected, actual);
+            
+            var resourceProvider = Substitute.For<IStringResourceProvider>();
+            resourceProvider.GetString("DescResource").Returns((string?)null);
+            resourceProvider.GetString("Desc").Returns("Description");
+
+            actual = ConfigurationExtensions.GetDisplayDescription(group, resourceProvider);
+            Assert.AreEqual(expected, actual);
+            
+            group.DescriptionResourceKey = "Desc";
+            actual = ConfigurationExtensions.GetDisplayDescription(group, resourceProvider);
+            Assert.AreEqual("Description", actual);
+
+            Assert.ThrowsException<ArgumentNullException>(() => ConfigurationExtensions.GetDisplayDescription(null!, resourceProvider));
         }
     }
 }

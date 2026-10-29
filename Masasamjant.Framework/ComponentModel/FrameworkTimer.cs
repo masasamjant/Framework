@@ -105,6 +105,11 @@ namespace Masasamjant.ComponentModel
         public bool AllowRaiseElapsed { get; set; } = true;
 
         /// <summary>
+        /// Gets or sets any context object associated with timer instance.
+        /// </summary>
+        public object? Tag { get; set; }
+
+        /// <summary>
         /// Disposes the timer, releasing all resources used by it.
         /// </summary>
         public void Dispose()
@@ -135,7 +140,8 @@ namespace Masasamjant.ComponentModel
 
         /// <summary>
         /// Raises the elapsed event, signaling that the timer has elapsed. 
-        /// This method can be called to manually trigger the elapsed event, optionally providing a specific signal time.
+        /// This method can be called to manually trigger the elapsed event, optionally providing a specific signal time. 
+        /// The difference is that manually raised event is executed in current thread context, while the event raised by the timer is executed in a separate thread context.
         /// </summary>
         /// <param name="signalTime">The time at which the elapsed event is signaled. If <c>null</c>, the current local time is used.</param>
         /// <exception cref="ObjectDisposedException">If the timer has been disposed.</exception>

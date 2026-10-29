@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Masasamjant.Resources;
+using Microsoft.Extensions.Configuration;
 
 namespace Masasamjant.Configuration
 {
@@ -70,6 +71,46 @@ namespace Masasamjant.Configuration
             {
                 throw new ConfigurationException(key, sectionKeys ?? [], "The configuration contains errors or configuration section does not exist.", exception);
             }
+        }
+
+        /// <summary>
+        /// Gets the display name of configuration item. That is either localized resource value, if available, or name of the item.
+        /// </summary>
+        /// <param name="configurationItem">The configuration item.</param>
+        /// <param name="resourceProvider">The string resource provider used to resolve localized or named string resources.</param>
+        /// <returns>A display name of the configuration item.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="configurationItem"/> is <c>null</c>.</exception>
+        public static string GetDisplayName(this IConfigurationItem configurationItem, IStringResourceProvider? resourceProvider)
+        {
+            ArgumentNullException.ThrowIfNull(configurationItem);
+
+            var nameResourceKey = configurationItem.NameResourceKey;
+
+            if (resourceProvider == null || string.IsNullOrWhiteSpace(nameResourceKey))
+                return configurationItem.Name;
+
+            var nameResource = resourceProvider.GetString(nameResourceKey);
+            return string.IsNullOrWhiteSpace(nameResource) ? configurationItem.Name : nameResource;
+        }
+
+        /// <summary>
+        /// Gets the display description of configuration item. That is either localized resource value, if available, or description of the item.
+        /// </summary>
+        /// <param name="configurationItem">The configuration item.</param>
+        /// <param name="resourceProvider">The string resource provider used to resolve localized or named string resources.</param>
+        /// <returns>A display description of the configuration item.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="configurationItem"/> is <c>null</c>.</exception>
+        public static string GetDisplayDescription(this IConfigurationItem configurationItem, IStringResourceProvider? resourceProvider)
+        {
+            ArgumentNullException.ThrowIfNull(configurationItem);
+
+            var descriptionResourceKey = configurationItem.DescriptionResourceKey;
+            
+            if (resourceProvider == null || string.IsNullOrWhiteSpace(descriptionResourceKey))
+                return configurationItem.Description;
+         
+            var descriptionResource = resourceProvider.GetString(descriptionResourceKey);
+            return string.IsNullOrWhiteSpace(descriptionResource) ? configurationItem.Description : descriptionResource;
         }
     }
 }

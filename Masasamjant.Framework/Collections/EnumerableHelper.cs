@@ -1,4 +1,5 @@
 ﻿using Masasamjant.Linq;
+using Masasamjant.Reflection;
 
 namespace Masasamjant.Collections
 {
@@ -217,6 +218,19 @@ namespace Masasamjant.Collections
                 set.Add(item);
 
             return set;
+        }
+
+        /// <summary>
+        /// Check if any item in <see cref="IEnumerable{T}"/> is <c>null</c>.
+        /// </summary>
+        /// <typeparam name="T">The type of the item.</typeparam>
+        /// <param name="source">The source <see cref="IEnumerable{T}"/>.</param>
+        /// <returns><c>true</c> if any item in <paramref name="source"/> is <c>null</c>; <c>false</c> otherwise.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="source"/> is <c>null</c>.</exception>
+        public static bool ContainsNull<T>(this IEnumerable<T> source)
+        {
+            ArgumentNullException.ThrowIfNull(source);
+            return source.Any(x => x is null);
         }
     }
 }

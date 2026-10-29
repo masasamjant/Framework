@@ -97,5 +97,15 @@
             Assert.AreEqual(1, result.Length);
             CollectionAssert.AreEqual(new object[] { a }, result);
         }
+
+        [TestMethod]
+        public void Test_ContainsNull()
+        {
+            var source = new List<object>() { new object(), null!, new object() };
+            Assert.IsTrue(EnumerableHelper.ContainsNull(source));
+            source = new List<object>() { new object(), new object() };
+            Assert.IsFalse(EnumerableHelper.ContainsNull(source));
+            Assert.ThrowsException<ArgumentNullException>(() => EnumerableHelper.ContainsNull<object>(null!));
+        }
     }
 }
